@@ -34,7 +34,12 @@ jobs:
         shell: bash
         
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --warning-mode all
+        shell: bash
+
+      # MySQL 설정 확인 (Optional)
+      - name: Verify MySQL Configuration
+        run: cat src/main/resources/application.properties
         shell: bash
         
       # zip파일로 변환
