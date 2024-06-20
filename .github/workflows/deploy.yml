@@ -34,7 +34,7 @@ jobs:
         shell: bash
         
       - name: Build with Gradle
-        run: ./gradlew build --warning-mode all
+        run: ./gradlew build --warning-mode all --scan
         shell: bash
 
       # MySQL 설정 확인 (Optional)
