@@ -31,13 +31,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET__ACCESS_KEY }}
           aws-region: 'ap-northeast-2'
 
-      - name: Add GitHub Actions IP
+      # - name: Add GitHub Actions IP
+      #   run: |
+      #     aws ec2 authorize-security-group-ingress \
+      #         --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+      #         --protocol tcp \
+      #         --port 3306 \
+      #         --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: Add GitHub Actions IP to MySQL RDS Security Group
         run: |
           aws ec2 authorize-security-group-ingress \
-              --group-id ${{ secrets.SECURITY_GROUP_ID }} \
-              --protocol tcp \
-              --port 3306 \
-              --cidr ${{ steps.ip.outputs.ipv4 }}/32
+            --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+            --protocol tcp \
+            --port 3306 \
+            --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        if: ${{ github.event_name == 'push' }}
           
       - name: Checkout code
         uses: actions/checkout@v2
