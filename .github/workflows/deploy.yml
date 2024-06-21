@@ -41,9 +41,9 @@ jobs:
       - name: Run build on EC2 instance
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ env.EC2_INSTANCE_IP }}
+          host: ${{ secrets.EC2_INSTANCE_IP }}
           username: ec2-user
-          key: ${{ env.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /path/to/your/project
             ./gradlew build --warning-mode all --scan
