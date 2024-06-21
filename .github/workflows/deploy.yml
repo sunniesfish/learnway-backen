@@ -16,6 +16,7 @@ env:
   EC2_USER: ubuntu
   EC2_HOST: ${{ secrets.EC2_INSTANCE_IP }}
   PROJECT_DIR: /home/ubuntu/aselcni
+  AWS_REGION: ap-northeast-2
   
 jobs:
   build:
