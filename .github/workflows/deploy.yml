@@ -41,9 +41,18 @@ jobs:
 
       - name: Run build and deploy on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
-          cd ${{ env.PROJECT_DIR }}
-          chmod +x ./gradlew
-          ./gradlew build --warning-mode all --scan
-          aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name $DEPLOYMENT_GROUP_NAME --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+          ssh -o StrictHostKeyChecking=no -t ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
+          set -e
+          tmux new-session -d -s build_session
+          tmux send-keys -t build_session "cd ${{ env.PROJECT_DIR }} && chmod +x ./gradlew && ./gradlew build --warning-mode all --scan" C-m
+          if [[ $? -ne 0 ]]; then
+            echo "Build failed, cleaning up..."
+            rm -rf ${{ env.PROJECT_DIR }}
+            exit 1
+          fi
           EOF
+
+      - name: Clean up on failure
+        if: failure()
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "rm -rf ${{ env.PROJECT_DIR }}"
