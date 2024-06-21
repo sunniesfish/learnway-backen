@@ -33,9 +33,9 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
         
-      - name: Build with Gradle
-        run: ./gradlew build --warning-mode all --scan
-        shell: bash
+      # - name: Build with Gradle
+      #   run: ./gradlew build --warning-mode all --scan
+      #   shell: bash
 
      # SSH를 통해 EC2 인스턴스에 접속하여 빌드 및 테스트 수행
       - name: Run build on EC2 instance
