@@ -32,7 +32,7 @@ jobs:
 
       - name: Copy files to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r . ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:${{ env.PROJECT_DIR }}
+          scp -o StrictHostKeyChecking=no -r * ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:${{ env.PROJECT_DIR }}
 
       - name: Run build and deploy on EC2
         run: |
