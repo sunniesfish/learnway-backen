@@ -35,7 +35,7 @@ jobs:
         shell: bash
       
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --scan
         shell: bash
 
       - name: Configure AWS credentials
