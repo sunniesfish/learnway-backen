@@ -48,7 +48,7 @@ jobs:
           #   echo "Build failed, cleaning up..."
           #   rm -rf ${{ env.PROJECT_DIR }}
           #   exit 1
-          fi
+          # fi
           EOF
 
       - name: Configure AWS credentials
