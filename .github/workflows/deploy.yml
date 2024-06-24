@@ -44,10 +44,10 @@ jobs:
           tmux kill-session -t build_session || true
           tmux new-session -d -s build_session
           tmux send-keys -t build_session "cd ${{ env.PROJECT_DIR }} && chmod +x ./gradlew && ./gradlew build --warning-mode all --scan" C-m
-          if [[ $? -ne 0 ]]; then
-            echo "Build failed, cleaning up..."
-            rm -rf ${{ env.PROJECT_DIR }}
-            exit 1
+          # if [[ $? -ne 0 ]]; then
+          #   echo "Build failed, cleaning up..."
+          #   rm -rf ${{ env.PROJECT_DIR }}
+          #   exit 1
           fi
           EOF
 
