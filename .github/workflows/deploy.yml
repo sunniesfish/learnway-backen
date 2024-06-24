@@ -37,19 +37,14 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no -r * ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:${{ env.PROJECT_DIR }}
           
-      - name: Run build and deploy on EC2
+      - name: Run build on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -t ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
-          set -e
-          tmux kill-session -t build_session || true
-          tmux new-session -d -s build_session
-          tmux send-keys -t build_session "cd ${{ env.PROJECT_DIR }} && chmod +x ./gradlew && ./gradlew build --warning-mode all --scan" C-m
-          # if [[ $? -ne 0 ]]; then
-          #   echo "Build failed, cleaning up..."
-          #   rm -rf ${{ env.PROJECT_DIR }}
-          #   exit 1
-          # fi
-          EOF
+          ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "cd ${{ env.PROJECT_DIR }} && chmod +x ./gradlew && ./gradlew build --warning-mode all --scan"
+          if [[ $? -ne 0 ]]; then
+            echo "Build failed, cleaning up..."
+            ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "rm -rf ${{ env.PROJECT_DIR }}"
+            exit 1
+          fi
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
