@@ -40,7 +40,7 @@ jobs:
         run: |
           scp -o StrictHostKeyChecking=no -r * ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:${{ env.PROJECT_DIR }}
 
-      - name: Run build and deploy on EC2
+      - name: Run build on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -t ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
           set -e
@@ -66,6 +66,15 @@ jobs:
         
       - name: Upload to S3
         run: aws s3 cp $GITHUB_SHA.zip s3://${{ env.BUCKET_NAME }}/${{ env.PROJECT_NAME }}/$GITHUB_SHA.zip --region ${{ env.AWS_REGION }}
+
+      - name: Deploy with CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APP_NAME }} \
+            --deployment-group-name ${{ env.DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=${{ env.BUCKET_NAME }},bundleType=zip,key=${{ env.PROJECT_NAME }}/${{ GITHUB_SHA }}.zip \
+            --region ${{ env.AWS_REGION }}
+
 
       - name: Clean up on failure
         if: failure()
