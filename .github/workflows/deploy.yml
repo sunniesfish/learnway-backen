@@ -21,30 +21,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+    
       - name: Checkout code
         uses: actions/checkout@v2
-
-      # - name: Setup SSH
-      #   uses: webfactory/ssh-agent@v0.5.3
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # - name: Create project directory on EC2
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "mkdir -p ${{ env.PROJECT_DIR }}"
-          
-      # - name: Copy files to EC2
-      #   run: |
-      #     scp -o StrictHostKeyChecking=no -r * ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:${{ env.PROJECT_DIR }}
-          
-      # - name: Run build on EC2
-      #   run: |
-      #     ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "cd ${{ env.PROJECT_DIR }} && chmod +x ./gradlew && ./gradlew build --warning-mode all --scan"
-      #     if [[ $? -ne 0 ]]; then
-      #       echo "Build failed, cleaning up..."
-      #       ssh -o StrictHostKeyChecking=no ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "rm -rf ${{ env.PROJECT_DIR }}"
-      #       exit 1
-      #     fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
