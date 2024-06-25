@@ -1,6 +1,7 @@
 package com.learnway.exam.controller;
 
 import com.learnway.exam.domain.Exam;
+import com.learnway.exam.dto.ExamDetailDTO;
 import com.learnway.exam.service.ExamService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -92,5 +93,22 @@ public class ExamController {
             examService.deleteExam(examId, memId);
         }
         return "redirect:/exam/list/1";
+    }
+
+    /*
+    * 시험 상세 페이지 memId 또는 examId가 없는 경우 시험 리스트로 리다이렉트
+    * */
+    @GetMapping("/detail/{examId}")
+    public String getDetailExam(@PathVariable("examId") Integer examId, Model model){
+        //get memId
+        Integer memId = 1;
+        
+        ExamDetailDTO dto = null;
+        dto = examService.getExamDetail(examId, memId);
+        if(dto != null) {
+            return "redirect:/exam/detail";
+        } else {
+            return "redirect:/exam/list/1";
+        }
     }
 }

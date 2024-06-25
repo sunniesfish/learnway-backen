@@ -1,10 +1,11 @@
 package com.learnway.exam.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "Score")
 public class Score {
@@ -13,6 +14,9 @@ public class Score {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "score_id", nullable = false)
     private Integer scoreId;
+
+    @Column(name = "member_id", nullable = false)
+    private Integer memId;
 
     @Column(name = "exam_id", nullable = false)
     private Integer examId;
