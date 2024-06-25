@@ -39,19 +39,19 @@ public class ExamController {
                         .examDate(examDate)
                         .examMemo(examMemo).build()
         );
-        return "redirect:/exam/list";
+        return "redirect:/exam/list/1";
     }
 
 
     /**
      * 사용자의 시험 리스트 가져옴
      */
-    @GetMapping("/list")
-    public String getExamList(Model model){
+    @GetMapping("/list/{pageNo}")
+    public String getExamList(@PathVariable("pageNo") Integer pageNo,Model model){
         //get memId
         int memeId = 1;
-
-        model.addAttribute("examList", examService.readExam(memeId));
+        pageNo = pageNo == null ? pageNo = 1 : pageNo;
+        model.addAttribute("examList", examService.readExam(memeId,pageNo,10));
         return "/template/exam";
     }
 
@@ -78,7 +78,7 @@ public class ExamController {
                         .examDate(examDate)
                         .examMemo(examMemo).build()
         );
-        return "redirect:/exam/list";
+        return "redirect:/exam/list/1";
     }
 
     /*
@@ -91,6 +91,6 @@ public class ExamController {
         if(memId != null) {
             examService.deleteExam(examId, memId);
         }
-        return "redirect:/exam/list";
+        return "redirect:/exam/list/1";
     }
 }
