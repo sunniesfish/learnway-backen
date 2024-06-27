@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var reservationContent = $("#reservationContent").val();
         var start = new Date($("#startTime").val());
         var end = new Date($("#endTime").val());
-
+		console.log(counselor);
         if (!reservationContent) {
             alert("상담하고싶은 내용을 간단하게 적어주세요");
             return;

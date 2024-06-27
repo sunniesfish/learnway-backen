@@ -7,12 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ConsultantService;
 
 import jakarta.servlet.http.HttpSession;
@@ -28,10 +30,12 @@ public class SseController {
     private ConsultantService consultantService;
 
     @GetMapping("/subscribe/{consultantId}")
-    public SseEmitter subscribe(@PathVariable("consultantId") Long consultantId, HttpSession session) {
+    public SseEmitter subscribe(@PathVariable("consultantId") Long consultantId,Authentication authentication) {
+    	ConsultantDetails consultant = (ConsultantDetails) authentication.getPrincipal();
+    	Long sessionId = consultant.getId();
     	System.out.println("1번 : " + consultantId );
-    	System.out.println("1번 : " + (Long)session.getAttribute("loggedInConsultantId"));
-        if (session.getAttribute("loggedInConsultantId") == null || !session.getAttribute("loggedInConsultantId").equals(consultantId)) {
+    	System.out.println("1번 : " + sessionId);
+        if (sessionId == null || !sessionId.equals(consultantId)) {
             // 상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리
         	System.out.println("상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리");
             return null;

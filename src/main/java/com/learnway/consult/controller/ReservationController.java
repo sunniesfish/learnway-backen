@@ -92,6 +92,7 @@ public class ReservationController {
     @GetMapping("/reservations")
     public List<ReservationEntity> getReservations(@RequestParam("consultant") Long consultant) {
     	System.out.println("특정상담사 예약일정");
+    	System.out.println("특정상담사 : "+consultant);
     	return reservationService.getReservationsByConsultantId(consultant);
     }
     
