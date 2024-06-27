@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+.fc-event-main {
+    color: #2C3E50 !important;
+  }
+  
+.fc-timegrid-slot:last-child {
+  height: 30px !important; /* 또는 다른 슬롯과 동일한 높이 */
+  min-height: 30px !important;
+}
+  
+.fc-event-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.fc-event-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fc-event-studyway,
+.fc-event-achieveRate {
+  display: inline-block;
+}
+
+.fc-event-studyway {
+  font-size: 16px;	
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.fc-event-achieveRate {
+  font-size: 15px;
+  font-weight: bold;	
+  text-align: right;
+}
+
+.fc-event-progress {
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(to right, #F48FB1 var(--progress), #e0e0e0 var(--progress));
+  
+  /*
+  E68FAC
+  
+  */
+}
+
+/* 일요일 날짜 빨간색 */
+.fc-day-sun {
+  color: #C62828;
+  text-decoration: none;
+}
+
+/* 토요일 날짜 파란색 */
+.fc-day-sat {
+  color: #1565C0;
+  text-decoration: none;
+}
+
+/* 달성율 0일 때 배경색 없애는 방법 */
+.fc-daygrid-event.no-achievement-event,
+.fc-daygrid-event.no-achievement-event .fc-event-main,
+.fc-daygrid-event.no-achievement-event .fc-event-title,
+.fc-daygrid-event.no-achievement-event .fc-event-time {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: transparent !important;
+}
+
+.fc-daygrid-event.no-achievement-event .fc-event-main {
+    display: none !important;
+}
+
+/*월간에서 일일상세모달창*/
+.modal-content {
+  border-radius: 0.5rem;
+}
+
+.modal-header {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.table th {
+  font-weight: 600;
+}
