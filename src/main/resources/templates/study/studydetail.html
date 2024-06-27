@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>게시글 상세보기</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+   제목: <h1 th:text="${study.title}"></h1>
+   내용: <div th:text="${study.content}"></div>
+   시작일 : <div th:text="${study.startdate}"></div>
+   종료일 : <div th:text="${study.enddate}"></div>
+   
+     <div th:each="tag : ${studyTag}">
+        <div th:text="${tag.tag}">Tag</div>
+    </div>
+ 
+     <div th:each="chatRoom : ${chatRoom}">
+     	<input type="hidden" id="chatroomid" th:value="${chatRoom.chatroomid}">
+        <div th:text="${chatRoom.chatroomid}" id="chatroomido">채팅방 아이디</div>
+    </div>
+    
+    
+<div th:each="image : ${imgList}">
+                <img th:src="@{|/comFile/${image.imgpath}|}" id="imgpathex" th:value="@{|/comFile/${image.imgpath}|}">
+                <div th:text="${image.correct}" >문제 정답</div>
+                <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}"> 
+</div>
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  채팅방 입장
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div th:each="image : ${imgList}">
+        <img th:src="@{|/comFile/${image.imgpath}|}" id="imgpathex" th:value="@{|/comFile/${image.imgpath}|}">
+        <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}"> 
+        <input type="hidden" id="problemCorrect" th:value="${image.correct}"> 
+		</div>
+		
+		정답 : <input type="text" id="correct" name="correct" >
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="correct_ck" >정답제출</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+
+
+<script>
+
+ $(document).ready(function() {
+
+	correct_ck();
+}); 
+
+    function correct_ck() {
+    	
+    	$('#correct_ck').click(function(){
+    		
+	    var correct = $('#problemCorrect').val();
+	    var inputData = $('#correct').val();
+    		 
+	    console.log(inputData+ '입력값');
+	    console.log(correct+'문제 정답');
+	    
+	    
+    	})
+    }
+</script>
+
+</html>
