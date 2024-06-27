@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.learnway.consult.dto;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.learnway.consult.controller;
 
 import java.util.Optional;
 
@@ -10,10 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.demo.dto.member.ConsultantDetails;
-import com.example.demo.dto.member.MemberDetails;
-import com.example.demo.repository.Consultant;
-import com.example.demo.service.ReservationService;
+import com.learnway.consult.domain.Consultant;
+import com.learnway.consult.service.ReservationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

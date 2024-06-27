@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.learnway.consult.controller;
 
 import java.io.IOException;
 import java.util.Map;

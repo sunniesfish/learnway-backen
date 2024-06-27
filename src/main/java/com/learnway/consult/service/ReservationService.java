@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.learnway.consult.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -8,14 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.ReservationDTO;
-import com.example.demo.dto.UserInfoDTO;
-import com.example.demo.repository.Consultant;
-import com.example.demo.repository.ConsultantRepository;
-import com.example.demo.repository.ReservationEntity;
-import com.example.demo.repository.ReservationRepository;
-import com.example.demo.repository.member.MemberEntity;
-import com.example.demo.repository.member.MemberRepository;
+import com.learnway.consult.domain.Consultant;
+import com.learnway.consult.domain.ConsultantRepository;
+import com.learnway.consult.domain.ReservationEntity;
+import com.learnway.consult.domain.ReservationRepository;
+import com.learnway.consult.dto.ReservationDTO;
+import com.learnway.consult.dto.UserInfoDTO;
 
 @Service
 public class ReservationService {

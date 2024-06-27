@@ -1,8 +1,7 @@
-package com.example.demo.repository;
+package com.learnway.consult.domain;
 
 import java.time.LocalDateTime;
 
-import com.example.demo.repository.member.MemberEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
