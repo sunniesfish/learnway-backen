@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Login OK
+<div>
+<h2>로그인 정보</h2>
+<p>Username(ID): <span sec:authentication="name"></span></p>
+<p>User ID(PK): <span th:text="${#authentication.principal.memberId}"></span></p>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">로그아웃</button>
+    </form>
+</div>
+
+<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <h2>관리자만 조회할 수 있는 버튼</h2>
+    <button>ADMIN</button>
+</div>
+<a href="admin/addMasterData">기준정보 추가</a>
+
+</body>
+</html>
