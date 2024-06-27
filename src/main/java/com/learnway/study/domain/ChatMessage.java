@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Table(name="ChatMessage")
 public class ChatMessage {
-
+ 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="chat_msg_id",nullable = false)
