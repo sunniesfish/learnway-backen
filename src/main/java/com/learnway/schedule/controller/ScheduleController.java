@@ -12,7 +12,7 @@ import com.learnway.schedule.service.schedule.ScheduleService;
 public class ScheduleController {
 	
 		@Autowired
-		private ScheduleService scheduleService;
+		private ScheduleService scheduleService; 
 		
 		@GetMapping("/weekSchedule")
 		public String weekSchedule() {
