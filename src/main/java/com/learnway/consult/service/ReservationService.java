@@ -14,6 +14,8 @@ import com.learnway.consult.domain.ReservationEntity;
 import com.learnway.consult.domain.ReservationRepository;
 import com.learnway.consult.dto.ReservationDTO;
 import com.learnway.consult.dto.UserInfoDTO;
+import com.learnway.member.domain.Member;
+import com.learnway.member.domain.MemberRepository;
 
 @Service
 public class ReservationService {
@@ -80,7 +82,7 @@ public class ReservationService {
 	    List<ReservationDTO> reservationDTO = list.stream()
 	        .map(reservation -> new ReservationDTO(
 	            reservation.getId(),
-	            reservation.getMember().getMemberId(), // Assuming getName() returns client name
+	            reservation.getMember().getMemberName(), // Assuming getName() returns client name
 	            reservation.getBookingStart().toString(),
 	            reservation.getBookingEnd().toString()
 	        ))
@@ -92,16 +94,15 @@ public class ReservationService {
     //상담사 예약리스트에서 유저 정보 확인
     public UserInfoDTO getUserInfo(Long userId) {
         // 나중에 DB에서 정확한 정보 가져와야함
-        Optional<MemberEntity> memberOptional = memberRepository.findById(userId);
+        Optional<Member> memberOptional = memberRepository.findById(userId);
         
         // memberOptional이 비어있을 경우를 처리해야 합니다.
         if (memberOptional.isPresent()) {
-            MemberEntity member = memberOptional.get();
+        	Member member = memberOptional.get();
             return new UserInfoDTO(
                 member.getId(),
-                member.getMemberName(),
-                member.getMemberEmail(),
-                member.getMemberAge()
+                member.getMemberName()
+
             );
         } else {
             // Optional이 비어있을 경우 처리 (예: 예외를 던지거나 null 반환 등)

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.example.demo.service.ConsultantService;
+import com.learnway.consult.service.ConsultantService;
 
 import jakarta.servlet.http.HttpSession;
 

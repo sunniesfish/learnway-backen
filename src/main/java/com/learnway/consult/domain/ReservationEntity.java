@@ -3,6 +3,7 @@ package com.learnway.consult.domain;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +25,7 @@ public class ReservationEntity {
     
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private MemberEntity member;
+    private Member member;
     
     @ManyToOne
     @JoinColumn(name = "counselor_id")
@@ -41,7 +42,7 @@ public class ReservationEntity {
 	public ReservationEntity() {
 	}
 
-    public ReservationEntity(Long id, MemberEntity member, Consultant counselor, String reservationContent,LocalDateTime bookingStart,
+    public ReservationEntity(Long id, Member member, Consultant counselor, String reservationContent,LocalDateTime bookingStart,
             LocalDateTime bookingEnd) {
 		this.id = id;
 		this.member = member;

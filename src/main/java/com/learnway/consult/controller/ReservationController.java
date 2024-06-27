@@ -22,15 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dto.ReservationDTO;
-import com.example.demo.dto.ReservationRequest;
-import com.example.demo.dto.UserInfoDTO;
-import com.example.demo.dto.member.MemberDetails;
-import com.example.demo.repository.Consultant;
-import com.example.demo.repository.ConsultantRepository;
-import com.example.demo.repository.ReservationEntity;
-import com.example.demo.repository.member.MemberEntity;
-import com.example.demo.service.ReservationService;
+import com.learnway.consult.domain.Consultant;
+import com.learnway.consult.domain.ConsultantRepository;
+import com.learnway.consult.domain.ReservationEntity;
+import com.learnway.consult.dto.ReservationDTO;
+import com.learnway.consult.dto.ReservationRequest;
+import com.learnway.consult.dto.UserInfoDTO;
+import com.learnway.consult.service.ReservationService;
+import com.learnway.member.domain.Member;
+import com.learnway.member.service.CustomUserDetails;
+
+
 
 @RestController
 @RequestMapping("/api")
@@ -48,12 +50,12 @@ public class ReservationController {
     // 상담사페이지 예약리스트
     @GetMapping("/reservationsList")
     public List<ReservationDTO> getReservationsList(@RequestParam("counselor_id") Long counselor_id,Authentication authentication) {
-        MemberEntity member = null;
+        Member member = null;
         if (authentication != null && authentication.isAuthenticated()) {
-            MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
         }
-        System.out.println("멤버pk값 : " + member.getId()); 
+        System.out.println("멤버pk값 : " + member); 
     	
     	return reservationService.getReservationsListByConsultantId(member.getId());
     }
@@ -76,12 +78,12 @@ public class ReservationController {
     @GetMapping("/myReservations")
     public List<ReservationEntity> getMyReservations(Authentication authentication) {
     	System.out.println("마이페이지에서 모달로 요청온 나의 상담리스트");
-        MemberEntity member = null;
+    	Member member = null;
         if (authentication != null && authentication.isAuthenticated()) {
-            MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
         }
-        System.out.println("멤버pk값 : " + member.getId()); 
+        System.out.println("멤버pk값 : " + member.getMemberId()); 
     	
     	return reservationService.getReservationsByMemberId(member.getId());
     }
@@ -142,9 +144,9 @@ public class ReservationController {
         if (!optionalConsultant.isPresent()) {
             return ResponseEntity.badRequest().build();
         }
-        MemberEntity member = null;
+        Member member = null;
         if (authentication != null && authentication.isAuthenticated()) {
-            MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
         }
         Consultant consultant = optionalConsultant.get();

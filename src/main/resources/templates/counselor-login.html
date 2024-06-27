@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Counselor Login</title>
+</head>
+<body>
+<h1>Counselor Login Test</h1>
+<form th:action="@{/counselor/login}" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+    <button type="submit">Login</button>
+</form>
+<div th:if="${param.error}">
+    <p>Error</p>
+</div>
+</body>
+</html>

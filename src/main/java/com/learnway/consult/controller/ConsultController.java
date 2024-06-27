@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.learnway.consult.domain.Consultant;
+import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ReservationService;
+import com.learnway.member.domain.Member;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +29,7 @@ public class ConsultController {
 		
     	Long memberId = null;
         if (authentication != null && authentication.isAuthenticated()) {
-            MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
+            Member userDetails = (Member) authentication.getPrincipal();
             memberId = userDetails.getId();
             System.out.println(memberId);
         }
@@ -122,8 +124,8 @@ public class ConsultController {
 		   
 		  	String memberId = null;
 	        if (authentication != null && authentication.isAuthenticated()) {
-	        	MemberDetails userDetails = (MemberDetails) authentication.getPrincipal();
-	            memberId = userDetails.getUsername();
+	        	Member userDetails = (Member) authentication.getPrincipal();
+	            memberId = userDetails.getMemberName();
 	            System.out.println("현재 로그인 아이디(멤버) : "+  memberId);
 	        }
 		   

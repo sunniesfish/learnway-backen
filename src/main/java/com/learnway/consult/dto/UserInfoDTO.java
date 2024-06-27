@@ -17,12 +17,11 @@ public class UserInfoDTO {
     public UserInfoDTO() {
     }
 
-	public UserInfoDTO(Long id, String userName, String userEmail, String userAge) {
+	public UserInfoDTO(Long id, String userName) {
 		super();
 		this.id = id;
 		this.userName = userName;
-		this.userEmail = userEmail;
-		this.userAge = userAge;
+
 	}
 
 
