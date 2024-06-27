@@ -1,4 +1,4 @@
-package com.learnway.schedule.service.schedule;
+package com.learnway.schedule.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,8 +13,8 @@ import com.learnway.schedule.domain.DailyAchieve;
 import com.learnway.schedule.domain.DailyAchieveRepository;
 import com.learnway.schedule.domain.Schedule;
 import com.learnway.schedule.domain.ScheduleRepository;
-import com.learnway.schedule.dto.schedule.DailyAchieveDto;
-import com.learnway.schedule.dto.schedule.ScheduleDto;
+import com.learnway.schedule.dto.DailyAchieveDto;
+import com.learnway.schedule.dto.ScheduleDto;
 
 @Service
 public class ScheduleService {

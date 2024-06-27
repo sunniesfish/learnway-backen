@@ -29,9 +29,9 @@ import com.learnway.schedule.domain.DailyAchieve;
 import com.learnway.schedule.domain.DailyAchieveRepository;
 import com.learnway.schedule.domain.Schedule;
 import com.learnway.schedule.domain.ScheduleRepository;
-import com.learnway.schedule.dto.schedule.DailyAchieveDto;
-import com.learnway.schedule.dto.schedule.ScheduleDto;
-import com.learnway.schedule.service.schedule.ScheduleService;
+import com.learnway.schedule.dto.DailyAchieveDto;
+import com.learnway.schedule.dto.ScheduleDto;
+import com.learnway.schedule.service.ScheduleService;
 
 
 @RestController

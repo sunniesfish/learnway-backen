@@ -27,7 +27,7 @@ public class StudyCorrectService {
 	public void updateStatus(CorrectCheckDto dto) {
 		
 		//멤버넘어올시 변경
-		Member member = memberRepository.findById(1)
+		Member member = memberRepository.findById((long) 1)
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
 		
 		Study study = studyRepository.findById(dto.getPostId())
