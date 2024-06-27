@@ -12,6 +12,8 @@
    내용: <div th:text="${study.content}"></div>
    시작일 : <div th:text="${study.startdate}"></div>
    종료일 : <div th:text="${study.enddate}"></div>
+  <input type="hidden" th:value="${study.postid}" id="postId">
+   
    
      <div th:each="tag : ${studyTag}">
         <div th:text="${tag.tag}">Tag</div>
@@ -74,12 +76,35 @@
     function correct_ck() {
     	
     	$('#correct_ck').click(function(){
-    		
+    	
+    	var status = null;
+    	var roomId = $('#chatroomid').val();
 	    var correct = $('#problemCorrect').val();
 	    var inputData = $('#correct').val();
+	    var postId = $('#postId').val();
     		 
-	    console.log(inputData+ '입력값');
-	    console.log(correct+'문제 정답');
+	    console.log(inputData+ ' 입력값');
+	    console.log(correct+' 정답');
+	    if(inputData === correct){
+	    	alert('정답입니다.');
+	    	status = 1;
+	    	 $.ajax({
+	             type: "POST",
+	             url: "/api/member/correct",
+	           data: JSON.stringify({ status: status,roomId:roomId,postId : postId}),
+	             contentType : "application/json",
+	             datatype : "json",
+	             success: function(response) {
+	               console.log(status);
+	               console.log(roomId);
+	             },
+	             error: function(error) {
+					console.log('함수에러');
+	             }
+	         });
+	    } else {
+	    	alert('오답입니다.');
+	    }
 	    
 	    
     	})
