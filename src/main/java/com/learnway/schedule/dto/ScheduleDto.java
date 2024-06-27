@@ -1,4 +1,4 @@
-package com.learnway.schedule.dto.schedule;
+package com.learnway.schedule.dto;
 
 import java.time.LocalDateTime;
 

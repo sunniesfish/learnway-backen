@@ -22,7 +22,7 @@ public class StudyProblemService {
 	public Integer problemAdd(StudyProblemDto dto,int postid) {
 		
 		//로그인한 값 가져와 수정예정
-		Member member = memberRepository.findById(1)
+		Member member = memberRepository.findById((long) 1)
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
 		System.out.println(dto.getSubject() + "과목");
 		System.out.println(dto.getLevel() + "난이도");

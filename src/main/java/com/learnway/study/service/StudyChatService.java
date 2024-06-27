@@ -30,7 +30,7 @@ public class StudyChatService {
 	//채팅방 생성 메서드
 	public ChatRoom chatRoomCreate(ChatRoomDto dto,Study study) {
 		
-		Member member = memberRepository.findById(1)
+		Member member = memberRepository.findById((long) 1)
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
 		
 		ChatRoom room = ChatRoom.builder().roomname(dto.getRoomname())
@@ -45,7 +45,7 @@ public class StudyChatService {
 	public ChatMessage storechat(ChatRoomDto dto) {
 		
 		//멤버값 넣을예정 임시로 1로지정
-		Member member = memberRepository.findById(1)
+		Member member = memberRepository.findById((long) 1)
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
 		ChatRoom chatRoom = studyChatRepository.findById(dto.getRoomId())
 				.orElseThrow(()-> new IllegalArgumentException("Invalid member ID: " + "1"));
