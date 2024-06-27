@@ -85,6 +85,7 @@
 /*월간에서 일일상세모달창*/
 .modal-content {
   border-radius: 0.5rem;
+  margin: auto;
 }
 
 .modal-header {
@@ -95,3 +96,25 @@
 .table th {
   font-weight: 600;
 }
+
+.bg-custom {
+  background-color: #546E7A; 
+}
+
+.modal-backdrop {
+    display: none;
+}
+
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0 auto;
+}
+
+#monthlyScheduleModal .modal-dialog {
+    max-width: 500px !important;
+    width: 90% !important;
+}
+
