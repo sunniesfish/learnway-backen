@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        // 기준 정보 입력 완료 시 알림창 임시
+        // JavaScript 함수로 URL 매개변수를 가져오는 함수
+        function getParameterByName(name) {
+            let url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // 페이지 로드 시 URL 매개변수 확인하여 알림 창 표시
+        window.onload = function() {
+            let message = getParameterByName('message');
+            if (message === 'success') {
+                alert('입력이 완료되었습니다.');
+                // URL에서 매개변수 제거
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        };
+    </script>
+    <title>add master data</title>
+</head>
+<body>
+<div>
+    <h2>기준 정보 추가</h2>
+    <form action="#" th:action="@{/admin/addMasterData}" method="post" th:object="${masterDataDTO}">
+        <div>
+            <label for="category">기준 정보 선택:</label>
+            <select id="category" name="category" th:field="*{category}">
+                <option value="subject">Subject</option>
+                <option value="studyway">StudyWay</option>
+                <option value="material">Material</option>
+            </select>
+            <div th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+        </div>
+        <div>
+            <label for="code">코드:</label>
+            <input type="text" id="code" name="code" th:field="*{code}" >
+            <div th:if="${#fields.hasErrors('code')}" th:errors="*{code}"></div>
+        </div>
+        <div>
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="name" th:field="*{name}" >
+            <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+        <div>
+            <label for="note">비고:</label>
+            <input type="text" id="note" name="note" th:field="*{note}">
+        </div>
+        <div>
+            <button type="submit">추가</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
