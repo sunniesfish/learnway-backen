@@ -34,6 +34,8 @@ import com.learnway.member.service.CustomUserDetails;
 
 
 
+
+
 @RestController
 @RequestMapping("/api")
 public class ReservationController {
@@ -71,6 +73,13 @@ public class ReservationController {
     @GetMapping("/consultants")
     public List<Consultant> getConsultants() {
         return reservationService.getAllConsultants();
+    }
+    
+    // 특정상담사 정보가져오기(예약페이지요청)
+    @GetMapping("/consultants/{consultantId}")
+    public Optional<Consultant> getConsultants(@PathVariable("consultantId") Long consultantId) {
+    	System.out.println("상담사정보조회들어옴");
+        return reservationService.getConsultants(consultantId);
     }	
 		
     

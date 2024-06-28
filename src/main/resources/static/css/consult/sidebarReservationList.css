@@ -1,0 +1,20 @@
+
+.room-list {
+    margin-top: 20px;
+}
+
+/*입장불가 색상지정 스타일 none */
+.disabled-link {
+    pointer-events: none;
+    color: gray;
+}
+/*모달창 제목? 1*/
+#reservationModalLabel {
+    color:black; /* 원하는 색상으로 변경 */
+}
+
+/*모달창 제목? 2*/
+#reservationModal .reservationModalH2 {
+    color: black; /* 제목 텍스트 색상 */
+}
+

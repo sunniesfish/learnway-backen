@@ -1,0 +1,85 @@
+<div th:fragment="sidebar">
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <span>🚀 LearnWay</span>
+        </div>
+        <hr>
+        <div class="sidebar-item">
+            👤 회원님
+        </div>
+        <hr>
+        <div class="sidebar-item">
+            📊 스케줄 관리
+            <div class="submenu">
+                <a href="#">주간 관리</a>
+                <a href="#">월간 관리</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            📝 성적 관리
+            <div class="submenu">
+                <a href="#">성적 입력</a>
+                <a href="#">성적 비교</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            👥 커뮤니티
+            <div class="submenu">
+                <a href="#">커뮤니티</a>
+                <a href="#">커뮤니티</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            💬 상담하기
+            <div class="submenu">
+                <a href="#" class="consult-link">상담예약</a>
+                <a href="#" class="reservationList-link">예약리스트</a>
+            </div>
+        </div>
+        <button id="empt" name="empt" class="btn">💬 미정</button>
+
+        <!-- 상담예약 모달 구조 -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 class="modalH2">상담사 리스트</h2>
+                <div id="consultantList">
+                    <!-- 상담사 리스트 항목들 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 예약리스트 모달 구조 -->
+        <div class="modal fade" id="reservationModal" tabindex="-1" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reservationModalLabel">화상상담 예약리스트</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h2 class="reservationModalH2">ReservationList</h2>
+                        <table class="table table-striped room-list">
+                            <thead>
+                                <tr>
+                                    <th>예약 상담</th>
+                                    <th>상담사</th>
+                                    <th>예약 시간</th>
+                                    <th>화상 상담</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservationList">
+                                <!-- 예약 리스트가 여기에 동적으로 추가됩니다. -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

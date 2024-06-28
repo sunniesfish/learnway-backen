@@ -1,11 +1,9 @@
 package com.learnway.consult.controller;
 
-import java.security.Principal;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +14,6 @@ import com.learnway.consult.domain.Consultant;
 import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ConsultController {
@@ -49,7 +44,7 @@ public class ConsultController {
             System.out.println(memberId);
         }
         model.addAttribute("memberId", memberId);
-		return "consult/main";
+		return "main";
 	}
 	
 	//모달창에서 상담사 예약하기누르면 처리하는 메소드
@@ -89,19 +84,19 @@ public class ConsultController {
 		
 		return "/consult/video";
 	}
-	
-	//임시 멤버 관리
-	@GetMapping("/login")
-	public String loginP() {
 		
-		return "/member/login";
-	}
-	
 	//뷰화면 테스트
 	@GetMapping("/test")
-	public String test() {
+	public String test(Authentication authentication,Model model) {
+//    	String memberId = null;
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//            memberId = userDetails.getUsername();
+//            System.out.println(memberId);
+//        }
+//        model.addAttribute("memberId", memberId);
 		
-		return "/test";
+		return "/page";
 	}
 	
 	//로그인한 세션 정보 확인

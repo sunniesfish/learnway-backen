@@ -1,277 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/default}">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>예약달력페이지</title>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnWay</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
+
 <link href='https://unpkg.com/@fullcalendar/core@5.11.0/main.min.css' rel='stylesheet' />
 <link href='https://unpkg.com/@fullcalendar/timegrid@5.11.0/main.min.css' rel='stylesheet' />
-<style>
-    #calendarBox {
-    width: 1000px; /* 원하는 가로 크기로 설정 */
-    margin: 0 auto; /* 중앙 정렬 */
-	}
-	#calendar {
-	    height: 634px; /* 전체 캘린더 높이를 800px로 설정 */
-	    width: 600px;
-	}
-    .fc-timegrid-slot {
-        height: 60px !important;
-    }
-    .fc-timegrid {
-    width: 1000px !important; /* 원하는 가로 크기로 수정 */
-	}
-    .fc-header-toolbar {
-    width: 1000px !important; /* .fc-timegrid와 동일한 크기로 설정 */
-    margin: 0 auto; /* 중앙 정렬 */
-	}
-	/* 일요일 날짜 빨간색 */
-	.fc-day-sun {
-	  color: #C62828;
-	  text-decoration: none;
-	}
-	
-	/* 토요일 날짜 파란색 */
-	.fc-day-sat {
-	  color: #1565C0;
-	  text-decoration: none;
-	}
-	.fc-event-main {
-    color: #2C3E50 !important;
- 	}
- 	    /* 이벤트 제목을 굵게 표시 */
-    .fc-event-title {
-        font-weight: bold !important;
-    }
-</style>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var Calendar = FullCalendar.Calendar;
-    var calendarEl = document.getElementById('calendar');
-    var consultantId = new URLSearchParams(window.location.search).get('consultant');
-    var calendar;
-    
 
+<link rel="stylesheet" type="text/css" href="/css/consult/reservationBoard.css">
+<link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
+<link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
 
-    // 예약 데이터 생성
-    function fetchReservations(consultantId) {
-        return $.ajax({
-            url: '/api/reservations?consultant=' + consultantId,
-            type: 'GET',
-            dataType: 'json'
-        }).done(function(data) {
-            console.log("예약 데이터: ", data);
-            return data;
-        }).fail(function(xhr, status, error) {
-            console.error('예약 데이터를 가져오는 데 실패했습니다. 오류: ', error);
-            return [];
-        });
-    }
-
-    // 달력 초기화 함수
-    function initializeCalendar() {
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'timeGridWeek',
-            initialDate: new Date(),
-            locale: 'ko',
-            timeZone: 'local',
-            headerToolbar: {
-                left: '',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            businessHours: [
-                {
-                    daysOfWeek: [1, 2, 3, 4, 5],
-                    startTime: '09:00',
-                    endTime: '12:00'
-                },
-                {
-                    daysOfWeek: [1, 2, 3, 4, 5],
-                    startTime: '14:00',
-                    endTime: '18:00'
-                }
-            ],
-            slotMinTime: '09:00:00',
-            slotMaxTime: '18:00:00',
-            slotDuration: '01:00:00',
-            allDaySlot: false,
-            selectConstraint: {
-                start: '09:00',
-                end: '17:00',
-                daysOfWeek: [1, 2, 3, 4, 5]
-            },
-            events: function(fetchInfo, successCallback, failureCallback) {
-                fetchReservations(consultantId).done(function(data) {
-                    var events = transformEventData(data);
-                    successCallback(events);
-                }).fail(function() {
-                    failureCallback();
-                });
-            },
-            dateClick: function(info) {
-                var clickedDate = new Date(info.dateStr);
-                var currentDate = new Date();
-                var day = clickedDate.getDay();
-                var hour = clickedDate.getHours();
-
-                if (clickedDate < currentDate) {
-                    alert('예약 가능한 시간이 아닙니다.');
-                    return;
-                }
-
-                if (day === 0 || day === 6) {
-                    alert('토요일/일요일/공휴일 은 예약이 불가능합니다.');
-                    return;
-                }
-
-                if (hour >= 12 && hour < 14) {
-                    alert('12:00 ~ 14:00 까지 점심시간 입니다.');
-                    return;
-                }
-
-                var events = calendar.getEvents();
-                var overlap = events.some(function(event) {
-                    var eventStart = new Date(event.start);
-                    var eventEnd = new Date(event.end);
-                    var clickedEnd = new Date(clickedDate);
-                    clickedEnd.setMinutes(clickedEnd.getMinutes() + 60);
-
-                    return (eventStart < clickedEnd && eventEnd > clickedDate);
-                });
-
-                if (overlap) {
-                    alert('해당 시간대에는 이미 예약이 있습니다.');
-                    return;
-                } else {
-                    $("#calendarModal").modal("show");
-                }
-
-                var startTime = new Date(info.date);
-                var localStartTime = formatDateToLocalISO(startTime);
-                $("#startTime").val(localStartTime);
-
-                var endDate = new Date(info.date);
-                endDate.setHours(endDate.getHours() + 1);
-                var localEndTime = formatDateToLocalISO(endDate);
-                $("#endTime").val(localEndTime);
-            },
-            eventClick: function(info) {
-                var deleteObj = info.event;
-                $("#deleteEventTitle").text(deleteObj.title + '을(를) 취소하시겠습니까?');
-                $("#deleteEventId").val(deleteObj.id);
-                $("#deleteEventModal").modal("show");
-            }
-        });
-
-        calendar.render();
-    }
-
-    function transformEventData(data) {
-        return data.map(event => {
-            return {
-                id: event.id,
-                title: event.counselor.name + ' 상담사',
-                start: event.bookingStart,
-                end: event.bookingEnd,
-                backgroundColor: '#C5E1A5',//은색
-                textColor: 'black',
-                borderColor :'white'
-            };
-        });
-    }
-
-    initializeCalendar();
-
-    function formatDateToLocalISO(date) {
-        const tzOffset = date.getTimezoneOffset() * 60000;
-        const localISOTime = new Date(date - tzOffset).toISOString().slice(0, 19);
-        return localISOTime;
-    }
-
-    // 예약 추가하기 요청
-    $("#addCalendar").on("click", function() {
-        var counselor = $("#counselor").val();
-        var reservationContent = $("#reservationContent").val();
-        var start = new Date($("#startTime").val());
-        var end = new Date($("#endTime").val());
-		console.log(counselor);
-        if (!reservationContent) {
-            alert("상담하고싶은 내용을 간단하게 적어주세요");
-            return;
-        }
-
-        var obj = {
-            "reservationContent": reservationContent,
-            "counselor": parseInt(counselor),
-            "bookingStart": formatDateToLocalISO(start),
-            "bookingEnd": formatDateToLocalISO(end)
-        };
-
-        $.ajax({
-            url: "/api/reservations",
-            type: "POST",
-            data: JSON.stringify(obj),
-            contentType: "application/json",
-            success: function(response) {
-                console.log("예약 성공: ", response);
-                $("#calendarModal").modal("hide");
-                calendar.refetchEvents();
-                // 페이지 상태 초기화
-                resetModalState();
-            },
-            error: function(xhr, status, error) {
-                console.log("예약 실패: ", error);
-                alert("예약에 실패했습니다. 다시 시도해주세요.");
-            }
-        });
-    });
-
-    $("#deleteEvent").on("click", function() {
-        var deleteId = $("#deleteEventId").val();
-
-        $.ajax({
-            url: "/api/reservations/" + deleteId,
-            type: "DELETE",
-            success: function(response) {
-                console.log("삭제 성공: ", response);
-                $("#deleteEventModal").modal("hide");
-                calendar.refetchEvents();
-            },
-            error: function(xhr, status, error) {
-                console.log("삭제 실패: ", error);
-                alert("삭제에 실패했습니다. 다시 시도해주세요.");
-            }
-        });
-    });
-
-    $("#calendarModal").on("hidden.bs.modal", function() {
-        resetModalState();
-    });
-
-    function resetModalState() {
-        $("#counselor").val(consultantId);
-        $("#reservationContent").val("");
-        $("#startTime").val("");
-        $("#endTime").val("");
-    }
-
-    // 모달 초기화 시 consultantId 설정
-    $("#calendarModal").on("show.bs.modal", function() {
-        $("#counselor").val(consultantId);
-    });
-
-    resetModalState();
-});
-
-</script>
 </head>
 <body>
+<!-- SideBar -->
+<div th:replace="sidebar :: sidebar"></div>
+
+<!-- 메인 컨텐츠 -->
+<div id="main-content">
+	
 		<!-- modal 추가 -->
 <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -334,6 +86,40 @@ document.addEventListener('DOMContentLoaded', function() {
 	   <div id="calendarBox">
 	     <div id='calendar'></div>
 	   </div>
-
+	   
+	<!-- 상담사 정보 모달 -->
+	<div class="modal fade" id="consultantInfoModal" tabindex="-1" role="dialog" aria-labelledby="consultantInfoModalLabel" aria-hidden="true">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="consultantInfoModalLabel">상담사 정보</h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	                <div class="card">
+	                    <img id="consultantPhoto" class="card-img-top" src="" alt="상담사 사진">
+	                    <div class="card-body">
+	                        <h5 class="card-title" id="consultantName"></h5>
+	                        <p class="card-text" id="consultantEmail"></p>
+	                        <p class="card-text" id="consultantPhone"></p>
+	                    </div>
+	                </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="/js/consult/reservationBoard.js"></script>
+<script src="/js/consult/consultationReservation.js"></script>
+<script src="/js/consult/reservationList.js"></script>
   </body>
 </html>

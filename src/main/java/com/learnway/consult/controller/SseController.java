@@ -41,16 +41,16 @@ public class SseController {
             return null;
         }
 
-        System.out.println("subscribe endpoint called for consultant ID: " + consultantId);
+        System.out.println("상담사id 요청 엔드포인트 : " + consultantId);
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        loggedInEmitters.put(consultantId, emitter);
+        loggedInEmitters.put(consultantId, emitter);//키값으로 상담사 pk값 벨류로 메세지
 
         emitter.onCompletion(() -> {
-            System.out.println("Emitter completed for consultant ID: " + consultantId);
+            System.out.println("상담사밀린메세지완료: " + consultantId);
             loggedInEmitters.remove(consultantId);
         });
         emitter.onTimeout(() -> {
-            System.out.println("Emitter timed out for consultant ID: " + consultantId);
+            System.out.println("상담사 타임아웃: " + consultantId);
             loggedInEmitters.remove(consultantId);
         });
 
@@ -61,7 +61,7 @@ public class SseController {
                 try {
                     emitter.send(SseEmitter.event().name("notification").data(notifications.poll()));
                 } catch (IOException e) {
-                    System.err.println("Error sending notification: " + e.getMessage());
+                    System.err.println("발송에러 실패 !! : " + e.getMessage());
                 }
             }
             notificationQueue.remove(consultantId);
