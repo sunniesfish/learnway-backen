@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // Member 관련 엔티티 클래스
 @Getter
@@ -36,7 +38,9 @@ public class Member {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private MemberTelecom memberTelecom;       // 통신사 (KT, SKT, LG, 동 알뜰폰)
+    private MemberTelecom memberTelecom;// 통신사 (KT, SKT, LG, 동 알뜰폰)
+
+    private String memberEmail;         // E-mail
 
     @CreationTimestamp
     private LocalDate memberCreate = LocalDate.now(); // 가입일 (가입 당시 시간 자동 입력)
@@ -44,13 +48,20 @@ public class Member {
     private String memberSchool;        // 학교
 
     @Column(nullable = true)
-    private int memberGrade;        // 학년 (1~6 숫자)
+    private int memberGrade;            // 학년 (1~6 숫자)
     private String memberAddress;       // 주소
     private String memberDetailadd;     // 상세 주소 (주소 외 나머지 주소)
-
-    /* private String memberImage;         // 프로필 이미지 / 기본 이미지 경로 추가 설정 필요
-    private String memberEmail;         // E-mail*/
+    private String memberImage;         // 프로필 이미지 / 기본 이미지 경로 추가 설정 필요
 
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole;      // 회원 관리자 구분 (Enum : ROLE_ADMIN, ROLE_USER)
+
+    // JOIN : 목표 대학
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default // 빌드 시 해당 필드 초기화
+    private List<TargetUni> targetUnis = new ArrayList<>();
+
+    public void addTargetUni(TargetUni targetUni) {
+        targetUnis.add(targetUni);
+    }
 }

@@ -1,6 +1,7 @@
 package com.learnway.member.controller;
 
 import com.learnway.member.dto.JoinDTO;
+import com.learnway.member.service.EmailService;
 import com.learnway.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -17,12 +17,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MemberController {
 
     private final MemberService memberService;
+    private final EmailService emailService; // 이메일 검증 확인 로직
 
     // Get 요청 시 회원가입 폼 리턴
     @GetMapping("/join")
     public String join(Model model) {
         model.addAttribute("joinDTO", new JoinDTO());
-        return "join";
+        return "member/join";
     }
 
     // Post 요청 시 회원 가입 처리
@@ -35,21 +36,26 @@ public class MemberController {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
             }
-            return "join";
+            return "member/join";
         }
         // Password / ConfirmPassword 일치 여부 확인
         if (!joinDTO.getPassword().equals(joinDTO.getConfirmPassword())) {
             model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
-            return "join";
+            return "member/join";
         }
-
         memberService.joinMember(joinDTO);
-        return "redirect:/member/joinSuccess"; // 회원 가입 성공 시 로그인 창
+        return "redirect:/member/joinSuccess"; // 회원 가입 성공 시 joinSuccess 에서 3초 후 로그인 폼으로 이동
+    }
+
+    // 이메일 인증 팝업
+    @GetMapping("/emailVerification")
+    public String emailVerification() {
+        return "member/emailVerification";
     }
 
     // 회원 가입 성공 페이지
     @GetMapping("/joinSuccess")
     public String joinSuccess() {
-        return "joinSuccess";
+        return "member/joinSuccess";
     }
 }

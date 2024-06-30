@@ -5,10 +5,15 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 // 회원 가입 시 사용되는 DTO
 @Getter
 @Setter
+@ToString
 public class JoinDTO {
 
     @NotEmpty(message = "아이디는 필수 입력 항목입니다.")
@@ -37,12 +42,19 @@ public class JoinDTO {
     @NotEmpty(message = "통신사는 필수 입력 항목입니다.")
     private String telecom;         // 통신사
 
+    @NotEmpty(message = "메일 인증을 진행해 주세요.")
+    private String email;           // 이메일
+
     // 하기는 선택 사항
-    private String school;
+    private String school;          // 학교
 
-    private int grade;
+    private int grade;              // 학년
 
-    private String address;
+    private String address;         // 주소 (카카오맵 선택)
 
-    private String detailAddress;
+    private String detailAddress;   // 상세 주소 (나머지 주소)
+
+    private MultipartFile image;    // 프로필 이미지
+
+    private List<TargetUniDTO> targetUni; // JOIN / 목표 대학
 }
