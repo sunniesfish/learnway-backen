@@ -14,7 +14,6 @@ Login OK
         <button type="submit">로그아웃</button>
     </form>
 </div>
-
 <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
     <h2>관리자만 조회할 수 있는 버튼</h2>
     <button>ADMIN</button>
