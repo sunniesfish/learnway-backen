@@ -24,4 +24,9 @@ public class Material {
     @Column(nullable = false)
     String material;       // 학습 종류명 (Not null)
     String materialNote;         // 학습 종류 비고
+    
+    // getName() 메서드 추가
+    public String getName() {
+        return this.material;
+    }
 }

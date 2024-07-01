@@ -22,6 +22,8 @@ import com.learnway.schedule.dto.DailyAchieveDto;
 import com.learnway.schedule.dto.ProgressDto;
 import com.learnway.schedule.dto.ScheduleDto;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class ScheduleService {
 	
@@ -41,20 +43,25 @@ public class ScheduleService {
     private MaterialRepository materialRepository;
 
 	// 스케쥴 추가하기
+    	@Transactional
 		public void add(ScheduleDto dto) {
 
 			Schedule schedule = new Schedule();
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
-			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId()).orElse(null));
-			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId()).orElse(null));
+			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
+			        .orElseThrow(() -> new RuntimeException("Studyway not found")));
+			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
+			        .orElseThrow(() -> new RuntimeException("Subject not found")));
 			
 			//Progress 엔티티 생성 및 설정
 			List<Progress> progresses = new ArrayList<>();
 			for (ProgressDto progressDto : dto.getProgresses()) {
 	            Progress progress = new Progress();
-	            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId()).orElseThrow(() -> new RuntimeException("Material not found")));
+	            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
+	                    .orElseThrow(() -> new RuntimeException("Material not found")));	            
 	            progress.setProgress(progressDto.getProgress());
+	            progress.setScheduleId(schedule);
 	            progresses.add(progress);
 	        }
 			schedule.setProgresses(progresses);

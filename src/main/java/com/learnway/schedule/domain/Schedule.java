@@ -49,7 +49,7 @@ public class Schedule {
 	@JoinColumn(columnDefinition = "VARCHAR(4)",unique = false)
 	private Studyway studywayId;
 	
-	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Progress> progresses;
 
 

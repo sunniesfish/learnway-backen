@@ -58,6 +58,7 @@ private static final Logger log = LoggerFactory.getLogger(ScheduleRestController
         for (Studyway studyway : studywayRepository.findAll()) {
             Map<String, Object> map = new HashMap<>();
             map.put("id", studyway.getStudywayCode());
+            
             map.put("name", studyway.getStudyway());
             studyways.add(map);
         }

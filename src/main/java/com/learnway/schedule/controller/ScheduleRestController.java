@@ -118,19 +118,20 @@ public class ScheduleRestController {
 		for (Schedule schedule : scheduleList) {
 	        Map<String, Object> event = new HashMap<>();
 	        event.put("id", schedule.getScheduleId());
-	        event.put("title", schedule.getStudywayId());
 	        event.put("start", schedule.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 	        event.put("end", schedule.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
-	        event.put("subject", schedule.getSubjectId());
-	        event.put("studyway", schedule.getStudywayId());
+	        event.put("title", schedule.getStudywayId().getName());
+	        event.put("subject", schedule.getSubjectId().getName());
+	        event.put("studyway", schedule.getStudywayId().getName());
 
 	        List<Map<String, Object>> progressList = new ArrayList<>();
 	        List<Progress> progresses = schedule.getProgresses();
 	        for (Progress progress : progresses) {
 	            Map<String, Object> progressData = new HashMap<>();
 	            progressData.put("id", progress.getProgressId());
-	            progressData.put("material", progress.getMaterialId());
+	            progressData.put("material", progress.getMaterialId().getName());
 	            progressData.put("achieveRate", progress.getAchieveRate());
+	            progressData.put("progress", progress.getProgress());
 	            progressList.add(progressData);
 	        }
 
@@ -166,6 +167,7 @@ public class ScheduleRestController {
 		            progressData.put("id", progress.getProgressId());
 		            progressData.put("material", progress.getMaterialId());
 		            progressData.put("achieveRate", progress.getAchieveRate());
+		            progressData.put("progress", progress.getProgress());
 		            progressList.add(progressData);
 		        }
 

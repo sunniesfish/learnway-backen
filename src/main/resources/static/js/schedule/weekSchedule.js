@@ -194,27 +194,113 @@ document.addEventListener('DOMContentLoaded', function() {
         	var view = info.view.type;
         	
 	        if(view === 'timeGridWeek')	{ //주간일때 event 클릭 설정
-        		 var events = new Array();
-                 var obj = new Object;
-                 obj.id = info.event.id;
-                 events.push(obj);
+	        
+        		 var eventId = info.event.id;
                
                  $.ajax({
                      url: "/api/schedule/getDetail",
                      method: "GET",
                      dataType: "json",
-                     data: { id: info.event.id },
+                     data: { id: eventId},
                      success: function(response) {
-                         
+                         console.log(response);
                          // 모달창 입력 필드에 받아온 데이터 설정
                          $("#updateModal #startTime").val(response.startTime);
                          $("#updateModal #endTime").val(response.endTime);
-                         $("#updateModal #studyway").val(response.studyway);
-                         $("#updateModal #subject").val(response.subject);
-                         $("#updateModal #material").val(response.material);
-                         $("#updateModal #progress").val(response.progress);
-                         $("#updateModal #achieveRate").val(response.achieveRate);
-
+                         
+                         // 드롭다운 선택지 초기화
+              			 initializeDropdowns();
+              			 
+                         // 드롭다운에 받아온 데이터 선택
+		                 // 드롭다운에 받아온 데이터 선택
+						fillDropdown("#updateModal #studyway", scheduleOptions.studyways);
+						$("#updateModal #studyway").val(response.studyway.studywayCode);
+						
+						fillDropdown("#updateModal #subject", scheduleOptions.subjects);
+						$("#updateModal #subject").val(response.subject.subjectCode);
+                         
+		                // 기존 진도 내역 입력 필드 제거 (첫 번째 필드는 제외)
+               			$("#updateModal #progressEntries .progress-entry:not(:first)").remove();
+		
+		                // 첫 번째 진도 내역 입력 필드에 데이터 설정
+						if (response.progresses.length > 0) {
+						    var firstProgress = response.progresses[0];
+						    fillDropdown("#updateModal #progressEntries .progress-entry:first select[name='material[]']", scheduleOptions.materials, "학습종류");
+						    $("#updateModal #progressEntries .progress-entry:first select[name='material[]']").val(firstProgress.material.materialCode);
+						    $("#updateModal #progressEntries .progress-entry:first input[name='progress[]']").val(firstProgress.progress);
+						    $("#updateModal #progressEntries .progress-entry:first input[name='achieveRate[]']").val(firstProgress.achieveRate);
+						}
+		
+		                // 나머지 진도 내역은 동적으로 추가
+						for (var i = 1; i < response.progresses.length; i++) {
+						    var progress = response.progresses[i];
+						    var newRow = `
+						        <div class="form-row align-items-center mb-2 progress-entry">
+						            <div class="col-3">
+						                <label for="material${i}" class="sr-only">학습종류</label>
+						                <select class="form-control" id="material${i}" name="material[]"></select>
+						            </div>
+						            <div class="col-6">
+						                <label for="progress${i}" class="sr-only">진도 내역</label>
+						                <input type="text" class="form-control" id="progress${i}" name="progress[]" placeholder="진도 내역" value="${progress.progress}">
+						            </div>
+						            <div class="col-2">
+						                <label for="achieveRate${i}" class="sr-only">달성율</label>
+						                <input type="text" class="form-control" id="achieveRate${i}" name="achieveRate[]" placeholder="0" value="${progress.achieveRate}">
+						            </div>
+						            <div class="col-auto">
+						                <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+						            </div>
+						        </div>
+						    `;
+						    $("#updateModal #progressEntries").append(newRow);
+						    fillDropdown(`#material${i}`, scheduleOptions.materials, "학습종류");
+						    $(`#material${i}`).val(progress.material.materialCode);
+						}
+						
+						// +/- 버튼 작동하도록 이벤트 핸들러 등록
+		                let progressCount = $("#updateModal #progressEntries .progress-entry").length;
+		
+		                $("#updateModal").on("click", ".add-progress", function() {
+		                    if (progressCount < 5) {
+		                        var newRow = `
+		                            <div class="form-row align-items-center mb-2 progress-entry">
+		                                <div class="col-3">
+		                                    <label for="material${progressCount}" class="sr-only">학습종류</label>
+		                                    <select class="form-control" id="material${progressCount}" name="material[]"></select>
+		                                </div>
+		                                <div class="col-6">
+		                                    <label for="progress${progressCount}" class="sr-only">진도 내역</label>
+		                                    <input type="text" class="form-control" id="progress${progressCount}" name="progress[]" placeholder="진도 내역">
+		                                </div>
+		                                <div class="col-2">
+		                                    <label for="achieveRate${progressCount}" class="sr-only">달성율</label>
+		                                    <input type="text" class="form-control" id="achieveRate${progressCount}" name="achieveRate[]" placeholder="0">
+		                                </div>
+		                                <div class="col-auto">
+		                                    <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+		                                </div>
+		                            </div>
+		                        `;
+		                        $("#updateModal #progressEntries").append(newRow);
+		                        fillDropdown(`#material${progressCount}`, scheduleOptions.materials, "학습종류");
+		                        progressCount++;
+		                        
+		                        if (progressCount === 5) {
+						            $("#updateModal .add-progress").css("display", "none"); // "+" 버튼 숨기기
+						        }
+		                    }else {
+						        alert("진도 내역은 최대 5개까지 입력할 수 있습니다."); // 알림 메시지 표시
+						    }
+		                });
+		
+		                $("#updateModal").on("click", ".remove-progress", function() {
+		                    if (progressCount > 1) {
+		                        $(this).closest(".progress-entry").remove();
+		                        progressCount--;
+		                    }
+		                });
+		                
                          // 모달창 열기
                          $("#updateModal").modal("show");
                          
@@ -251,30 +337,38 @@ document.addEventListener('DOMContentLoaded', function() {
                    	        var endTime = $("#updateModal #endTime").val();
                    	        var studyway = $("#updateModal #studyway").val();
                    	        var subject = $("#updateModal #subject").val();
-                   	        var material = $("#updateModal #material").val();
-                   	        var progress = $("#updateModal #progress").val();
-                   	        var achieveRate = $("#updateModal #achieveRate").val();
+                   	        
+                   	        
+                   	        var progresses = [];
+					        $(".progress-entry").each(function() {
+					            var material = $(this).find("select[name='material[]']").val();
+					            var progress = $(this).find("input[name='progress[]']").val();
+					            var achieveRate = $(this).find("input[name='achieveRate[]']").val();
+					            progresses.push({
+					                materialId: material,
+					                progress: progress,
+					                achieveRate: achieveRate
+					            });
+					        });
                     	
-                    		   //유효성 검사
-	       	                if (startTime == null || startTime == "") {
-	       	                  alert("시작 시간을 입력하세요");
-	       	                } else if (endTime == null || endTime == "") {
-	       	                  alert("종료 시간을 입력하세요");
-	       	                } else if (studyway == null || studyway == "") {
-	       	                  alert("학업 구분을 입력하세요");
-	       	                } else if (subject == null || subject == "") {
-	       	                  alert("과목을 입력하세요");
-	       	                } else if (material == null || material == "") {
-	       	                  alert("학습 종류를 입력하세요");
-	       	                } else if (progress == null || progress == "") {
-	       	                  alert("진도 내역을 입력하세요");
-	       	                } else if (achieveRate == null || achieveRate == "") {
-	       	                  alert("달성율을 입력하세요");
-	       	                } else if (new Date(endTime) - new Date(startTime) < 0) {
-	       	                  alert("종료 시간이 시작 시간보다 먼저입니다");
-	       	                } else if (achieveRate < 0 || achieveRate > 100) { 
-	       	                	alert("달성율은 0 ~ 100까지의 범위 내에서 입력하세요"); 
-	       	                } else {
+                    		// 유효성 검사
+					        if (startTime == null || startTime == "") {
+					            alert("시작 시간을 입력하세요");
+					        } else if (endTime == null || endTime == "") {
+					            alert("종료 시간을 입력하세요");
+					        } else if (studyway == null || studyway == "") {
+					            alert("학업 구분을 입력하세요");
+					        } else if (subject == null || subject == "") {
+					            alert("과목을 입력하세요");
+					        } else if (progresses.some(item => item.materialId == null || item.materialId == "")) {
+					            alert("모든 학습 종류를 선택하세요");
+					        } else if (progresses.some(item => item.progress == null || item.progress.trim() == "")) {
+					            alert("모든 진도 내역을 입력하세요");
+					        } else if (progresses.some(item => item.achieveRate == null || item.achieveRate == "" || item.achieveRate < 0 || item.achieveRate > 100)) {
+					            alert("달성율은 0부터 100 사이의 값을 입력하세요");
+					        } else if (new Date(endTime) - new Date(startTime) < 0) {
+					            alert("종료 시간이 시작 시간보다 먼저입니다");
+					        } else {
 	       	                	
        	                	  var updatedEvent = {
        	                		      id: info.event.id,
@@ -291,11 +385,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	                	"scheduleId" : info.event.id,
 	       	                    "startTime": startTime,
 	       	                    "endTime": endTime,
-	       	                    "studyway": studyway,
-	       	                    "subject": subject,
-	       	                    "material": material,
-	       	                    "progress": progress,
-	       	                    "achieveRate": achieveRate
+	       	                    "studywayId": studyway,
+	       	                    "subjectId": subject,
+	       	                    "progresses": progresses
 	       	                  };
                              $.ajax({
                           	   url: "/api/schedule/updateSchedule",
@@ -470,16 +562,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	                var studyway = $("#studyway").val(); //학업구분
 	                var subject = $("#subject").val(); //과목
 	                
-	                
-	                // 여러 개의 material과 progress를 수집
-				    var materials = [];
-				    var progresses = [];
-				    $("select[name='material[]']").each(function() {
-				        materials.push($(this).val());
-				    });
-				    $("input[name='progress[]']").each(function() {
-				        progresses.push($(this).val());
-				    });
+	                var progressList = [];
+				    $("#progressEntries .progress-entry").each(function() {
+				        var materialId = $(this).find("select[name='material[]']").val();
+				        var progress = $(this).find("input[name='progress[]']").val();
+				        progressList.push({
+				            materialId: materialId,
+				            progress: progress
+				        });
+				     });
 
 	                //유효성 검사
 	                if (startTime == null || startTime == "") {
@@ -490,15 +581,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	                  alert("학업 구분을 입력하세요");
 	                } else if (subject == null || subject == "") {
 	                  alert("과목을 입력하세요");
-	                } else if (materials.length === 0) {
-	                  alert("학습 종류를 입력하세요");
-	                } else if (isAnyEmpty(materials)) {
-					    alert("모든 학습 종류를 입력하세요");
-					} else if (progresses.length === 0) {
-	                  alert("진도 내역을 입력하세요");
-	                } else if (isAnyEmpty(progresses)) {
-					    alert("모든 진도 내역을 입력하세요");
-					}else if (new Date(endTime) - new Date(startTime) < 0) {
+	                } else if (progressList.length === 0) {
+	                  alert("최소 하나의 학습 내용을 입력하세요");
+	                } else if (progressList.some(item => item.materialId == null || item.materialId == "")) {
+					  alert("모든 학습 종류를 선택하세요");
+					} else if (progressList.some(item => item.progress == null || item.progress.trim() == "")) {
+					  alert("모든 진도 내역을 입력하세요");
+					} else if (new Date(endTime) - new Date(startTime) < 0) {
 	                  alert("종료 시간이 시작 시간보다 먼저입니다");
 	                } else {
    	                	
@@ -515,10 +604,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	                  var obj = { //전송할 객체 생성
 	                    "startTime": startTime,
 	                    "endTime": endTime,
-	                    "studyway": studyway,
-	                    "subject": subject,
-	                    "materials": material,
-	                    "progresses": progresses
+	                    "studywayId": studyway,
+	                    "subjectId": subject,
+	                    "progresses": progressList
 	                  };
 						console.log(obj);
 	                  $.ajax({
@@ -864,7 +952,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('.add-progress').addEventListener('click', function() {
     if (progressCount < 5) {
       const newRow = document.createElement('div');
-      newRow.className = 'form-row align-items-center mb-2';
+      newRow.className = 'form-row align-items-center mb-2 progress-entry';
       newRow.innerHTML = `
         <div class="col-4">
           <select class="form-control" id="material${progressCount}" name="material[]"></select>
@@ -883,6 +971,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (progressCount === 5) {
         document.querySelector('.add-progress').style.display = 'none';
       }
+    }else {
+        alert("진도 내역은 최대 5개까지 입력할 수 있습니다."); // 알림 메시지 표시
     }
   });
 
