@@ -1,9 +1,12 @@
+let scheduleOptions;
 
 document.addEventListener('DOMContentLoaded', function() {
 
       var calendarEl = document.getElementById('calendar');
       var weeklyEvents = []; // 주간 뷰 이벤트 저장
       var monthlyEvents = []; // 월간 뷰 이벤트 저장
+      
+      
     
       //과목명과 색상 매핑 객체
       var subjectColors = {
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	  } else if (currentViewType === 'timeGridWeek') {
     	    // 주간 뷰 데이터 리로드
     	    $.ajax({
-    	      url: "/api/schedule/findAll",
+    	      url: "/api/schedule/findAll", //refreshEvents
     	      type: "GET",
     	      dataType: "json",
     	      success: function(data) {
@@ -84,7 +87,14 @@ document.addEventListener('DOMContentLoaded', function() {
     	    });
     	  }
     	}
-      
+    	
+    	function isAnyEmpty(arr) {
+		    return arr.some(item => item === null || item.trim() === "");
+		}
+
+    	
+    	
+		      
       var calendar = new FullCalendar.Calendar(calendarEl, {
     	
     	events: [],
@@ -94,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
    	    nextDayThreshold: '06:00:00',
    	    slotDuration: '00:30:00', 
     	allDaySlot: false,
-        initialView: 'dayGridMonth',
+        initialView: 'timeGridWeek',
         initialDate: new Date(),
         headerToolbar: {
           left: 'prev,next today',
@@ -459,9 +469,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	                var endTime = $("#endTime").val();
 	                var studyway = $("#studyway").val(); //학업구분
 	                var subject = $("#subject").val(); //과목
-	                var material = $("#material").val(); //학습 종류
-	                var progress = $("#progress").val(); //진도 내역
-	                var achieveRate = $("#achieveRate").val(); //달성율
+	                
+	                
+	                // 여러 개의 material과 progress를 수집
+				    var materials = [];
+				    var progresses = [];
+				    $("select[name='material[]']").each(function() {
+				        materials.push($(this).val());
+				    });
+				    $("input[name='progress[]']").each(function() {
+				        progresses.push($(this).val());
+				    });
 
 	                //유효성 검사
 	                if (startTime == null || startTime == "") {
@@ -472,17 +490,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	                  alert("학업 구분을 입력하세요");
 	                } else if (subject == null || subject == "") {
 	                  alert("과목을 입력하세요");
-	                } else if (material == null || material == "") {
+	                } else if (materials.length === 0) {
 	                  alert("학습 종류를 입력하세요");
-	                } else if (progress == null || progress == "") {
+	                } else if (isAnyEmpty(materials)) {
+					    alert("모든 학습 종류를 입력하세요");
+					} else if (progresses.length === 0) {
 	                  alert("진도 내역을 입력하세요");
-	                } else if (achieveRate == null || achieveRate == "") {
-	                  alert("달성율을 입력하세요");
-	                } else if (new Date(endTime) - new Date(startTime) < 0) {
+	                } else if (isAnyEmpty(progresses)) {
+					    alert("모든 진도 내역을 입력하세요");
+					}else if (new Date(endTime) - new Date(startTime) < 0) {
 	                  alert("종료 시간이 시작 시간보다 먼저입니다");
-	                } else if (achieveRate < 0 || achieveRate > 100) { 
-   	                	alert("달성율은 0 ~ 100까지의 범위 내에서 입력하세요"); 
-   	                } else {
+	                } else {
    	                	
 	               	 var newEvent = {
 	           			     start: new Date(startTime),
@@ -499,9 +517,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	                    "endTime": endTime,
 	                    "studyway": studyway,
 	                    "subject": subject,
-	                    "material": material,
-	                    "progress": progress,
-	                    "achieveRate": achieveRate
+	                    "materials": material,
+	                    "progresses": progresses
 	                  };
 						console.log(obj);
 	                  $.ajax({
@@ -784,19 +801,52 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+  $(document).ready(function() {
+    $.ajax({
+        url: '/api/schedule/options',
+        method: 'GET',
+        success: function(data) {
+            scheduleOptions = data;
+            initializeDropdowns();
+        },
+        error: function(error) {
+            console.error('Failed to load schedule options:', error);
+        }
+    });
+});
+
   $("#calendarModal").on("hidden.bs.modal", function() {
-    // 스케쥴 입력 모달 창이 닫힌 후 실행되는 코드
-    // 입력 필드 값 리셋
-    $("#startTime").val("");
-    $("#endTime").val("");
-    $("#studyway").val("");
-    $("#subject").val("");
-    $("#material").val("");
-    $("#progress").val("");
-    $("#achieveRate").val("");
-  });
+  // 모든 입력 필드 리셋
+  $("#calendarModal input, #calendarModal select").val("");
+  
+  // 동적으로 추가된 행 제거
+  $("#progressEntries").empty();
+  $("#progressEntries").html(`
+    <div class="form-row align-items-center mb-2">
+      <div class="col-4">
+        <select class="form-control" id="material0" name="material[]"></select>
+      </div>
+      <div class="col-7">
+        <input type="text" class="form-control" id="progress0" name="progress[]" placeholder="진도 내역">
+      </div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
+      </div>
+    </div>
+  `);
+  
+  // 드롭다운 초기화
+  initializeDropdowns();
+  
+  // progressCount 초기화
+  progressCount = 1;
+  
+  // 추가 버튼 표시
+  document.querySelector('.add-progress').style.display = 'inline-block';
+});
+
   $("#updateModal").on("hidden.bs.modal", function() {
-    // 모달 창이 닫힌 후 실행되는 코드
+    // 수정 모달 창이 닫힌 후 실행되는 코드
     // 입력 필드 값 리셋
     $("#startTime").val("");
     $("#endTime").val("");
@@ -807,3 +857,60 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#achieveRate").val("");
   });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+  let progressCount = 1;
+
+  document.querySelector('.add-progress').addEventListener('click', function() {
+    if (progressCount < 5) {
+      const newRow = document.createElement('div');
+      newRow.className = 'form-row align-items-center mb-2';
+      newRow.innerHTML = `
+        <div class="col-4">
+          <select class="form-control" id="material${progressCount}" name="material[]"></select>
+        </div>
+        <div class="col-7">
+          <input type="text" class="form-control" id="progress${progressCount}" name="progress[]" placeholder="진도 내역">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+        </div>
+      `;
+      document.getElementById('progressEntries').appendChild(newRow);
+      fillNewMaterialDropdown(`material${progressCount}`);
+      progressCount++;
+
+      if (progressCount === 5) {
+        document.querySelector('.add-progress').style.display = 'none';
+      }
+    }
+  });
+
+  document.getElementById('progressEntries').addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-progress')) {
+      e.target.closest('.form-row').remove();
+      progressCount--;
+      document.querySelector('.add-progress').style.display = 'inline-block';
+    }
+  });
+});
+
+function fillNewMaterialDropdown(newDropdownId) {
+		    fillDropdown(`#${newDropdownId}`, scheduleOptions.materials, "학습종류");
+		}
+		
+function initializeDropdowns() {
+		    fillDropdown('#studyway', scheduleOptions.studyways);
+		    fillDropdown('#subject', scheduleOptions.subjects);
+		    fillDropdown('#material', scheduleOptions.materials, "학습종류");
+		    
+		}
+		
+function fillDropdown(selector, options, defaultText = "선택하세요") {
+    const dropdown = $(selector);
+    dropdown.empty();
+    dropdown.append(`<option value="">${defaultText}</option>`);
+    $.each(options, function(i, option) {
+        dropdown.append($('<option></option>').attr('value', option.id).text(option.name));
+    });
+}

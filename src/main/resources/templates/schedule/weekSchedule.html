@@ -16,42 +16,48 @@
 </head>
   <body>
 		<!-- modal 추가 -->
-		<div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-		    aria-hidden="true">
-		    <div class="modal-dialog" role="document">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		                <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
-		                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		                    <span aria-hidden="true">&times;</span>
-		                </button>
-		            </div>
-		            <div class="modal-body">
-		                <div class="form-group">
-		                    <label for="taskId" class="col-form-label">시작 날짜</label>
-		                    <input type="datetime-local" class="form-control" id="startTime" name="startTime">
-		                    <label for="taskId" class="col-form-label">종료 날짜</label>
-		                    <input type="datetime-local" class="form-control" id="endTime" name="endTime">
-		                    <label for="taskId" class="col-form-label">학업 구분</label>
-		                    <input type="text" class="form-control" id="studyway" name="studyway">
-		                    <label for="taskId" class="col-form-label">과목</label>
-		                    <input type="text" class="form-control" id="subject" name="subject">
-		                </div>
-		                <div>
-		                	<label for="taskId" class="col-form-label">학습종류</label>
-		                    <input type="text" class="form-control" id="material" name="material">
-		                    <label for="taskId" class="col-form-label">진도 내역</label>
-		                    <input type="text" class="form-control" id="progress" name="progress">
-		                    <label for="taskId" class="col-form-label">달성율</label>
-		                    <input type="text" class="form-control" id="achieveRate" name="achieveRate">	
-		                </div>
-		            </div>
-		            <div class="modal-footer">
-		                <button type="button" class="btn btn-outline-success float-right insertBtn" id="addCalendar">추가</button>
-		                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
-		            </div>		
+		<div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <div class="form-group">
+		          <label for="startTime" class="col-form-label">시작 날짜</label>
+		          <input type="datetime-local" class="form-control" id="startTime" name="startTime">
+		          <label for="endTime" class="col-form-label">종료 날짜</label>
+		          <input type="datetime-local" class="form-control" id="endTime" name="endTime">
+		          <label for="studyway" class="col-form-label">학업 구분</label>
+		          <select class="form-control" id="studyway" name="studyway"></select>
+		          <label for="subject" class="col-form-label">과목</label>
+		          <select class="form-control" id="subject" name="subject"></select>
 		        </div>
+		        <div id="progressEntries">
+		          <div class="form-row align-items-center mb-2">
+		            <div class="col-4">
+		              <label for="material" class="sr-only">학습종류</label>
+		              <select class="form-control" id="material" name="material[]"></select>
+		            </div>
+		            <div class="col-7">
+		              <label for="progress0" class="sr-only">진도 내역</label>
+		              <input type="text" class="form-control" id="progress0" name="progress[]" placeholder="진도 내역">
+		            </div>
+		            <div class="col-auto">
+		              <button type="button" class="btn btn-success btn-sm add-progress">+</button>
+		            </div>
+		          </div>
+		        </div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-outline-success float-right insertBtn" id="addCalendar">추가</button>
+		        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+		      </div>
 		    </div>
+		  </div>
 		</div>
 		<!-- 수정 modal 추가 -->
 		<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -70,14 +76,14 @@
 		                    <input type="datetime-local" class="form-control" id="startTime" name="startTime">
 		                    <label for="taskId" class="col-form-label">종료 날짜</label>
 		                    <input type="datetime-local" class="form-control" id="endTime" name="endTime">
-		                    <label for="taskId" class="col-form-label">학업 구분</label>
-		                    <input type="text" class="form-control" id="studyway" name="studyway">
-		                    <label for="taskId" class="col-form-label">과목</label>
-		                    <input type="text" class="form-control" id="subject" name="subject">
+		                    <label for="studyway" class="col-form-label">학업 구분</label>
+		                    <select class="form-control" id="studyway" name="studyway"></select>
+		                    <label for="subject" class="col-form-label">과목</label>
+		                    <select class="form-control" id="subject" name="subject"></select>
 		                </div>
 		                <div>
-		                	<label for="taskId" class="col-form-label">학습종류</label>
-		                    <input type="text" class="form-control" id="material" name="material">
+		                	<label for="material" class="col-form-label">학습종류</label>
+		                    <select class="form-control" id="material" name="material"></select>
 		                    <label for="taskId" class="col-form-label">진도 내역</label>
 		                    <input type="text" class="form-control" id="progress" name="progress">
 		                    <label for="taskId" class="col-form-label">달성율</label>

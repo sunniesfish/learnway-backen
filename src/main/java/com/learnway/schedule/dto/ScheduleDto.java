@@ -1,8 +1,12 @@
 package com.learnway.schedule.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.learnway.global.domain.Material;
+import com.learnway.global.domain.Studyway;
+import com.learnway.global.domain.Subject;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,18 +26,15 @@ public class ScheduleDto {
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
 	private LocalDateTime  endTime;
-	private String studyway;
-	private String subject;
-	private String progress;
-	private String material;
-	private double achieveRate;
-	
+	private String studywayId;
+	private String subjectId;
+	private List<ProgressDto> progresses;
 	@Override
 	public String toString() {
 		return "ScheduleDto [scheduleId=" + scheduleId + ", startTime=" + startTime + ", endTime=" + endTime
-				+ ", studyway=" + studyway + ", subject=" + subject + ", progress=" + progress + ", achieveRate="
-				+ achieveRate + "]";
+				+ ", studywayId=" + studywayId + ", subjectId=" + subjectId + ", progresses=" + progresses + "]";
 	}
+	
 	
 	
 

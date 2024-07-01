@@ -9,11 +9,17 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.learnway.global.domain.MaterialRepository;
+import com.learnway.global.domain.StudywayRepository;
+import com.learnway.global.domain.SubjectRepository;
 import com.learnway.schedule.domain.DailyAchieve;
 import com.learnway.schedule.domain.DailyAchieveRepository;
+import com.learnway.schedule.domain.Progress;
 import com.learnway.schedule.domain.Schedule;
 import com.learnway.schedule.domain.ScheduleRepository;
 import com.learnway.schedule.dto.DailyAchieveDto;
+import com.learnway.schedule.dto.ProgressDto;
 import com.learnway.schedule.dto.ScheduleDto;
 
 @Service
@@ -24,20 +30,34 @@ public class ScheduleService {
 	
 	@Autowired
 	private DailyAchieveRepository dailyAchieveRepository;
+	
+	@Autowired
+    private StudywayRepository studywayRepository;
+    
+    @Autowired
+    private SubjectRepository subjectRepository;
+    
+    @Autowired
+    private MaterialRepository materialRepository;
 
 	// 스케쥴 추가하기
 		public void add(ScheduleDto dto) {
 
 			Schedule schedule = new Schedule();
-			schedule.setScheduleId(dto.getScheduleId());
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
-			schedule.setStudyway(dto.getStudyway());
-			schedule.setMaterial(dto.getMaterial());
-			schedule.setProgress(dto.getProgress());
-			schedule.setSubject(dto.getSubject());
-			schedule.setAchieveRate(dto.getAchieveRate());
+			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId()).orElse(null));
+			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId()).orElse(null));
 			
+			//Progress 엔티티 생성 및 설정
+			List<Progress> progresses = new ArrayList<>();
+			for (ProgressDto progressDto : dto.getProgresses()) {
+	            Progress progress = new Progress();
+	            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId()).orElseThrow(() -> new RuntimeException("Material not found")));
+	            progress.setProgress(progressDto.getProgress());
+	            progresses.add(progress);
+	        }
+			schedule.setProgresses(progresses);
 			scheduleRepository.save(schedule);
 		}
 		
@@ -54,7 +74,8 @@ public class ScheduleService {
 			
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
-			schedule.setStudyway(dto.getStudyway());
+			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId()).orElse(null));
+
 			
 			scheduleRepository.save(schedule);
 		}
@@ -72,49 +93,26 @@ public class ScheduleService {
 		        // DTO의 값으로 schedule 객체 업데이트
 		        schedule.setStartTime(dto.getStartTime());
 		        schedule.setEndTime(dto.getEndTime());
-		        schedule.setStudyway(dto.getStudyway());
-		        schedule.setSubject(dto.getSubject());
-		        schedule.setMaterial(dto.getMaterial());
-		        schedule.setProgress(dto.getProgress());
-		        schedule.setAchieveRate(dto.getAchieveRate());
+		        schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId()).orElse(null));
+		        schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId()).orElse(null));
+				
+		      //Progress 엔티티 생성 및 설정
+				List<Progress> progresses = new ArrayList<>();
+				for(ProgressDto progressDto : dto.getProgresses()) {
+					Progress progress = new Progress();
+					progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId()).orElse(null));
+					progress.setAchieveRate(progressDto.getAchieveRate());
+			        progress.setScheduleId(schedule); // 연관관계 설정
+			        progresses.add(progress);
+				}
+				schedule.setProgresses(progresses);
+				scheduleRepository.save(schedule);
 		        
 		        scheduleRepository.save(schedule);
 		    } else {
 		        throw new RuntimeException("일정을 찾을 수 없습니다.");
 		    }
 		}
-		
-		
-//		public ScheduleDto getDetailll(Long id) throws DataNotException {
-//			
-//			Optional<Schedule> schedule = scheduleRepository.findById(id);
-//			
-//			if (schedule.isPresent()) {
-//		        Schedule updateschedule = schedule.get();
-//		        ScheduleDto dto = convertDTO(updateschedule);
-//
-//		        return dto;
-//		    } else {
-//		        throw new DataNotException("schedule not found");
-//		    }
-//		
-//		}
-//		
-//		private ScheduleDto convertDTO(Schedule schedule) {
-//			
-//			ScheduleDto dto = new ScheduleDto();
-//			
-//			dto.setScheduleId(schedule.getScheduleId());
-//			dto.setStartTime(schedule.getStartTime());
-//			dto.setEndTime(schedule.getEndTime());
-//			dto.setStudyway(schedule.getStudyway());
-//			dto.setSubject(schedule.getSubject());
-//			dto.setProgress(schedule.getProgress());
-//			dto.setMaterial(schedule.getMaterial());
-//			dto.setAchieveRate(schedule.getAchieveRate());
-//			
-//			return dto;
-//		}
 		
 		//스케쥴 삭제하기
 		public void deleteSchedule(Long id) {
@@ -183,8 +181,18 @@ public class ScheduleService {
 		    }
 		    
 		    double totalAchieveRate = 0.0;
+		    int totalProgresses = 0;
+		    
 		    for (Schedule schedule : schedules) {
-		        totalAchieveRate += schedule.getAchieveRate();
+		    	List<Progress> progresses = schedule.getProgresses();
+		    	for(Progress progress : progresses) {
+		        totalAchieveRate += progress.getAchieveRate();
+		        totalProgresses++;
+		      }
+		    }
+		    
+		    if (totalProgresses == 0) {
+		        return 0.0;
 		    }
 		    
 		    return totalAchieveRate / schedules.size();

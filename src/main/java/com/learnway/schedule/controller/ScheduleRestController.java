@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learnway.schedule.domain.DailyAchieve;
 import com.learnway.schedule.domain.DailyAchieveRepository;
+import com.learnway.schedule.domain.Progress;
 import com.learnway.schedule.domain.Schedule;
 import com.learnway.schedule.domain.ScheduleRepository;
 import com.learnway.schedule.dto.DailyAchieveDto;
@@ -62,6 +63,7 @@ public class ScheduleRestController {
 		
 	}
 	
+	//날짜에 따라 찾기 기준시간 오전6시 ~ 다음날 오전6시
 	@GetMapping("findByDate")
 	public ResponseEntity<List<Map<String,Object>>> findByDate(@RequestParam("date") String dateStr){
 		
@@ -76,14 +78,16 @@ public class ScheduleRestController {
 	        List<Map<String, Object>> responseData = new ArrayList<>();
 	        
 	        for (Schedule schedule : schedules) {
-	            Map<String, Object> scheduleData = new HashMap<>();
-	            scheduleData.put("id", schedule.getScheduleId());
-	            scheduleData.put("studyway", schedule.getStudyway());
-	            scheduleData.put("subject", schedule.getSubject());
-	            scheduleData.put("material", schedule.getMaterial());
-	            scheduleData.put("progress", schedule.getProgress());
-	            scheduleData.put("achieveRate", schedule.getAchieveRate());
-	            responseData.add(scheduleData);
+	            List<Progress> progresses = schedule.getProgresses();
+	            for (Progress progress : progresses) {
+	            	Map<String, Object> progressData = new HashMap<>();
+	            	progressData.put("id", progress.getProgressId());
+	                progressData.put("studyway", schedule.getStudywayId());
+	                progressData.put("subject", schedule.getSubjectId());
+	                progressData.put("material", progress.getMaterialId());
+	                progressData.put("achieveRate", progress.getAchieveRate());
+	                responseData.add(progressData);
+	            }
 	        }
 	        
 	       String existingId = scheduleService.generateDailyAchieveId(startDateTime);
@@ -114,14 +118,23 @@ public class ScheduleRestController {
 		for (Schedule schedule : scheduleList) {
 	        Map<String, Object> event = new HashMap<>();
 	        event.put("id", schedule.getScheduleId());
-	        event.put("title", schedule.getStudyway());
+	        event.put("title", schedule.getStudywayId());
 	        event.put("start", schedule.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 	        event.put("end", schedule.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
-	        event.put("subject", schedule.getSubject());
-	        event.put("material", schedule.getMaterial());
-	        event.put("achieveRate", schedule.getAchieveRate());
-	        event.put("studyway", schedule.getStudyway());
-	        event.put("progress", schedule.getProgress());
+	        event.put("subject", schedule.getSubjectId());
+	        event.put("studyway", schedule.getStudywayId());
+
+	        List<Map<String, Object>> progressList = new ArrayList<>();
+	        List<Progress> progresses = schedule.getProgresses();
+	        for (Progress progress : progresses) {
+	            Map<String, Object> progressData = new HashMap<>();
+	            progressData.put("id", progress.getProgressId());
+	            progressData.put("material", progress.getMaterialId());
+	            progressData.put("achieveRate", progress.getAchieveRate());
+	            progressList.add(progressData);
+	        }
+
+	        event.put("progresses", progressList);
 	        eventList.add(event);
 	    }
 		
@@ -137,14 +150,27 @@ public class ScheduleRestController {
 			Optional<Schedule> detail = scheduleService.getDetail(id);
 			Map<String,Object> detailList = new HashMap<>();
 			
-			detailList.put("startTime", detail.get().getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
-		    detailList.put("endTime", detail.get().getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
-			detailList.put("id", detail.get().getScheduleId());
-			detailList.put("studyway", detail.get().getStudyway());
-			detailList.put("subject", detail.get().getSubject());
-			detailList.put("material", detail.get().getMaterial());
-			detailList.put("progress", detail.get().getProgress());
-			detailList.put("achieveRate", detail.get().getAchieveRate());
+			if (detail.isPresent()) {
+		        Schedule schedule = detail.get();
+		        List<Progress> progresses = schedule.getProgresses();
+
+		        detailList.put("startTime", schedule.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+		        detailList.put("endTime", schedule.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+		        detailList.put("id", schedule.getScheduleId());
+		        detailList.put("studyway", schedule.getStudywayId());
+		        detailList.put("subject", schedule.getSubjectId());
+
+		        List<Map<String, Object>> progressList = new ArrayList<>();
+		        for (Progress progress : progresses) {
+		            Map<String, Object> progressData = new HashMap<>();
+		            progressData.put("id", progress.getProgressId());
+		            progressData.put("material", progress.getMaterialId());
+		            progressData.put("achieveRate", progress.getAchieveRate());
+		            progressList.add(progressData);
+		        }
+
+		        detailList.put("progresses", progressList);
+		    }
 	
 			return detailList;
 		}
@@ -153,7 +179,7 @@ public class ScheduleRestController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<String> addSchedule(@RequestBody ScheduleDto dto){
-		
+		System.out.println("Received DTO: " + dto); // 로그 추가
 		try {
 		
         // 데이터 처리 로직 (DB 저장 등)
@@ -164,6 +190,7 @@ public class ScheduleRestController {
 		}catch (DateTimeParseException e) {
 	        return ResponseEntity.badRequest().body("잘못된 날짜/시간 형식입니다.");
 	    } catch (Exception e) {
+	    	log.error("일정 추가 중 오류 발생", e);
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 추가 중 오류가 발생했습니다.");
 	    }
 		
