@@ -2,6 +2,8 @@ package com.learnway.consult.controller;
 
 import java.util.Optional;
 
+import com.learnway.consult.service.ConsultantService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,10 +20,12 @@ import com.learnway.member.domain.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+@RequiredArgsConstructor
 @Controller
 public class ConsultController {
 	@Autowired
 	private ReservationService reservationService;
+	private final ConsultantService consultantService;
 	
 	//유저 마이페이지에 기생할 유저 예약리스트 확인하는모달
 	@GetMapping("/reservation")
@@ -139,4 +143,5 @@ public class ConsultController {
 	            return "세션에 로그인 정보가 없습니다.";
 	        }
 	    }
+
 }
