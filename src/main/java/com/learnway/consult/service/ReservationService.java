@@ -33,18 +33,11 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 	
-    
     // 예약 저장 서비스
     public ReservationEntity save(ReservationEntity reservation) {
         return reservationRepository.save(reservation);
     }
     
-   //??
-//	public List<ReservationEntity> getAllReservations() {
-//		return reservationRepository.findAll();	
-//	}
-	
-	
 	//사이드바에서 상담하기 버튼눌러서 모달창에 보여줄 상담사리스트 조회
     public List<Consultant> getAllConsultants() {
         return consultantRepository.findAll();
@@ -82,7 +75,7 @@ public class ReservationService {
 	    List<ReservationDTO> reservationDTO = list.stream()
 	        .map(reservation -> new ReservationDTO(
 	            reservation.getId(),
-	            reservation.getMember().getMemberName(), // Assuming getName() returns client name
+	            reservation.getMember().getMemberName(), 
 	            reservation.getBookingStart().toString(),
 	            reservation.getBookingEnd().toString()
 	        ))
@@ -93,10 +86,8 @@ public class ReservationService {
     
     //상담사 예약리스트에서 유저 정보 확인
     public UserInfoDTO getUserInfo(Long userId) {
-        // 나중에 DB에서 정확한 정보 가져와야함
         Optional<Member> memberOptional = memberRepository.findById(userId);
         
-        // memberOptional이 비어있을 경우를 처리해야 합니다.
         if (memberOptional.isPresent()) {
         	Member member = memberOptional.get();
             return new UserInfoDTO(
@@ -105,11 +96,12 @@ public class ReservationService {
 
             );
         } else {
-            // Optional이 비어있을 경우 처리 (예: 예외를 던지거나 null 반환 등)
-            // 여기서는 예외를 던지는 방식으로 처리
             throw new NoSuchElementException("User not found with id: " + userId);
         }
     }
 
-
+    //예약페이지 와 상담사이드바  consultant 정보 가져오기
+	public Optional<Consultant> getConsultants(Long consultantId) {
+		return consultantRepository.findById(consultantId);
+	}
 }
