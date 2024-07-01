@@ -72,7 +72,7 @@ public class ExamController {
         if(memId != null){
             System.out.println("getting exam list : "+memId);
             pageNo = pageNo == null ? pageNo = 1 : pageNo;
-            model.addAttribute("examList", examService.readExam(memId,pageNo,10));
+            model.addAttribute("examList", examService.readExam(memId,pageNo,8));
         }
         return "exam/exam";
     }
@@ -115,8 +115,8 @@ public class ExamController {
     /*
     * 시험 삭제 후 시험리스트 페이지로 리다이렉트
     * */
-    @GetMapping("/delete/{examId}")
-    public String deleteExam(@PathVariable("examId") Long examId, Authentication authentication){
+    @PostMapping("/delete")
+    public String deleteExam(@RequestParam("examId") Long examId, Authentication authentication){
         //get memId
         Member member = null;
         Long memId = null;
@@ -152,7 +152,7 @@ public class ExamController {
         }
         if(dto != null) {
             model.addAttribute("exam", dto);
-            return "template/exam/exam-detail";
+            return "exam/exam-detail";
         } else {
             return "redirect:/exam/list/1";
         }

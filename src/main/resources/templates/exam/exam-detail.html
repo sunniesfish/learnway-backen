@@ -6,8 +6,11 @@
         <title>LearnWay</title>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+        <script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
-        <link rel="stylesheet" href="/css/exam/exam" type="text/css"/>
+        <link rel="stylesheet" href="/css/exam/exam-detail.css" type="text/css"/>
     </head>
     <body>
     <!-- SideBar 불러오는부분 -->
@@ -16,7 +19,10 @@
     <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
     <div class="main__content">
         <!-- 이곳에 작업합시다  -->
-        <div class="main__content__title"></div>
+        <div class="main__content__title" th:text="${exam.getExamName()}"></div>
+        <div class="exam-detail__container" id="exam-detail-root">
+
+        </div>
     </div>
 
 </body>
@@ -25,4 +31,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script><!-- 툴팁(tooltips)과 팝오버(popovers) 같은 UI 요소를 쉽게 관리 -->
 <script src="/js/consult/consultationReservation.js"></script><!-- 상담예약 javascript -->
 <script src="/js/consult/reservationList.js"></script><!-- 예약리스트 javascript -->
+<script src="/js/exam/exam-detail.js" type="text/babel"></script>
 </html>

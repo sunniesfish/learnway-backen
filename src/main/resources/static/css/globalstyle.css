@@ -1,10 +1,16 @@
 /* 전체 테마*/
 :root {
-    --yellow: #fae100;
+    --hoverColor: #96C9F4;
 }
 
 
 /* 공통 스타일*/
+.clickable:hover{
+  cursor: pointer;
+}
+.hidden {
+  display: none;
+}
 .main__content {
   flex-grow: 1; /* 사이드바를 제외한 공간을 차지 */
   display: flex;
@@ -52,9 +58,6 @@ footer, header, hgroup, main, menu, nav, section {
   display: block;
 }
 /* HTML5 hidden-attribute fix for newer browsers */
-.hidden {
-    display: none;
-}
 body {
   line-height: 1.2;
   font-family: 'Source Sans Pro', sans-serif;
@@ -82,6 +85,8 @@ a{
 }
 a:hover{
   cursor: pointer;
+  text-decoration: none;
+  color:inherit;
 }
 *{
   box-sizing: border-box;
