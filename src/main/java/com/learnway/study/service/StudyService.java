@@ -1,5 +1,7 @@
 package com.learnway.study.service;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,19 +43,19 @@ public class StudyService {
 	@Transactional
 	public void crateBoard(StudyDto dto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 						StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto
-						,MultipartFile[] files) {
+						,MultipartFile[] files,Principal principal) {
 		
 		System.out.println("게시글생성");
 		//게시글 생성
-		Study study = studyPostService.boardadd(dto);
+		Study study = studyPostService.boardadd(dto,principal);
 		int postid = study.getPostid();
 		
 		//채팅방 생성
-		studyChatService.chatRoomCreate(chatRoomDto, study);
+		studyChatService.chatRoomCreate(chatRoomDto, study,principal);
 		//태그값 저장
 		studyTagService.createTag(studyTagDto, study);
 		//문제 저장
-		int problemid = studyProblemService.problemAdd(studyProblemDto,postid);
+		int problemid = studyProblemService.problemAdd(studyProblemDto,postid,principal);
 		
 		System.out.println(problemid + "해당문제아이디");
 		

@@ -1,5 +1,7 @@
 package com.learnway.study.controller;
 
+import java.lang.reflect.Member;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.learnway.member.service.CustomUserDetails;
 import com.learnway.study.domain.ChatRoom;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyProblemImg;
@@ -54,6 +57,7 @@ public class StudyController {
 	StudyChatService studyChatService;
 	
 	
+	
 
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
 	@GetMapping(value="/studylist")
@@ -61,7 +65,6 @@ public class StudyController {
 //		model.addAttribute("study",studyRepository.findAll(Sort.by(Sort.Direction.DESC,"postid")));
 //		model.addAttribute("studytag",studyTagService.findAllTag());
 
-		
 //		List<Study> studies = studyPostService.findAll(); 페이징전 코드
 		Page<Study> studies = studyPostService.getBoardList(pageable);
 		
@@ -85,9 +88,9 @@ public class StudyController {
 	@PostMapping(value="/studyadd")
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
-			@RequestParam("imgpath") MultipartFile[] files) {
+			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
 		System.out.println("컨트롤러진입");
-		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files);
+		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		System.out.println(studyTagDto.getTag()+"태그값");
 		
 		System.out.println("post studyadd 진입");

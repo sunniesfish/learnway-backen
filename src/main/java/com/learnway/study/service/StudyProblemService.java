@@ -1,5 +1,7 @@
 package com.learnway.study.service;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +21,11 @@ public class StudyProblemService {
 	private MemberRepository memberRepository;
 	
 	//문제등록 및 해당문제id값 return
-	public Integer problemAdd(StudyProblemDto dto,int postid) {
+	public Integer problemAdd(StudyProblemDto dto,int postid,Principal principal) {
 		
 		//로그인한 값 가져와 수정예정
-		Member member = memberRepository.findById((long) 1)
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
+		Member member = memberRepository.findByMemberId(principal.getName())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
 		System.out.println(dto.getSubject() + "과목");
 		System.out.println(dto.getLevel() + "난이도");
 		

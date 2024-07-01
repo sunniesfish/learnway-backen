@@ -30,7 +30,7 @@ public class CorrectCheck {
 	private Integer correctId;
 	
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
 	@ManyToOne

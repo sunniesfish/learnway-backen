@@ -31,9 +31,11 @@ public class ChatRoom {
 	@ManyToOne
 	@JoinColumn(name = "study_postid", nullable = false)
 	private Study study;
+	
 //	엔티티생성후 제거예정
+	
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
 	

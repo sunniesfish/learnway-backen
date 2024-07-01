@@ -14,7 +14,7 @@
    종료일 : <div th:text="${study.enddate}"></div>
   <input type="hidden" th:value="${study.postid}" id="postId">
    
-   
+   <span th:each="member : ${study.member}" th:text="${member.memberName}">Tag</span>
      <div th:each="tag : ${studyTag}">
         <div th:text="${tag.tag}">Tag</div>
     </div>
@@ -63,17 +63,24 @@
 </div>
 
 
+<form action="/joinRoom" method="post">
+방이름 : <input type="text" id="roomname" name="roomname">
+방아이디 : <input type="text" id="roomId" name="roomId">
+게시글아이디 : <input type="text" id="postId" name="postId">
+<input type="submit">
+</form>
 </body>
 
 
 <script>
 
- $(document).ready(function() {
+  $(document).ready(function() {
 
 	correct_ck();
 }); 
 
-    function correct_ck() {
+  
+     function correct_ck() {
     	
     	$('#correct_ck').click(function(){
     	
@@ -85,30 +92,44 @@
     		 
 	    console.log(inputData+ ' 입력값');
 	    console.log(correct+' 정답');
-	    if(inputData === correct){
-	    	alert('정답입니다.');
-	    	status = 1;
-	    	 $.ajax({
-	             type: "POST",
-	             url: "/api/member/correct",
-	           data: JSON.stringify({ status: status,roomId:roomId,postId : postId}),
-	             contentType : "application/json",
-	             datatype : "json",
-	             success: function(response) {
-	               console.log(status);
-	               console.log(roomId);
-	             },
-	             error: function(error) {
-					console.log('함수에러');
-	             }
-	         });
-	    } else {
+	    if (inputData === correct) {
+	        alert('정답입니다.');
+	        status = 1;
+	        $.ajax({
+	            type: "POST",
+	            url: "/api/member/correct",
+	            data: JSON.stringify({ status: status, roomId: roomId, postId: postId }),
+	            contentType: "application/json",
+	            success: function(response) {
+	                console.log("성공");
+	                 $.ajax({
+	                    type: "POST",
+	                    url: "/joinRoom",
+	                    data: JSON.stringify({ roomId: roomId }),
+	                    contentType: "application/json",
+	                    success: function(response) {
+	                        console.log("2차성공");
+	                        // /study/mychat 페이지로 이동
+	                        window.location.href = "/study/mychat";
+	                    },
+	                    error: function(error) {
+	                        console.log('2차에러');
+	                    }
+	                }); 
+	            },
+	            error: function(error) {
+	                console.log('에러');
+	            }
+	        });
+	    }
+	     else {
 	    	alert('오답입니다.');
 	    }
 	    
 	    
-    	})
-    }
+    	});
+    }  
+   
 </script>
 
 </html>

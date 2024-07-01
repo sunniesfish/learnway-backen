@@ -47,41 +47,6 @@
 </style>
 
 <script>
-/* $(document).ready(function(){
-	var roomId = $("#roomId").text();
-	var name = $("#name").text();
-	
-	var sock = new SockJS("/stomp/chat")
-	var stomp = Stomp.over(sock);
-	
-	stomp.connect({},function(frame){
-		
-		stomp.subscribe("/sub/study/mychat/"+roomId,function(chat){
-			var content = JSON.parse(chat.body);
-			var str = "";
-			if(content.name==name){
-				 str = "<div class='message self'>";
-                 str += "<div class='bubble'>";
-                 str += "<b>" + content.name + " : " + content.message + "</b>";
-                 str += "</div></div>";
-             } else {
-                 str = "<div class='message other'>";
-                 str += "<div class='bubble'>";
-                 str += "<b>" + content.name + " : " + content.message + "</b>";
-                 str += "</div></div>";
-             }
-			$("#msgArea").append(str);	
-			
-		});
-		
-		 stomp.send('/pub/chat/enter',{},JSON.stringify({roomId: roomId,name: name})); 
-	});
-	$("button-send").on("click",function(){
-		var msg = $("#msg").val();
-		stomp.send('/pub/chat/message',{},JSON.stringify({roomId:roomId,name:name}));
-		$("#msg").val('');
-	});
-}); */
 
     function getFormattedTime() {
         var now = new Date();
@@ -125,8 +90,10 @@ $(document).ready(function () {
 
     stomp.connect({}, function (frame) {
         console.log("Connected: 연결 " + frame);
+	    console.log("-----1-----");
 
         stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+		    console.log("-----2-----");
             var content = JSON.parse(chat.body);
             var str = '';
 

@@ -35,7 +35,7 @@ public class ChatMessage {
     private ChatRoom chatroom;
 	
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
 	

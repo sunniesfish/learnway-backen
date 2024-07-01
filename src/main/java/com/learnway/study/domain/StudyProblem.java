@@ -45,7 +45,7 @@ public class StudyProblem {
 	private Study study;
 	
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "id", nullable = false)
 	private Member memid;
 	
 }
