@@ -18,10 +18,10 @@ public class Exam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "exam_id", nullable = false)
-    private Integer examId;
+    private Long examId;
 
     @Column(name = "member_id", nullable = false)
-    private Integer memId;
+    private Long memId;
 
     @Column(name = "exam_name", nullable = false)
     private String examName;
@@ -39,7 +39,7 @@ public class Exam {
     private String examMemo;
 
     @Builder
-    public Exam(Integer examId, Integer memId, String examName, String examType, String examRange, Date examDate, String examMemo) {
+    public Exam(Long examId, Long memId, String examName, String examType, String examRange, Date examDate, String examMemo) {
         this.examId = examId;
         this.memId = memId;
         this.examName = examName;

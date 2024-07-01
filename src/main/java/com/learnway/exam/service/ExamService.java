@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface ExamService {
 
     public void writeExam(Exam exam);
-    public Page<Exam> readExam(Integer memId, int pageNo, int pageSize);
+    public Page<Exam> readExam(Long memId, int pageNo, int pageSize);
     public void updateExam(Exam exam);
-    public void deleteExam(Integer examId, Integer memId);
-    public Optional<Exam> findExamById(Integer examId, Integer memId);
-    public ExamDetailDTO getExamDetail(Integer examId, Integer memId);
+    public void deleteExam(Long examId, Long memId);
+    public Optional<Exam> findExamById(Long examId, Long memId);
+    public ExamDetailDTO getExamDetail(Long examId, Long memId);
 }

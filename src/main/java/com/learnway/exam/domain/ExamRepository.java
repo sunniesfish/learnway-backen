@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ExamRepository extends JpaRepository<Exam, Integer> {
-    Page<Exam> findByMemIdOrderByExamDateDesc(Integer memId, Pageable pageable);
+public interface ExamRepository extends JpaRepository<Exam, Long> {
+    Page<Exam> findByMemIdOrderByExamDateDesc(Long memId, Pageable pageable);
 
-    void deleteByMemIdAndExamId(Integer memId, Integer examId);
-    Optional<Exam> findByMemIdAndExamId(Integer memId, Integer examId);
+    void deleteByMemIdAndExamId(Long memId, Long examId);
+    Optional<Exam> findByMemIdAndExamId(Long memId, Long examId);
 }

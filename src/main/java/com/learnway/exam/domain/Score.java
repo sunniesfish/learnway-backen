@@ -13,13 +13,13 @@ public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "score_id", nullable = false)
-    private Integer scoreId;
+    private Long scoreId;
 
     @Column(name = "member_id", nullable = false)
-    private Integer memId;
+    private Long memId;
 
     @Column(name = "exam_id", nullable = false)
-    private Integer examId;
+    private Long examId;
 
     @Column(name = "subject_code", nullable = false)
     private String subjectCode;
@@ -40,7 +40,7 @@ public class Score {
     private String scoreMemo;
 
     @Builder
-    public Score(Integer scoreId, Integer examId, String subjectCode, int scoreExScore, int scoreScore, int scoreGrade, int scoreStdScore, String scoreMemo) {
+    public Score(Long scoreId, Long examId, String subjectCode, int scoreExScore, int scoreScore, int scoreGrade, int scoreStdScore, String scoreMemo) {
         this.scoreId = scoreId;
         this.examId = examId;
         this.subjectCode = subjectCode;

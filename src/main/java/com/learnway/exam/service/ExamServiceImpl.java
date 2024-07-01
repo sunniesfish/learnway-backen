@@ -27,7 +27,7 @@ public class ExamServiceImpl implements ExamService{
 
     //시험 목록 불러오기
     @Override
-    public Page<Exam> readExam(Integer memId, int pageNo, int pageSize) {
+    public Page<Exam> readExam(Long memId, int pageNo, int pageSize) {
         return examRepository.findByMemIdOrderByExamDateDesc(memId, PageRequest.of(pageNo -1, pageSize));
     }
 
@@ -48,20 +48,20 @@ public class ExamServiceImpl implements ExamService{
 
     //시험 삭제
     @Override
-    public void deleteExam(Integer examId, Integer memId) {
+    public void deleteExam(Long examId, Long memId) {
         examRepository.deleteByMemIdAndExamId(memId, examId);
     }
 
     //시험 상세 정보
     @Override
-    public Optional<Exam> findExamById(Integer examId, Integer memId) {
+    public Optional<Exam> findExamById(Long examId, Long memId) {
         return examRepository.findByMemIdAndExamId(memId, examId);
     }
 
     //시험 상세 페이지 가져오기
     @Transactional
     @Override
-    public ExamDetailDTO getExamDetail(Integer examId, Integer memId) {
+    public ExamDetailDTO getExamDetail(Long examId, Long memId) {
         ExamDetailDTO dto = new ExamDetailDTO();
         if (memId != null) {
             Optional<Exam> opExam = findExamById(examId, memId);

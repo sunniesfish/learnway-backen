@@ -2,11 +2,13 @@ package com.learnway.exam.controller;
 
 import com.learnway.exam.domain.Score;
 import com.learnway.exam.service.ScoreService;
+import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -24,10 +26,11 @@ public class ScoreRestController {
     @GetMapping("/{examId}/{pageNo}")
     public ResponseEntity<Page<Score>> getScoreList(
             @PathVariable("pageNo") int pageNo,
-            @PathVariable("examId") Integer examId
-    ) {
+            @PathVariable("examId") Long examId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            ) {
         //get memId
-        Integer memId = 1;
+        Long memId = userDetails.getMemberId();
 
         Page<Score> page = scoreService.getScoreListByExam(examId, memId, PageRequest.of(pageNo,10));
         if (memId == null) {
@@ -40,10 +43,10 @@ public class ScoreRestController {
     /*
     * 과목 상세 불러오기
     * */
-    @GetMapping("/{scoreId}")
-    public ResponseEntity<Score> getScore(@PathVariable int scoreId) {
+    @GetMapping("/exam/{scoreId}")
+    public ResponseEntity<Score> getScore(@PathVariable long scoreId) {
         //get memId
-        Integer memId = 1;
+        Long memId = 1l;
         Optional<Score> score = scoreService.getScoreById(scoreId, memId);
 
         if (!score.isPresent() || memId == null) {
@@ -58,11 +61,12 @@ public class ScoreRestController {
     * */
     @PostMapping("/{examId}")
     public ResponseEntity<Score> createScore(
-            @PathVariable Integer examId,
-            @RequestBody Score score
+            @PathVariable Long examId,
+            @RequestBody Score score,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         //get memId
-        Integer memId = 1;
+        Long memId = userDetails.getMemberId();
 
         score.setMemId(memId);
         if (score == null || memId == null) {
@@ -79,10 +83,11 @@ public class ScoreRestController {
     public ResponseEntity<Score> updateScore(
             @PathVariable("examId") Integer examId,
             @PathVariable("scoreId") Integer scoreId,
-            @RequestBody Score score
+            @RequestBody Score score,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         //get memId
-        Integer memId = 1;
+        Long memId = userDetails.getMemberId();
 
         score.setMemId(memId);
         Optional<Score> opScore = scoreService.updateScore(score);
@@ -97,13 +102,14 @@ public class ScoreRestController {
     /*
     * 점수 삭제
     * */
-    @DeleteMapping("/{examId}/")
+    @DeleteMapping("/{examId}/{scoreId}")
     public ResponseEntity<Score> deleteScore(
-            @PathVariable("examId") Integer examId,
-            @PathVariable("scoreId") Integer scoreId
+            @PathVariable("examId") Long examId,
+            @PathVariable("scoreId") Long scoreId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         //get memId
-        Integer memId = 1;
+        Long memId = userDetails.getMemberId();
 
         if (scoreId == null || memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -112,4 +118,5 @@ public class ScoreRestController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
+
 }

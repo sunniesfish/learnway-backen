@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ScoreRepository extends JpaRepository<Score, Integer> {
+public interface ScoreRepository extends JpaRepository<Score, Long> {
 
-    Page<Score> findByMemIdAndExamId(Integer memId, Integer examId, Pageable pageable);
-    Optional<Score> findByMemIdAndScoreId(Integer memId, Integer scoreId);
-    void deleteByMemIdAndExamId(Integer memId, Integer scoreId);
+    Page<Score> findByMemIdAndExamId(Long memId, Long examId, Pageable pageable);
+    Optional<Score> findByMemIdAndScoreId(Long memId, Long scoreId);
+    void deleteByMemIdAndExamId(Long memId, Long scoreId);
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -20,7 +21,7 @@ public class ScoreServiceImpl implements ScoreService{
     /*
     * 시험id로 과목별 점수 리스트 가져옴
     * */
-    public Page<Score> getScoreListByExam(Integer examId, Integer memId, Pageable pageable) {
+    public Page<Score> getScoreListByExam(Long examId, Long memId, Pageable pageable) {
         return scoreRepository.findByMemIdAndExamId(memId, examId, pageable);
     }
 
@@ -28,7 +29,7 @@ public class ScoreServiceImpl implements ScoreService{
     * 점수 상세
     * */
     @Override
-    public Optional<Score> getScoreById(Integer scoreId, Integer memId) {
+    public Optional<Score> getScoreById(Long scoreId, Long memId) {
         return scoreRepository.findByMemIdAndScoreId(memId, scoreId);
     }
 
@@ -64,7 +65,27 @@ public class ScoreServiceImpl implements ScoreService{
     * 점수 삭제
     * */
     @Override
-    public void deleteScore(Integer memId ,Integer scoreId) {
+    public void deleteScore(Long memId ,Long scoreId) {
         scoreRepository.deleteByMemIdAndExamId(memId, scoreId);
+    }
+
+    @Override
+    public List<Score> getScoreListBySubjectCode(Long memId, String subjectCode) {
+        return List.of();
+    }
+
+    @Override
+    public List<Score> getGrades(Long memId) {
+        return List.of();
+    }
+
+    @Override
+    public List<Score> getScoreListByExamType(Long memId, String examType) {
+        return List.of();
+    }
+
+    @Override
+    public List<Integer> getAvgScores(Long memId) {
+        return List.of();
     }
 }

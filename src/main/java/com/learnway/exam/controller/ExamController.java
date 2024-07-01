@@ -3,7 +3,10 @@ package com.learnway.exam.controller;
 import com.learnway.exam.domain.Exam;
 import com.learnway.exam.dto.ExamDetailDTO;
 import com.learnway.exam.service.ExamService;
+import com.learnway.member.service.CustomUserDetails;
+import com.learnway.member.domain.Member;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,20 +29,29 @@ public class ExamController {
             @RequestParam(name = "examType") String examType,
             @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
-            @RequestParam(name = "examMemo") String examMemo
+            @RequestParam(name = "examMemo") String examMemo,
+            Authentication authentication
             ){
         // get memId
-        int memId = 1;
+        Member member = null;
+        Long memId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+            memId = member.getId();
+        }
+        if(memId != null){
+            examService.writeExam(
+                    new Exam().builder()
+                            .memId(memId)
+                            .examName(examName)
+                            .examType(examType)
+                            .examRange(examRange)
+                            .examDate(examDate)
+                            .examMemo(examMemo).build()
+            );
+        }
 
-        examService.writeExam(
-                new Exam().builder()
-                        .memId(memId)
-                        .examName(examName)
-                        .examType(examType)
-                        .examRange(examRange)
-                        .examDate(examDate)
-                        .examMemo(examMemo).build()
-        );
         return "redirect:/exam/list/1";
     }
 
@@ -48,11 +60,19 @@ public class ExamController {
      * 사용자의 시험 리스트 가져옴
      */
     @GetMapping("/list/{pageNo}")
-    public String getExamList(@PathVariable("pageNo") Integer pageNo,Model model){
+    public String getExamList(@PathVariable("pageNo") Integer pageNo, Model model, Authentication authentication){
         //get memId
-        int memeId = 1;
-        pageNo = pageNo == null ? pageNo = 1 : pageNo;
-        model.addAttribute("examList", examService.readExam(memeId,pageNo,10));
+        Member member = null;
+        Long memId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+            memId = member.getId();
+        }
+        if(memId != null){
+            pageNo = pageNo == null ? pageNo = 1 : pageNo;
+            model.addAttribute("examList", examService.readExam(memId,pageNo,10));
+        }
         return "/template/exam";
     }
 
@@ -65,20 +85,29 @@ public class ExamController {
             @RequestParam(name = "examType") String examType,
             @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
-            @RequestParam(name = "examMemo") String examMemo
+            @RequestParam(name = "examMemo") String examMemo,
+            Authentication authentication
     ){
         // get memId
-        int memId = 1;
+        Member member = null;
+        Long memId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+            memId = member.getId();
+        }
 
-        examService.updateExam(
-                new Exam().builder()
-                        .memId(memId)
-                        .examName(examName)
-                        .examType(examType)
-                        .examRange(examRange)
-                        .examDate(examDate)
-                        .examMemo(examMemo).build()
-        );
+        if(memId != null){
+            examService.updateExam(
+                    new Exam().builder()
+                            .memId(memId)
+                            .examName(examName)
+                            .examType(examType)
+                            .examRange(examRange)
+                            .examDate(examDate)
+                            .examMemo(examMemo).build()
+            );
+        }
         return "redirect:/exam/list/1";
     }
 
@@ -86,9 +115,16 @@ public class ExamController {
     * 시험 삭제 후 시험리스트 페이지로 리다이렉트
     * */
     @GetMapping("/delete/{examId}")
-    public String deleteExam(@PathVariable("examId") Integer examId){
+    public String deleteExam(@PathVariable("examId") Long examId, Authentication authentication){
         //get memId
-        Integer memId = 1;
+        Member member = null;
+        Long memId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+            memId = member.getId();
+        }
+
         if(memId != null) {
             examService.deleteExam(examId, memId);
         }
@@ -99,16 +135,26 @@ public class ExamController {
     * 시험 상세 페이지 memId 또는 examId가 없는 경우 시험 리스트로 리다이렉트
     * */
     @GetMapping("/detail/{examId}")
-    public String getDetailExam(@PathVariable("examId") Integer examId, Model model){
+    public String getDetailExam(@PathVariable("examId") Long examId, Model model, Authentication authentication){
         //get memId
-        Integer memId = 1;
-        
+        Member member = null;
+        Long memId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+            memId = member.getId();
+        }
+
         ExamDetailDTO dto = null;
-        dto = examService.getExamDetail(examId, memId);
+        if(memId != null){
+            dto = examService.getExamDetail(examId, memId);
+        }
         if(dto != null) {
             return "redirect:/exam/detail";
         } else {
             return "redirect:/exam/list/1";
         }
     }
+
+
 }
