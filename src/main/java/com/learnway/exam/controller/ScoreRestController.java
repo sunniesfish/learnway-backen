@@ -1,6 +1,7 @@
 package com.learnway.exam.controller;
 
 import com.learnway.exam.domain.Score;
+import com.learnway.exam.service.ExamService;
 import com.learnway.exam.service.ScoreService;
 import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/score")
 public class ScoreRestController {
 
-    private final ScoreService scoreService;
+    private final ExamService examService;
 
     /*
     * 시험의 과목별 점수 목록 가져오기
@@ -32,7 +33,7 @@ public class ScoreRestController {
         //get memId
         Long memId = userDetails.getMemberId();
 
-        Page<Score> page = scoreService.getScoreListByExam(examId, memId, PageRequest.of(pageNo,10));
+        Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo,10));
         if (memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
@@ -47,7 +48,7 @@ public class ScoreRestController {
     public ResponseEntity<Score> getScore(@PathVariable long scoreId) {
         //get memId
         Long memId = 1l;
-        Optional<Score> score = scoreService.getScoreById(scoreId, memId);
+        Optional<Score> score = examService.getScoreById(scoreId, memId);
 
         if (!score.isPresent() || memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -72,7 +73,7 @@ public class ScoreRestController {
         if (score == null || memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        scoreService.writeScore(score);
+        examService.writeScore(score);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -90,7 +91,7 @@ public class ScoreRestController {
         Long memId = userDetails.getMemberId();
 
         score.setMemId(memId);
-        Optional<Score> opScore = scoreService.updateScore(score);
+        Optional<Score> opScore = examService.updateScore(score);
 
         if (opScore.isEmpty() || memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -114,7 +115,7 @@ public class ScoreRestController {
         if (scoreId == null || memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
-            scoreService.deleteScore(memId, scoreId);
+            examService.deleteScore(memId, scoreId);
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }

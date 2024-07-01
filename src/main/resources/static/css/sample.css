@@ -1,7 +1,10 @@
 @import "../css/globalstyle.css";
+@import "../css/consult/sidebarConsultantList.css";
+@import "../css/consult/sidebarReservationList.css";
 
 /* 페이지에 적용할 스타일 작성 */
 
 .sample{
     background-color: var(--blue);
+    color: var(--underline)
 }

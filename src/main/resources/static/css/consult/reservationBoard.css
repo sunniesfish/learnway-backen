@@ -1,3 +1,5 @@
+@import "../globalstyle.css";
+
 body {
     display: flex;
     min-height: 100vh;

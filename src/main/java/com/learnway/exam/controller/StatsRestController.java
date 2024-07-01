@@ -1,5 +1,6 @@
 package com.learnway.exam.controller;
 
+import com.learnway.exam.service.ExamService;
 import com.learnway.exam.service.ScoreService;
 import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api/stats")
 public class StatsRestController {
 
-    private final ScoreService scoreService;
+    private final ExamService examService;
 
     //과목별 성적
     @GetMapping("/subject/{subjectCode}")
@@ -33,7 +34,7 @@ public class StatsRestController {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         } else {
             List list = new ArrayList<>();
-            list = scoreService.getScoreListByExamType(memId, subjectCode);
+            list = examService.getScoreListByExamType(memId, subjectCode);
             return new ResponseEntity(list, HttpStatus.OK);
         }
     }
@@ -46,7 +47,7 @@ public class StatsRestController {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         } else {
             List list = new ArrayList<>();
-            list = scoreService.getScoreListByMemId(memId);
+            list = examService.getScoreListByMemId(memId);
             return new ResponseEntity<>(list,HttpStatus.OK);
         }
     }
@@ -62,7 +63,7 @@ public class StatsRestController {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         } else {
             List list = new ArrayList<>();
-            list = scoreService.getScoreListByExamType(memId, examType);
+            list = examService.getScoreListByExamType(memId, examType);
             return new ResponseEntity(list,HttpStatus.OK);
         }
     }
