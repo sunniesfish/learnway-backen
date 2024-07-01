@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LearnWay</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LearnWay</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
+        <link rel="stylesheet" href="/css/exam/exam.css" type="text/css"/>
+    </head>
+    <body>
+    <!-- SideBar 불러오는부분 -->
+    <div th:replace="sidebar :: sidebar"></div>
+
+    <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
+    <div class="main__content">
+        <!-- 이곳에 작업합시다  -->
+        <div class="main__content__title">
+            성적 입력
+        </div>
+        <div class="exam__container">
+            <div class="exam__item" th:each="item : ${examList.content}">
+                <div class="exam__item__name" th:text="${item.examName}"></div>
+                <div class="exam__item__date" th:text="${item.examDate}"></div>
+                <div class="exam__item__type" th:text="${item.examType}"></div>
+            </div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+            <span th:if="${examList.hasPrevious()}">
+                <a th:href="@{/items(page=${examList.previousPageable().pageNumber})}" class="page-link">Previous</a>
+            </span>
+            <span th:each="i : ${#numbers.sequence(0, examList.totalPages - 1)}">
+                <a th:href="@{/items(page=${i})}" th:class="${examList.number == i} ? 'active' : ''" class="page-link" th:text="${i + 1}"></a>
+            </span>
+            <span th:if="${examList.hasNext()}">
+                <a th:href="@{/items(page=${examList.nextPageable().pageNumber})}" class="page-link">Next</a>
+            </span>
+        </div>
+    </div>
     
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
-</head>
-<body>
-<!-- SideBar 불러오는부분 -->
-<div th:replace="sidebar :: sidebar"></div>
 
-<!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
-<div id="main-content">
-    <!-- 이곳에 작업합시다  -->
-
-</div>
-
-
+</body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script><!-- 툴팁(tooltips)과 팝오버(popovers) 같은 UI 요소를 쉽게 관리 -->
 <script src="/js/consult/consultationReservation.js"></script><!-- 상담예약 javascript -->
 <script src="/js/consult/reservationList.js"></script><!-- 예약리스트 javascript -->
-</body>
 </html>

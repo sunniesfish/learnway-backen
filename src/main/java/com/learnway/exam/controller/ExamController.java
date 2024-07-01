@@ -70,10 +70,11 @@ public class ExamController {
             memId = member.getId();
         }
         if(memId != null){
+            System.out.println("getting exam list : "+memId);
             pageNo = pageNo == null ? pageNo = 1 : pageNo;
             model.addAttribute("examList", examService.readExam(memId,pageNo,10));
         }
-        return "/template/exam";
+        return "exam/exam";
     }
 
     /*
@@ -150,7 +151,8 @@ public class ExamController {
             dto = examService.getExamDetail(examId, memId);
         }
         if(dto != null) {
-            return "redirect:/exam/detail";
+            model.addAttribute("exam", dto);
+            return "template/exam/exam-detail";
         } else {
             return "redirect:/exam/list/1";
         }

@@ -1,12 +1,6 @@
 /* 전체 테마*/
 :root {
     --yellow: #fae100;
-    --purple: #BA91FD;
-    --green: #30FD4E;
-    --blue: rgb(94, 255, 233);
-    --horizontal-space: 25px;
-    --grayColor:rgba(0, 0, 0, 0.5);
-    --underline: #ccc;
 }
 
 
@@ -17,8 +11,6 @@
   flex-direction: column; /* 자식 요소를 세로로 정렬 */
   justify-content: flex-start; /* 상단 정렬 */
   align-items: center; /* 수평 중앙 정렬 */
-  margin-right: 13%;
-  margin-top: 1%;
 }
 
 .main__content__title {
@@ -27,8 +19,8 @@
   text-align: center;
   font-size: 2em; /* 제목 글꼴 크기 */
   margin-bottom: 40px; /* 제목과 내용 사이의 간격 */
-  margin-left: 210px;
   border-bottom: 1px solid #ccc; /* 밑줄 스타일 */
+  padding-top: 10px;
   padding-bottom: 20px; /* 밑줄 아래 여백 */
 }
 
