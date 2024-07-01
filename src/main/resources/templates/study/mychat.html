@@ -93,10 +93,15 @@ $(document).ready(function () {
 	    console.log("-----1-----");
 
         stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+        	
 		    console.log("-----2-----");
             var content = JSON.parse(chat.body);
             var str = '';
-
+            str = "<div class='message enter'>";
+            str += "<div class='bubble'>";
+            str += "<b>" + content.message+ "</b><br/>";
+            str += "</div></div>";
+            
             if (content.type === 'ENTER') {
                 str = "<div class='message enter'>";
                 str += "<div class='bubble'>";
