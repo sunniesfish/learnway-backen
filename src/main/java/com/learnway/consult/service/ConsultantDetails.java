@@ -1,13 +1,15 @@
 package com.learnway.consult.service;
 
-import com.learnway.consult.domain.Consultant;
-import lombok.Getter;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
+import com.learnway.consult.domain.Consultant;
+
+import lombok.Getter;
 
 // Counselor 멀티 로그인 테스트 파일
 @Getter
@@ -59,4 +61,6 @@ public class ConsultantDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    
+    
 }
