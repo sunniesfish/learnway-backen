@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,15 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learnway.consult.domain.Consultant;
 import com.learnway.consult.domain.ConsultantRepository;
+import com.learnway.consult.domain.Memo;
 import com.learnway.consult.domain.ReservationEntity;
+import com.learnway.consult.dto.MemoRequest;
 import com.learnway.consult.dto.ReservationDTO;
 import com.learnway.consult.dto.ReservationRequest;
 import com.learnway.consult.dto.UserInfoDTO;
+import com.learnway.consult.service.ConsultantDetails;
+import com.learnway.consult.service.ConsultantService;
 import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
 import com.learnway.member.service.CustomUserDetails;
-
-
 
 
 
@@ -48,6 +51,9 @@ public class ReservationController {
 	
     @Autowired
     private ConsultantRepository consultantRepository;
+    
+    @Autowired
+    private ConsultantService consultantService;
 	
     // 상담사페이지 예약리스트
     @GetMapping("/reservationsList")
@@ -192,5 +198,82 @@ public class ReservationController {
 
         return ResponseEntity.ok(savedReservation);
     }
+    //상담사예약페이지에서 상담신청자 정보 조회
+    @GetMapping("/userinfo")
+    public UserInfoDTO userinfo(Authentication authentication) {
+    	System.out.println("유저조회 들어옴");
+        Member member = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+        }
+    	return reservationService.getUserInfo(member.getId());
+    }
+   
+    //상담사페이지 사이드바 상담사정보 가져오기
+    @GetMapping("/consultantInfo")
+    public Optional<Consultant> consultantInfo(Authentication authentication) {
+    	System.out.println("상담사조회 들어옴");
+    	Consultant consultant = null;
+    	if (authentication != null && authentication.isAuthenticated()) {
+    		ConsultantDetails userDetails = (ConsultantDetails) authentication.getPrincipal();
+    		consultant = userDetails.getConsultant();
+    	}
+    	System.out.println("상담사정보조회"+consultant.getId());
+    	return reservationService.getConsultants(consultant.getId());
+    }
+    
+    //메모 저장 요청
+    @PostMapping("/memos")
+    public ResponseEntity<String> saveMemo(Authentication authentication, @RequestBody MemoRequest memoRequest) {
+    	Consultant consultant = null;
+    	if (authentication != null && authentication.isAuthenticated()) {
+    		ConsultantDetails userDetails = (ConsultantDetails) authentication.getPrincipal();
+    		consultant = userDetails.getConsultant();
+    	}
+    	System.out.println("memoRequest.getMemoContents() : "+memoRequest.getMemoContents());
+        Memo memo = consultantService.saveMemo(consultant.getId(), memoRequest.getMemoTitle(), memoRequest.getMemoContents());
+        return ResponseEntity.status(HttpStatus.CREATED).body("메모저장 성공: " + memo.getMemoId());
+    }
+    
+    //메모리스트 조회요청
+    @GetMapping("/memos")
+    public List<Memo> getMemo(Authentication authentication) {
+    	System.out.println("메모리스트조회 들어옴");
+    	Consultant consultant = null;
+    	if (authentication != null && authentication.isAuthenticated()) {
+    		ConsultantDetails userDetails = (ConsultantDetails) authentication.getPrincipal();
+    		consultant = userDetails.getConsultant();
+    	}
+    	
+        return consultantService.getMemoByConsultantId(consultant.getId());
+    }
+    
+    //메모 디테일창 및 수정폼 요청
+    @GetMapping("/memos/{memoId}")
+    public List<Memo> getMemoDetail(@PathVariable("memoId") Long memoId) {
+    	System.out.println("메모디테일 들어옴");
+    	//List<Memo> list = consultantService.getMemoDetail(memoId);
+    	return consultantService.getMemoDetail(memoId);
+    }
+    
+    //메모 수정 요청
+    @PutMapping("/memos/{memoId}")
+    public ResponseEntity<String> MemoEdit(Authentication authentication,@PathVariable("memoId") Long memoId,@RequestBody MemoRequest memoRequest) {
+    	System.out.println("메모수정 들어옴");
+    	Consultant consultant = null;
+    	if (authentication != null && authentication.isAuthenticated()) {
+    		ConsultantDetails userDetails = (ConsultantDetails) authentication.getPrincipal();
+    		consultant = userDetails.getConsultant();
+    	}
+    	Memo memo = consultantService.updateMemo(memoId,consultant.getId() ,memoRequest.getMemoTitle(), memoRequest.getMemoContents());
+    	return ResponseEntity.status(HttpStatus.CREATED).body("메모업데이트 성공: " + memo.getMemoId());
+    }
+    
+    //메모 삭제 요청
+    @DeleteMapping("/memos/{memoId}")
+    public void MemoDelete(@PathVariable("memoId") Long memoId ) {
+    	System.out.println("메모삭제 들어옴");
+    	consultantService.deleteBymemoId(memoId);
+    }
 }
-

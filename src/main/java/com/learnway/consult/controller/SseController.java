@@ -17,8 +17,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ConsultantService;
 
-import jakarta.servlet.http.HttpSession;
-
 @RestController
 @RequestMapping("/sse")
 public class SseController {

@@ -17,8 +17,6 @@ import com.learnway.consult.dto.UserInfoDTO;
 import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
 
-
-
 @Service
 public class ReservationService {
 	
@@ -102,7 +100,7 @@ public class ReservationService {
         }
     }
 
-    //예약페이지 consultant 정보 가져오기
+    //예약페이지 와 상담사이드바  consultant 정보 가져오기
 	public Optional<Consultant> getConsultants(Long consultantId) {
 		return consultantRepository.findById(consultantId);
 	}
