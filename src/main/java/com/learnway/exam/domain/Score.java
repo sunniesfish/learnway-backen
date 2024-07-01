@@ -21,8 +21,9 @@ public class Score {
     @Column(name = "exam_id", nullable = false)
     private Long examId;
 
-    @Column(name = "subject_code", nullable = false)
-    private String subjectCode;
+    @ManyToOne
+    @JoinColumn(name = "subject_code")
+    private Subject subject
 
     @Column(name = "score_ex_score", nullable = false, columnDefinition = "TINYINT DEFAULT 100")
     private int scoreExScore;
