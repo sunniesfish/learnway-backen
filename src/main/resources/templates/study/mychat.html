@@ -67,73 +67,76 @@
         return formattedTime;
     }
     
-$(document).ready(function () {
-    var roomId = $("#roomId").text();
-    var name = $("#name").text();
-//    var datetime = getFormattedTime();
-//    var datetime =Date().now();
-    
-    var now = new Date();
-    var year = now.getFullYear();
-    var month = ('0' + (now.getMonth() + 1)); // 월은 0부터 시작하므로 +1을 해준다. 두 자리로 표시하기 위해 slice를 사용
-    var day = ('0' + now.getDate()).slice(-2); // 일자도 두 자리로 표시하기 위해 slice를 사용
+    $(document).ready(function () {
+        var roomId = $("#roomId").text();
+        var name = $("#name").text();
 
-    var hours = ('0' + now.getHours()).slice(-2); // 시간
-    var minutes = ('0' + now.getMinutes()).slice(-2); // 분
-    var seconds = ('0' + now.getSeconds()).slice(-2); // 초
- 
-    var datetime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-    
-    
-    var sock = new SockJS("/stomp/chat");
-    var stomp = Stomp.over(sock);
+        function getCurrentDateTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2); // 월은 0부터 시작하므로 +1을 해준다. 두 자리로 표시하기 위해 slice를 사용
+            var day = ('0' + now.getDate()).slice(-2); // 일자도 두 자리로 표시하기 위해 slice를 사용
+            var hours = ('0' + now.getHours()).slice(-2); // 시간
+            var minutes = ('0' + now.getMinutes()).slice(-2); // 분
+            var seconds = ('0' + now.getSeconds()).slice(-2); // 초
 
-    stomp.connect({}, function (frame) {
-        console.log("Connected: 연결 " + frame);
-	    console.log("-----1-----");
+            return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        }
 
-        stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
-        	
-		    console.log("-----2-----");
-            var content = JSON.parse(chat.body);
-            var str = '';
-            str = "<div class='message enter'>";
-            str += "<div class='bubble'>";
-            str += "<b>" + content.message+ "</b><br/>";
-            str += "</div></div>";
-            
-            if (content.type === 'ENTER') {
-                str = "<div class='message enter'>";
-                str += "<div class='bubble'>";
-                str += "<b>" + content.message+ "</b><br/>";
-                str += "</div></div>";
-            } else if(content.type==='CHAT') {
-            	if(content.name===name){
-            		 str = "<div class='message self'>";
-                     str += "<div class='bubble'>";
-                     str += "<b>" + content.name + " : " + content.message+ "</b><br/>";
-                     str += datetime;
-                     str += "</div></div>";
-            	} else{
-                str = "<div class='message other'>";
-                str += "<div class='bubble'>";
-                str += "<b>" + content.name + " : " + content.message+ "</b><br/>";
-                str += datetime;
-                str += "</div></div>";
-            	}
-            }
-            $("#msgArea").append(str);
+        var sock = new SockJS("/stomp/chat");
+        var stomp = Stomp.over(sock);
+
+        stomp.connect({}, function (frame) {
+            console.log("Connected: 연결 " + frame);
+
+            stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+                var content = JSON.parse(chat.body);
+                var str = '';
+
+                if (content.type === 'ENTER') {
+                    str = "<div class='message enter'>";
+                    str += "<div class='bubble'>";
+                    str += "<b>" + content.message + "</b><br/>";
+                    str += "</div></div>";
+                } else if (content.type === 'CHAT') {
+                    if (content.name === name) {
+                        str = "<div class='message self'>";
+                        str += "<div class='bubble'>";
+                        str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                        str += content.date;
+                        str += "</div></div>";
+                    } else {
+                        str = "<div class='message other'>";
+                        str += "<div class='bubble'>";
+                        str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                        str += content.date;
+                        str += "</div></div>";
+                    }
+                }
+                $("#msgArea").append(str);
+            });
+
+            stomp.send('/pub/chat/enter', {}, JSON.stringify({ type: 'ENTER', roomId: roomId, name: name }));
         });
 
-        stomp.send('/pub/chat/enter', {}, JSON.stringify({type:'ENTER',roomId: roomId, name: name}));
-    });
+        function sendMessage() {
+            var msg = $("#msg").val();
+            var datetime = getCurrentDateTime();
+            stomp.send('/pub/chat/message', {}, JSON.stringify({ type: 'CHAT', roomId: roomId, message: msg, name: name, date: datetime }));
+            $("#msg").val('');
+        }
 
-    $("#button-send").on("click", function () {
-        var msg = $("#msg").val();
-        stomp.send('/pub/chat/message', {}, JSON.stringify({type:'CHAT',roomId: roomId, message: msg,name: name,date:datetime}));
-        $("#msg").val('');
+        $("#button-send").on("click", function () {
+            sendMessage();
+        });
+
+        $("#msg").on("keypress", function (e) {
+            if (e.which == 13) { // Enter key pressed
+                sendMessage();
+                return false; // Prevent the default action (form submission)
+            }
+        });
     });
-});
 </script>
 </head>
 <body>

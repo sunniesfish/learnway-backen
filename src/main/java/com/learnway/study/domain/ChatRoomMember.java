@@ -1,7 +1,5 @@
 package com.learnway.study.domain;
 
-import java.time.LocalDateTime;
-
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -22,30 +20,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="ChatMessage")
-public class ChatMessage {
- 
+@Table(name="ChatRoomMember")
+public class ChatRoomMember {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="chat_msg_id",nullable = false)
-	private Integer msgid;
-	
-	@ManyToOne
-	@JoinColumn(name = "study_chatroomid", nullable = false)
-    private ChatRoom chatroom;
+	@Column(name="chatmem_id",nullable = false)
+	private Integer chatMemId;
 	
 	@ManyToOne
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	
-	
-	@Column(name="chat_msg",nullable = false)
-	private String msg;
-	
-	@Column(name="chat_date",nullable = false)
-	private LocalDateTime datetime;
-	
-	@Column(name="unread_count",nullable = true)
-	private LocalDateTime unread;
+	@ManyToOne
+	@JoinColumn(name = "study_chatroomid", nullable = false)
+    private ChatRoom chatRoom;
 }

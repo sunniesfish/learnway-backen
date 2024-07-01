@@ -63,12 +63,12 @@
 </div>
 
 
-<form action="/joinRoom" method="post">
+<!-- <form action="/joinRoom" method="post">
 방이름 : <input type="text" id="roomname" name="roomname">
 방아이디 : <input type="text" id="roomId" name="roomId">
 게시글아이디 : <input type="text" id="postId" name="postId">
 <input type="submit">
-</form>
+</form> -->
 </body>
 
 
@@ -105,7 +105,7 @@
 	                 $.ajax({
 	                    type: "POST",
 	                    url: "/joinRoom",
-	                    data: JSON.stringify({ roomId: roomId }),
+	                    data: JSON.stringify({ roomId: roomId,postId: postId}),
 	                    contentType: "application/json",
 	                    success: function(response) {
 	                        console.log("2차성공");

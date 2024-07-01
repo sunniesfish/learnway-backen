@@ -12,6 +12,7 @@ import com.learnway.study.domain.ChatMessage;
 import com.learnway.study.domain.ChatRoom;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyChatRepository;
+import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.ChatRoomDto;
 
 @Service
@@ -21,6 +22,9 @@ public class StudyChatService {
 	private StudyChatRepository studyChatRepository;
 	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
+	private StudyRepository studyRepository;
+	
 	
 	//postId로 ChatRoomId 조회
 	public List<ChatRoom> chatRoomId(int postId) {
@@ -29,21 +33,28 @@ public class StudyChatService {
 	}
 	
 	
-	//채팅방 참여 메서드
-//	public void joinChatRoom(Principal principal) {
-//		
-//		Member member = memberRepository.findByMemberId(principal.getName())
-//	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-//		
-//		ChatRoom room = ChatRoom.builder().roomname(dto.getRoomname())
-//				.study(study).member(member).build();
-//	}
+//	채팅방 참여 메서드
+	public ChatRoom joinChatRoom(ChatRoomDto dto,Principal principal) {
+		
+		Member member = memberRepository.findByMemberId(principal.getName())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		
+		Study study = studyRepository.findById(dto.getPostId())
+				.orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + dto.getPostId()));
+		String roomname = studyChatRepository.findRoomNameByRoomId(dto.getRoomId());
+		
+		ChatRoom room = ChatRoom.builder().
+				roomname(roomname).chatroomid(dto.getRoomId())
+				.study(study).member(member).build();
+		return studyChatRepository.save(room);
+	}
 	
 	//채팅방 생성 메서드
 	public ChatRoom chatRoomCreate(ChatRoomDto dto,Study study,Principal principal) {
 		
 		Member member = memberRepository.findByMemberId(principal.getName())
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		
 		
 		ChatRoom room = ChatRoom.builder().roomname(dto.getRoomname())
 				.study(study).member(member).build();

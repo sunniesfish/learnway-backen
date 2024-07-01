@@ -43,24 +43,22 @@ public class StudyChatController {
 	}
 	
 	@RequestMapping(value="/joinRoom",method= {RequestMethod.GET,RequestMethod.POST})
-	public String addRoom(ChatRoomDto dto,
-			Model model) {
+	public String addRoom(@RequestBody ChatRoomDto dto,
+			Model model,Principal principal) {
+		System.out.println("진입");
+		System.out.println(dto.getRoomId()+"룸아이디");
+		System.out.println(dto.getPostId()+"게시글아이디");
+	
+		studyChatService.joinChatRoom(dto, principal);
+		//채팅방 입장
+		System.out.println("save");
 		
-		//채팅방 이름저장 ->수정필요 (FK로 게시글id,맴버id 필요함)
-//		studyChatService.chatRoomCreate(dto,0);
-		
-//		System.out.println("채팅방입장");
-//		System.out.println(dto.getRoomId() + " : 룸아이디");
-//		System.out.println(dto.getRoomname() + " : 룸이름");
-//		System.out.println(principal.getName() + " : 로그인 사용자");
-//		model.addAttribute("name",1); //채팅방-멤버테이블 가져올값
-//		model.addAttribute("id",1); //채팅방-멤버테이블 가져올값
-//		model.addAttribute("roomId",dto.getRoomId()); //수정해야됨
-//		model.addAttribute("roomname","테스트");
+		model.addAttribute("name",principal.getName()); //채팅방-멤버테이블 가져올값
+		model.addAttribute("roomId",dto.getRoomId()); //수정해야됨
+		model.addAttribute("roomname","테스트");
 		//채팅방 저장
-		
-		model.addAttribute("roomId",dto.getRoomId());
-		model.addAttribute("name",dto.getName());
+	
+
 		return "/study/mychat";
 	}
 	
