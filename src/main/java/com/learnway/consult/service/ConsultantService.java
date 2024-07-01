@@ -26,4 +26,5 @@ public class ConsultantService  implements UserDetailsService {
         return consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new IllegalArgumentException("상담사를 찾을 수 없습니다."));
     }
+
 }
