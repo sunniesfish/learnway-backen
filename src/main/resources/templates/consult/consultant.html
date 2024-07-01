@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상담사 마이페이지</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<style>
+    body {
+        padding: 20px;
+    }
+    .room-list {
+        margin-top: 20px;
+    }
+    .disabled-link {
+        pointer-events: none;
+        color: gray;
+    }
+    
+    .toast-container {
+        position: fixed; /* 고정 위치로 변경 */
+        background-color: bisque;
+        top: 20px; /* 원하는 위치로 조정 */
+        right: 20px; /* 원하는 위치로 조정 */
+        z-index: 1060; /* 토스트가 다른 요소들 위에 표시되도록 z-index 설정 */
+    }
+</style>
+</head>
+<body>
+    <!-- 모델로 담아온 상담사 pk값 히든으로 담아둠 java스크립트에서 사용할 예정-->
+    <input type="hidden" th:value="${counselor_id}" id="counselor_id">
+    <div class="container">
+        <h1>상담사 마이페이지</h1>
+        <h2>ReservationList</h2>
+        <table class="table table-striped room-list">
+            <thead>
+                <tr>
+                    <th>예약 ID</th>
+                    <th>예약자</th>
+                    <th>예약 시간</th>
+                    <th>상담자정보</th>
+                    <th>화상 상담</th>
+                </tr>
+            </thead>
+            <tbody id="reservationList">
+                <!-- 예약 리스트가 여기에 동적으로 추가됩니다. -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 유저 정보 모달 -->
+    <div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userInfoModalLabel">유저 정보</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 유저 정보가 여기에 표시됩니다. -->
+                    <div id="userInfoContent"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success" id="printButton">프린트</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
+        <div style="position: absolute; top: 0; right: 0;">
+            <div id="toastContainer" class="toast-container"></div>
+        </div>
+    </div>
+
+<script>
+	$(document).ready(function() {
+	    // 히든 input의 value 값을 변수에 저장
+	    var counselor_id = document.getElementById("counselor_id").value;
+	
+	    // SSE 연결
+	    var eventSource = new EventSource('/sse/subscribe/' + counselor_id);
+	    eventSource.addEventListener('notification', function(event) {
+	        console.log("알림 들어옴: ", event.data);
+	        showToast('새 알림', event.data);
+	    });
+	
+	    eventSource.onerror = function(event) {
+	        console.error('SSE 연결 오류', event);
+	    };
+	
+	    // 토스트 메시지 표시 함수
+	    function showToast(title, message) {
+	        var toastId = 'toast-' + new Date().getTime();
+	        var toastHtml =
+	            `<div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+	                <div class="toast-header">
+	                    <strong class="mr-auto">${title}</strong>
+	                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+	                        <span aria-hidden="true">&times;</span>
+	                    </button>
+	                </div>
+	                <div class="toast-body">
+	                    ${message}
+	                    <div class="row">
+    						<div class="col-md-12">
+	                    		<button class="btn btn-sm btn-outline-success mt-2 float-right confirm-btn">확인</button>
+						     </div>
+	            		</div>	                
+	                </div>
+	            </div>`;
+	
+	        $('#toastContainer').append(toastHtml);
+	        var $toast = $('#' + toastId);
+	        $toast.toast('show');
+	
+	        // 확인 버튼 클릭 시 처리
+	        $toast.find('.confirm-btn').click(function() {
+	            $toast.toast('hide'); // 토스트 메시지 숨기기
+	            location.reload(); // 페이지 새로고침
+	        });
+	    }
+	
+	            // 날짜 포맷팅 함수
+	            function formatDateTime(dateTimeString) {
+	                const date = new Date(dateTimeString);
+	                const year = date.getFullYear();
+	                const month = ('0' + (date.getMonth() + 1)).slice(-2);
+	                const day = ('0' + date.getDate()).slice(-2);
+	                let hours = date.getHours();
+	                const minutes = ('0' + date.getMinutes()).slice(-2);
+	
+	                // 오전/오후 구분과 12시간제 표시
+	                const period = hours < 12 ? '오전' : '오후';
+	                hours = hours % 12 || 12; // 0시일 경우 12시로 표시
+	                const formattedTime = `${year}/${month}/${day} ${period} ${hours}:${minutes}`;
+	
+	                return formattedTime;
+	            }
+	
+	            // 예약 데이터를 가져와서 화면에 표시하는 함수
+	            function fetchReservations() {
+	                $.ajax({
+	                    url: '/api/reservations?consultant=' + counselor_id,
+	                    type: 'GET',
+	                    dataType: 'json',
+	                    success: function(data) {
+	                        var reservationList = $('#reservationList');
+	                        reservationList.empty();
+	                        
+	                    // 데이터를 시작 날짜 기준으로 정렬
+			            data.sort(function(a, b) {
+			                return new Date(a.bookingStart) - new Date(b.bookingStart);
+			            });
+	
+	                        const currentTime = new Date(); // 현재 시간
+	
+	                        data.forEach(function(reservation) {
+	                            // 예약 시간을 포맷팅
+	                            var bookingStartTime = new Date(reservation.bookingStart);
+	                            var bookingEndTime = new Date(reservation.bookingEnd);
+	                            var formattedStartTime = formatDateTime(reservation.bookingStart);
+	                            var formattedEndTime = formatDateTime(reservation.bookingEnd);
+	                            var formattedTime = `${formattedStartTime} ~ ${formattedEndTime}`;
+	                            var userName = reservation.member.memberName;
+	                            var roomId = counselor_id;
+	                            var userId = reservation.member.id;
+	                            console.log("userId : " + userId)
+	
+	                            // 현재 시간이 예약 시간 내에 있는지 확인
+	                            var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
+	                            var linkClass = isWithinBookingTime ? '' : 'disabled-link';
+	                            //var linkClass = isWithinBookingTime ? 'disabled-link' : '';
+	                            var linkText = isWithinBookingTime ? '입장하기' : '입장불가';
+	
+	                            var row = `
+	                                <tr>
+	                                    <td>${reservation.member.memberId}</td>
+	                                    <td>${userName}</td>
+	                                    <td>${formattedTime}</td>
+	                                    <td><a href="#" class="user-info-link" data-user-id="${userId}">확인</a></td>
+	                                    <td><a href="#" class="${linkClass} enter-room-link" data-room-id="${roomId}">${linkText}</a></td>
+	                                </tr>
+	                            `;
+	                            reservationList.append(row);
+	                        });
+	                    },
+	                    error: function(xhr, status, error) {
+	                        console.error('예약 데이터를 가져오는 데 실패했습니다. 오류: ', error);
+	                    }
+	                });
+	            }
+	
+	            // 입장하기 링크 클릭 시의 이벤트 핸들러
+	            $(document).on('click', 'a.enter-room-link', function(e) {
+	                e.preventDefault();
+	                var roomId = $(this).data('room-id');
+	                var myKey = Math.random().toString(36).substring(2, 11);
+	                // WebSocket 연결 설정
+	                var socket = new SockJS('/signaling/video');
+	                var stompClient = Stomp.over(socket);
+	                stompClient.debug = null;
+	
+	                // 서버와의 WebSocket 연결
+	                stompClient.connect({}, function () {
+	                    console.log('WebSocket 연결 성공');
+	
+	                    // 서버로 roomId 전송
+	                    stompClient.send(`/app/join/room/${roomId}/${myKey}`, {}, JSON.stringify({}));
+	
+	                    // 서버로부터의 응답 처리
+	                    stompClient.subscribe(`/topic/join/room/${roomId}/${myKey}`, function (response) {
+	                        var message = response.body.trim();
+	                        console.log('서버 응답:', message);
+	
+	                        // "successfully"와 "full" 문자열에 따른 처리
+	                        if (message === 'successfully') {
+	                            console.log("방 들어가기 요청 성공");
+	                            window.open(`http://localhost:8080/video?roomId=${roomId}`, '_blank');
+	                        } else if (message === 'full') {
+	                            console.log("방 들어가기 요청 실패");
+	                            alert('이미 방이 가득 찼습니다.');
+	                        } else {
+	                            console.log("서버 응답 형식 오류:", message);
+	                            // 필요한 추가 처리를 여기에 추가
+	                        }
+	
+	                        // WebSocket 연결 종료
+	                        stompClient.disconnect();
+	                    });
+	                }, function (error) {
+	                    console.error('WebSocket 연결 실패:', error);
+	                });
+	            });
+	
+	            // 확인하기 링크 클릭 시의 이벤트 핸들러
+	            $(document).on('click', 'a.user-info-link', function(e) {
+	                e.preventDefault();
+	                var userId = $(this).data('user-id');
+	
+	                // 유저 정보 가져오기
+	                $.ajax({
+	                    url: `/api/users/${userId}`,
+	                    type: 'GET',
+	                    dataType: 'json',
+	                    success: function(user) {
+	                        var userInfoContent = `
+	                            <p>이름: ${user.userName}</p>
+	                            <p>나이: ${user.userAge}</p>
+	                            <p>성별: ${user.sex}</p>
+	                            <p>성적통계: ${user.stats}</p>
+	                            <p>목표대학: ${user.targetUniversity}</p>
+	                            <p>목표학과: ${user.targetSubject}</p>
+	                            <p>이메일: ${user.userEmail}</p>
+	                        `;
+	                        $('#userInfoContent').html(userInfoContent);
+	
+	                        // 모달 띄우기
+	                        $('#userInfoModal').modal('show');
+	                    },
+	                    error: function(xhr, status, error) {
+	                        console.error('유저 정보를 가져오는 데 실패했습니다. 오류: ', error);
+	                    }
+	                });
+	            });
+	
+	            // 초기 예약 데이터 가져오기 함수 호출
+	            fetchReservations();
+	
+	            // 프린트 버튼 클릭 시의 이벤트 핸들러
+	            $(document).on('click', '#printButton', function() {
+	                var printContents = $('#userInfoContent').html();
+	
+	                // 프린트 실행 전에 모달을 닫습니다.
+	                $('#userInfoModal').modal('hide');
+	                var originalContents = $('body').html();
+	                $('body').html(printContents);
+	                window.print();
+	                $('body').html(originalContents);
+	                // 프린트 후에 예약 데이터 다시 로드 및 모달 열기
+	                fetchReservations();
+	                // 프린트 후 페이지 새로고침
+    				window.location.reload();
+	            });
+	        });
+</script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
