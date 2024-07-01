@@ -87,10 +87,10 @@ public class SecurityConfig {
         http
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/", "/member/join").permitAll() // 비회원 포함 모든 권한 접근 가능
+                                .requestMatchers("/", "/member/join","/**","/api/**").permitAll() // 비회원 포함 모든 권한 접근 가능
                                 .requestMatchers("/admin/**").hasRole("ADMIN")      // Admin 권한만 접근 가능
                                 .requestMatchers("/counselor/**").denyAll()         // 일반 사용자 counselor 접근 제한
-                                .requestMatchers("/haha/**","/loginOk").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/haha/**","/loginOk","/api/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().authenticated()                         // 그 외 조건은 인증 필요
                 )
 
@@ -116,7 +116,7 @@ public class SecurityConfig {
                                 // migrateSession(): 사용자가 로그인할 때 새로운 세션을 생성, 기존 세션의 속성 새 세션으로 복사
                                 // 세션 고정 공격 : 악의적으로 다른 사용자의 세션 ID를 탈취하여 해당 세션을 사용하는 공격
                                 .maximumSessions(1)                 // 최대 동시 세션 수
-                );
+                ).csrf().disable();
 
         return http.build();
     }
