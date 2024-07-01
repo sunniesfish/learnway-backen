@@ -22,7 +22,7 @@ public class StatsRestController {
     private final ScoreService scoreService;
 
     //과목별 성적
-    @GetMapping("/{subjectCode}")
+    @GetMapping("/subject/{subjectCode}")
     public ResponseEntity getScoreBySubject(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable("subjectCode") String subjectCode
@@ -35,6 +35,35 @@ public class StatsRestController {
             List list = new ArrayList<>();
             list = scoreService.getScoreListByExamType(memId, subjectCode);
             return new ResponseEntity(list, HttpStatus.OK);
+        }
+    }
+
+    //전체 성적 추이
+    @GetMapping("/all")
+    public ResponseEntity getScoreAll(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long memId = userDetails.getMemberId();
+        if (memId == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            List list = new ArrayList<>();
+            list = scoreService.getScoreListByMemId(memId);
+            return new ResponseEntity<>(list,HttpStatus.OK);
+        }
+    }
+
+    //시험 유형별 성적 추이
+    @GetMapping("/type/{examType}")
+    public ResponseEntity getScoreByExamType(
+            @PathVariable String examType,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        Long memId = userDetails.getMemberId();
+        if (memId == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            List list = new ArrayList<>();
+            list = scoreService.getScoreListByExamType(memId, examType);
+            return new ResponseEntity(list,HttpStatus.OK);
         }
     }
 }

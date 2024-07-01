@@ -19,10 +19,22 @@ public class ScoreServiceImpl implements ScoreService{
 
 
     /*
-    * 시험id로 과목별 점수 리스트 가져옴
+    * 시험id로 과목별 점수 페이지 가져옴
     * */
     public Page<Score> getScoreListByExam(Long examId, Long memId, Pageable pageable) {
         return scoreRepository.findByMemIdAndExamId(memId, examId, pageable);
+    }
+
+    //memId로 점수 페이지 가져오기
+    @Override
+    public Page<Score> getScoresByMemId(Long memId, Pageable pageable) {
+        return scoreRepository.findByMemId(memId, pageable);
+    }
+
+    //memId로 점수 리스트 가져오기
+    @Override
+    public List<Score> getScoreListByMemId(Long memId) {
+        return scoreRepository.findAllByMemId(memId);
     }
 
     /*
@@ -81,7 +93,7 @@ public class ScoreServiceImpl implements ScoreService{
 
     @Override
     public List<Score> getScoreListByExamType(Long memId, String examType) {
-        return List.of();
+        return scoreRepository.findAllByMemIdAndExamType(memId, examType);
     }
 
     @Override
