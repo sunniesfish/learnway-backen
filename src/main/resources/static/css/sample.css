@@ -1,3 +1,7 @@
 @import "../css/globalstyle.css";
 
 /* 페이지에 적용할 스타일 작성 */
+
+.sample{
+    background-color: var(--blue);
+}
