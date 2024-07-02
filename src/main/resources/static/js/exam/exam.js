@@ -11,4 +11,3 @@ function handleRegBtnClick(event){
         examRegModal.classList.add("hidden")
     });
 }
-

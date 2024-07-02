@@ -73,9 +73,12 @@ public class ExamServiceImpl implements ExamService{
             if (opExam.isPresent()) {
                 Exam exam = opExam.get();
                 Page<Score> scores = getScoreListByExam(examId, memId, PageRequest.of(1,10));
+                dto.setExamId(exam.getExamId());
                 dto.setExamName(exam.getExamName());
                 dto.setExamType(exam.getExamType());
                 dto.setExamDate(exam.getExamDate());
+                dto.setExamRange(exam.getExamRange());
+                dto.setExamMemo(exam.getExamMemo());
                 dto.setScoreList(scores);
                 return dto;
             } else return null;

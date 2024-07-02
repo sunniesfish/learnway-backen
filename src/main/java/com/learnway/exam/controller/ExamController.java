@@ -82,6 +82,7 @@ public class ExamController {
     * */
     @PostMapping("/update")
     public String updateExam(
+            @RequestParam(name = "examId") Long examId,
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examType") String examType,
             @RequestParam(name = "examRange") String examRange,
@@ -102,6 +103,7 @@ public class ExamController {
             examService.updateExam(
                     new Exam().builder()
                             .memId(memId)
+                            .examId(examId)
                             .examName(examName)
                             .examType(examType)
                             .examRange(examRange)

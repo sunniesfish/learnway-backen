@@ -12,8 +12,11 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExamDetailDTO {
+    Long examId;
     String examName;
     String examType;
+    String examRange;
     Date examDate;
+    String examMemo;
     Page<Score> scoreList;
 }

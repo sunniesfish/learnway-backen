@@ -1,3 +1,17 @@
+const examDetailBtn = document.querySelector(".exam-detail__detail-btn");
+const examDetailModal = document.querySelector(".exam-detail__modal__info");
+const examModalOverlay = document.querySelector(".exam-detail__modal__detail-overlay");
+examDetailBtn.addEventListener("click",handleRegBtnClick);
+
+function handleRegBtnClick(event){
+    event.preventDefault();
+    examDetailModal.classList.remove("hidden")
+    examModalOverlay.addEventListener("click",()=>{
+        examDetailModal.classList.add("hidden")
+    });
+}
+
+
 const detailRoot = document.getElementById("exam-detail-root");
 const path = window.location.pathname;
 const parts = path.split('/');
