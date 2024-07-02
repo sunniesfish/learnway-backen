@@ -164,7 +164,7 @@ public class ScheduleRestController {
 		        List<Map<String, Object>> progressList = new ArrayList<>();
 		        for (Progress progress : progresses) {
 		            Map<String, Object> progressData = new HashMap<>();
-		            progressData.put("id", progress.getProgressId());
+		            progressData.put("progressId", progress.getProgressId());
 		            progressData.put("material", progress.getMaterialId());
 		            progressData.put("achieveRate", progress.getAchieveRate());
 		            progressData.put("progress", progress.getProgress());
@@ -181,7 +181,6 @@ public class ScheduleRestController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<String> addSchedule(@RequestBody ScheduleDto dto){
-		System.out.println("Received DTO: " + dto); // 로그 추가
 		try {
 		
         // 데이터 처리 로직 (DB 저장 등)
@@ -226,7 +225,8 @@ public class ScheduleRestController {
 	//일정 수정하기
 	@PatchMapping("/updateSchedule")
 	public ResponseEntity<Map<String, String>> updateSchedule(@RequestBody ScheduleDto dto){
-		
+
+		System.out.println("Received DTO: " + dto); // 로그 추가
 		try {
 	        Optional<Schedule> existingSchedule = scheduleService.getDetail(dto.getScheduleId());
 	        if (!existingSchedule.isPresent()) {

@@ -225,10 +225,13 @@ document.addEventListener('DOMContentLoaded', function() {
 		                // 첫 번째 진도 내역 입력 필드에 데이터 설정
 						if (response.progresses.length > 0) {
 						    var firstProgress = response.progresses[0];
-						    fillDropdown("#updateModal #progressEntries .progress-entry:first select[name='material[]']", scheduleOptions.materials, "학습종류");
-						    $("#updateModal #progressEntries .progress-entry:first select[name='material[]']").val(firstProgress.material.materialCode);
-						    $("#updateModal #progressEntries .progress-entry:first input[name='progress[]']").val(firstProgress.progress);
-						    $("#updateModal #progressEntries .progress-entry:first input[name='achieveRate[]']").val(firstProgress.achieveRate);
+						    var firstEntry = $("#updateModal #progressEntries .progress-entry").eq(0);
+						    fillDropdown(firstEntry.find("select[name='material[]']"), scheduleOptions.materials, "학습종류");
+						    firstEntry.find("select[name='material[]']").val(firstProgress.material.materialCode);
+						    firstEntry.find("input[name='progress[]']").val(firstProgress.progress);
+						    firstEntry.find("input[name='achieveRate[]']").val(firstProgress.achieveRate);
+    						firstEntry.find("input[name='progressId[]']").val(firstProgress.progressId); // progressId를 input 요소에 저장
+
 						}
 		
 		                // 나머지 진도 내역은 동적으로 추가
@@ -249,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						                <input type="text" class="form-control" id="achieveRate${i}" name="achieveRate[]" placeholder="0" value="${progress.achieveRate}">
 						            </div>
 						            <div class="col-auto">
+						                <input type="hidden" name="progressId[]" value="${progress.progressId}">
 						                <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
 						            </div>
 						        </div>
@@ -340,16 +344,35 @@ document.addEventListener('DOMContentLoaded', function() {
                    	        
                    	        
                    	        var progresses = [];
-					        $(".progress-entry").each(function() {
-					            var material = $(this).find("select[name='material[]']").val();
-					            var progress = $(this).find("input[name='progress[]']").val();
-					            var achieveRate = $(this).find("input[name='achieveRate[]']").val();
-					            progresses.push({
-					                materialId: material,
-					                progress: progress,
-					                achieveRate: achieveRate
-					            });
-					        });
+                   	        // 첫 번째 진도 내역 가져오기
+						    var firstEntry = $("#updateModal #progressEntries .progress-entry").eq(0);
+                   	        var firstProgressId = firstEntry.find("input[name='progressId[]']").val();
+						    var firstMaterialId = firstEntry.find("select[name='material[]']").val();
+						    var firstProgress = firstEntry.find("input[name='progress[]']").val();
+						    var firstAchieveRate = firstEntry.find("input[name='achieveRate[]']").val();
+						    
+						    progresses.push({
+								progressId: firstProgressId,
+						        materialId: firstMaterialId,
+						        progress: firstProgress,
+						        achieveRate: firstAchieveRate
+						    });
+						    
+						    // 나머지 진도 내역 가져오기
+						    $("#updateModal #progressEntries .progress-entry:not(:first)").each(function() {
+								var progressId = $(this).find("input[name='progressId[]']").val();
+						        var materialId = $(this).find("select[name='material[]']").val();
+						        var progress = $(this).find("input[name='progress[]']").val();
+						        var achieveRate = $(this).find("input[name='achieveRate[]']").val();
+						        progresses.push({
+									progressId: progressId,
+						            materialId: materialId,
+						            progress: progress,
+						            achieveRate: achieveRate
+						        });
+						    });
+					        
+					        console.log(progresses);
                     	
                     		// 유효성 검사
 					        if (startTime == null || startTime == "") {
@@ -563,14 +586,28 @@ document.addEventListener('DOMContentLoaded', function() {
 	                var subject = $("#subject").val(); //과목
 	                
 	                var progressList = [];
-				    $("#progressEntries .progress-entry").each(function() {
-				        var materialId = $(this).find("select[name='material[]']").val();
-				        var progress = $(this).find("input[name='progress[]']").val();
-				        progressList.push({
-				            materialId: materialId,
-				            progress: progress
-				        });
-				     });
+				    // 첫 번째 진도 내역 필드 처리
+					var firstMaterialId = $("#material0").val();
+					var firstProgress = $("#progress0").val();
+					if (firstMaterialId && firstProgress) {
+					    progressList.push({
+					        materialId: firstMaterialId,
+					        progress: firstProgress
+					    });
+					}
+					
+					// 동적으로 추가된 진도 내역 필드 처리
+					$("#progressEntries .progress-entry:not(:first)").each(function() {
+					    var materialId = $(this).find("select[name='material[]']").val();
+					    var progress = $(this).find("input[name='progress[]']").val();
+					    if (materialId && progress) {
+					        progressList.push({
+					            materialId: materialId,
+					            progress: progress
+					        });
+					    }
+					});
+				     console.log(progressList);
 
 	                //유효성 검사
 	                if (startTime == null || startTime == "") {
@@ -903,34 +940,36 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+//일정등록 입력창 닫힐 때 리셋하는 함수 
   $("#calendarModal").on("hidden.bs.modal", function() {
-  // 모든 입력 필드 리셋
-  $("#calendarModal input, #calendarModal select").val("");
-  
-  // 동적으로 추가된 행 제거
-  $("#progressEntries").empty();
-  $("#progressEntries").html(`
-    <div class="form-row align-items-center mb-2">
-      <div class="col-4">
-        <select class="form-control" id="material0" name="material[]"></select>
-      </div>
-      <div class="col-7">
-        <input type="text" class="form-control" id="progress0" name="progress[]" placeholder="진도 내역">
-      </div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
-      </div>
-    </div>
-  `);
-  
-  // 드롭다운 초기화
-  initializeDropdowns();
-  
-  // progressCount 초기화
-  progressCount = 1;
-  
-  // 추가 버튼 표시
-  document.querySelector('.add-progress').style.display = 'inline-block';
+	  // 모든 입력 필드 리셋
+	  $("#calendarModal input, #calendarModal select").val("");
+	  
+	  // 동적으로 추가된 행 제거
+	  $("#progressEntries").empty();
+	  
+	  $("#progressEntries").html(`
+	    <div class="form-row align-items-center mb-2">
+	      <div class="col-4">
+	        <select class="form-control" id="material0" name="material[]"></select>
+	      </div>
+	      <div class="col-7">
+	        <input type="text" class="form-control" id="progress0" name="progress[]" placeholder="진도 내역">
+	      </div>
+	      <div class="col-auto">
+	        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
+	      </div>
+	    </div>
+	  `);
+	  
+	  // 드롭다운 초기화
+	  initializeDropdowns();
+	  
+	  // progressCount 초기화
+	  progressCount = 1;
+	  
+	  // 추가 버튼 표시
+	  document.querySelector('.add-progress').style.display = 'inline-block';
 });
 
   $("#updateModal").on("hidden.bs.modal", function() {
@@ -993,6 +1032,7 @@ function initializeDropdowns() {
 		    fillDropdown('#studyway', scheduleOptions.studyways);
 		    fillDropdown('#subject', scheduleOptions.subjects);
 		    fillDropdown('#material', scheduleOptions.materials, "학습종류");
+		    fillDropdown('#material0', scheduleOptions.materials, "학습종류");
 		    
 		}
 		
