@@ -47,5 +47,5 @@ public class ChatMessage {
 	private LocalDateTime datetime;
 	
 	@Column(name="unread_count",nullable = true)
-	private LocalDateTime unread;
+	private Integer unread;
 }

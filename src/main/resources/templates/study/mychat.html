@@ -142,6 +142,51 @@
 <body>
 방번호 <span id="roomId" th:text="${roomId}"></span>
 참여자 <span id="name" th:text="${name}"></span>
+<div id="participants">
+    <h3>참여자</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>이름</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="host : ${chatListHost}">
+                <td th:text="|방장 : ${host.member.memberName}|"></td>
+            </tr>
+            <tr th:each="guest : ${chatListGuest}">
+                <td th:text="|참여자 : ${guest.member.memberName}|"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${chatListHost!=null}">
+    <p>채팅방장 값 넘어옴</p>
+</div>
+<div th:if="${chatListGuest!=null}">
+    <p>채팅멤버값 넘어옴</p>
+</div>
+
+<div id="chatMessages">
+        <h2>이전 채팅 내역</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>작성자</th>
+                    <th>메시지</th>
+                    <th>작성 시간</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="chatMessage : ${chatMessageList}">
+                 <td th:text="${chatMessage.member.memberName}"></td>
+                    <td th:text="${chatMessage.msg}"></td> 
+                    <td th:text="${#temporals.format(chatMessage.datetime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
 <div id="msgArea"></div>
 <input type="text" id="msg" placeholder="메시지 입력">
 <button id="button-send">전송</button>

@@ -1,5 +1,7 @@
 package com.learnway.study.domain;
 
+import java.util.Optional;
+
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -20,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="ChatRoomMember")
+@Table(name="Chatroommember")
 public class ChatRoomMember {
 
 	@Id
