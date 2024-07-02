@@ -123,6 +123,8 @@ public class ScheduleRestController {
 	        event.put("title", schedule.getStudywayId().getName());
 	        event.put("subject", schedule.getSubjectId().getName());
 	        event.put("studyway", schedule.getStudywayId().getName());
+	        event.put("studywayId", schedule.getStudywayId().getStudywayCode());
+	        
 
 	        List<Map<String, Object>> progressList = new ArrayList<>();
 	        List<Progress> progresses = schedule.getProgresses();
@@ -160,6 +162,7 @@ public class ScheduleRestController {
 		        detailList.put("id", schedule.getScheduleId());
 		        detailList.put("studyway", schedule.getStudywayId());
 		        detailList.put("subject", schedule.getSubjectId());
+		        
 
 		        List<Map<String, Object>> progressList = new ArrayList<>();
 		        for (Progress progress : progresses) {

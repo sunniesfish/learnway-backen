@@ -85,7 +85,8 @@ public class ScheduleService {
 			
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
-			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId()).orElse(null));
+			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
+			        .orElseThrow(() -> new RuntimeException("Studyway not found")));
 
 			
 			scheduleRepository.save(schedule);

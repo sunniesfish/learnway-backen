@@ -170,7 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	                    "endTime": endTime,
 	                    "studywayId": studyway,
 	                    "subjectId": subject,
-	                    "progresses": progressList
+	                    "progresses": progressList,
+	                    "extendedProps": {
+						    "studywayId": studyway
+						    }
 	                  };
                  
             	 var newEvent = {
@@ -427,8 +430,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	                    "endTime": endTime,
 	       	                    "studywayId": studyway,
 	       	                    "subjectId": subject,
-	       	                    "progresses": progresses
+	       	                    "progresses": progresses,
+	       	                    "extendedProps": {
+							    "studywayId": studyway
+							    }
 	       	                  };
+	       	                  
                              $.ajax({
                           	   url: "/api/schedule/updateSchedule",
                                method: "PATCH",
@@ -660,7 +667,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	                    "endTime": endTime,
 	                    "studywayId": studyway,
 	                    "subjectId": subject,
-	                    "progresses": progressList
+	                    "progresses": progressList,
+	                    "extendedProps": {
+						    "studywayId": studyway
+						    }
 	                  };
 						console.log(obj);
 	                  $.ajax({
@@ -716,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
     		  var event = info.event;
    	          var scheduleDto = {
    	               scheduleId: event.id,
-   	               studyway: event.title,
+   	               studywayId: event.extendedProps.studywayId,
    	               startTime: startTimeStr,
                    endTime: endTimeStr
     	         };
@@ -922,7 +932,12 @@ document.addEventListener('DOMContentLoaded', function() {
        	        type: "GET",
        	        dataType: "json",
        	        success: function(data) {
-       	          weeklyEvents = data;
+       	          weeklyEvents = data.map(function(event) {
+				    event.extendedProps = {
+				      studywayId: event.studywayId
+				    };
+				    return event;
+				  });
        	          calendar.removeAllEvents();
        	          calendar.addEventSource(weeklyEvents);
        	        },
