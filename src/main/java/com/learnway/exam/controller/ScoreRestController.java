@@ -1,8 +1,10 @@
 package com.learnway.exam.controller;
 
+import com.learnway.exam.domain.Exam;
 import com.learnway.exam.domain.Score;
 import com.learnway.exam.service.ExamService;
 import com.learnway.exam.service.ScoreService;
+import com.learnway.global.domain.Subject;
 import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,7 @@ public class ScoreRestController {
             ) {
         //get memId
         Long memId = userDetails.getMemberId();
+        System.out.println("memId = " + memId);
 
         Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo,10));
         if (memId == null) {
@@ -45,16 +48,11 @@ public class ScoreRestController {
     * 과목 상세 불러오기
     * */
     @GetMapping("/exam/{scoreId}")
-    public ResponseEntity<Score> getScore(@PathVariable long scoreId) {
+    public ResponseEntity<Score> getScore(@PathVariable long scoreId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         //get memId
-        Long memId = 1l;
+        Long memId = userDetails.getMemberId();
         Optional<Score> score = examService.getScoreById(scoreId, memId);
-
-        if (!score.isPresent() || memId == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(score.get(), HttpStatus.OK);
-        }
+        return new ResponseEntity<>(score.get(), HttpStatus.OK);
     }
 
     /*
@@ -63,16 +61,17 @@ public class ScoreRestController {
     @PostMapping("/{examId}")
     public ResponseEntity<Score> createScore(
             @PathVariable Long examId,
-            @RequestBody Score score,
+            @ModelAttribute Score score,
+            @RequestParam("subjectCode") String subjectCode,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        System.out.println("subjectCode = " + subjectCode);
         //get memId
         Long memId = userDetails.getMemberId();
-
+        new Exam();
+        score.setExam(Exam.builder().examId(examId).build());
+        score.setSubject(Subject.builder().subjectCode(subjectCode).build());
         score.setMemId(memId);
-        if (score == null || memId == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         examService.writeScore(score);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -82,23 +81,23 @@ public class ScoreRestController {
     * */
     @PutMapping("/{examId}/{scoreId}")
     public ResponseEntity<Score> updateScore(
-            @PathVariable("examId") Integer examId,
+            @PathVariable("examId") Long examId,
             @PathVariable("scoreId") Integer scoreId,
-            @RequestBody Score score,
+            @ModelAttribute Score score,
+            @RequestParam("subjectCode") String subjectCode,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         //get memId
         Long memId = userDetails.getMemberId();
-
+        System.out.println("memId = " + memId);
+        System.out.println("subjectCode = " + subjectCode);
+        score.setExam(Exam.builder().examId(examId).build());
+        score.setSubject(Subject.builder().subjectCode(subjectCode).build());
         score.setMemId(memId);
         Optional<Score> opScore = examService.updateScore(score);
-
-        if (opScore.isEmpty() || memId == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     /*
     * 점수 삭제
@@ -111,8 +110,9 @@ public class ScoreRestController {
     ) {
         //get memId
         Long memId = userDetails.getMemberId();
+        System.out.println("memId = " + memId);
 
-        if (scoreId == null || memId == null) {
+        if (scoreId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
             examService.deleteScore(memId, scoreId);

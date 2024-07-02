@@ -51,6 +51,7 @@ public class ExamServiceImpl implements ExamService{
     }
 
     //시험 삭제
+    @Transactional
     @Override
     public void deleteExam(Long examId, Long memId) {
         examRepository.deleteByMemIdAndExamId(memId, examId);
@@ -117,6 +118,7 @@ public class ExamServiceImpl implements ExamService{
      * 점수 입력
      * */
     @Override
+    @Transactional
     public void writeScore(Score score) {
         scoreRepository.save(score);
     }
@@ -125,7 +127,7 @@ public class ExamServiceImpl implements ExamService{
      * 점수 수정
      * */
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public Optional<Score> updateScore(Score score) {
         Optional<Score> opScore = scoreRepository.findByMemIdAndScoreId(score.getMemId(), score.getScoreId());
         opScore.ifPresent(value -> {
@@ -145,6 +147,7 @@ public class ExamServiceImpl implements ExamService{
      * 점수 삭제
      * */
     @Override
+    @Transactional
     public void deleteScore(Long memId ,Long scoreId) {
         scoreRepository.deleteByMemIdAndScoreId(memId, scoreId);
     }

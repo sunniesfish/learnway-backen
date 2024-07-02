@@ -5,7 +5,7 @@
 .exam-detail__container{
     width: 100%;
     max-width: 800px;
-    height: 60vh;
+    height: auto;
 }
 .exam-detail__item{
     width: 100%;
