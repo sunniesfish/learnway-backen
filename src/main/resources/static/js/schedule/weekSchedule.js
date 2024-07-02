@@ -1,12 +1,10 @@
-let scheduleOptions;
-
 document.addEventListener('DOMContentLoaded', function() {
 
       var calendarEl = document.getElementById('calendar');
       var weeklyEvents = []; // 주간 뷰 이벤트 저장
       var monthlyEvents = []; // 월간 뷰 이벤트 저장
-      
-      
+      let progressCount = 1;
+      let scheduleOptions;
     
       //과목명과 색상 매핑 객체
       var subjectColors = {
@@ -926,7 +924,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+//시작할때 실행되는 코드 
   $(document).ready(function() {
+	
+	//기준 정보 드롭앤다운에 불러오기 
     $.ajax({
         url: '/api/schedule/options',
         method: 'GET',
@@ -938,29 +939,15 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Failed to load schedule options:', error);
         }
     });
-});
-
-//일정등록 입력창 닫힐 때 리셋하는 함수 
+    
+    //일정등록 입력창 닫힐 때 리셋하는 함수 
   $("#calendarModal").on("hidden.bs.modal", function() {
 	  // 모든 입력 필드 리셋
 	  $("#calendarModal input, #calendarModal select").val("");
 	  
 	  // 동적으로 추가된 행 제거
-	  $("#progressEntries").empty();
-	  
-	  $("#progressEntries").html(`
-	    <div class="form-row align-items-center mb-2">
-	      <div class="col-4">
-	        <select class="form-control" id="material0" name="material[]"></select>
-	      </div>
-	      <div class="col-7">
-	        <input type="text" class="form-control" id="progress0" name="progress[]" placeholder="진도 내역">
-	      </div>
-	      <div class="col-auto">
-	        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
-	      </div>
-	    </div>
-	  `);
+ 	  $("#progressEntries .progress-entry:not(:first)").remove();
+
 	  
 	  // 드롭다운 초기화
 	  initializeDropdowns();
@@ -970,7 +957,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	  
 	  // 추가 버튼 표시
 	  document.querySelector('.add-progress').style.display = 'inline-block';
+ });
 });
+
+
 
   $("#updateModal").on("hidden.bs.modal", function() {
     // 수정 모달 창이 닫힌 후 실행되는 코드
@@ -983,12 +973,10 @@ document.addEventListener('DOMContentLoaded', function() {
     $("#progress").val("");
     $("#achieveRate").val("");
   });
-});
+  
 
-document.addEventListener('DOMContentLoaded', function() {
-  let progressCount = 1;
-
-  document.querySelector('.add-progress').addEventListener('click', function() {
+document.getElementById('progressEntries').addEventListener('click', function(e) {
+  if (e.target.classList.contains('add-progress')) {
     if (progressCount < 5) {
       const newRow = document.createElement('div');
       newRow.className = 'form-row align-items-center mb-2 progress-entry';
@@ -1008,23 +996,21 @@ document.addEventListener('DOMContentLoaded', function() {
       progressCount++;
 
       if (progressCount === 5) {
-        document.querySelector('.add-progress').style.display = 'none';
+        e.target.style.display = 'none';
       }
-    }else {
-        alert("진도 내역은 최대 5개까지 입력할 수 있습니다."); // 알림 메시지 표시
+    } else {
+      alert("진도 내역은 최대 5개까지 입력할 수 있습니다.");
     }
-  });
-
-  document.getElementById('progressEntries').addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-progress')) {
-      e.target.closest('.form-row').remove();
-      progressCount--;
+  } else if (e.target.classList.contains('remove-progress')) {
+    e.target.closest('.form-row').remove();
+    progressCount--;
+    if (progressCount < 5) {
       document.querySelector('.add-progress').style.display = 'inline-block';
     }
-  });
+  }
 });
-
-function fillNewMaterialDropdown(newDropdownId) {
+  
+  function fillNewMaterialDropdown(newDropdownId) {
 		    fillDropdown(`#${newDropdownId}`, scheduleOptions.materials, "학습종류");
 		}
 		
@@ -1044,3 +1030,6 @@ function fillDropdown(selector, options, defaultText = "선택하세요") {
         dropdown.append($('<option></option>').attr('value', option.id).text(option.name));
     });
 }
+  
+  
+});

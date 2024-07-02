@@ -176,9 +176,7 @@ public class ScheduleRestController {
 	
 			return detailList;
 		}
-	
 		
-	
 	@PostMapping("/add")
 	public ResponseEntity<String> addSchedule(@RequestBody ScheduleDto dto){
 		try {
