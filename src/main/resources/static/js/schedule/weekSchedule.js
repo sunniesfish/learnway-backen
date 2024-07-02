@@ -121,9 +121,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 var endTime = $("#endTime").val();
                 var studyway = $("#studyway").val(); //학업구분
                 var subject = $("#subject").val(); //과목
-                var material = $("#material").val(); //학습 종류
-                var progress = $("#progress").val(); //진도 내역
-                var achieveRate = $("#achieveRate").val(); //달성율
+                
+                var progressList = [];
+			    // 첫 번째 진도 내역 필드 처리
+				var firstMaterialId = $("#material0").val();
+				var firstProgress = $("#progress0").val();
+				if (firstMaterialId && firstProgress) {
+				    progressList.push({
+				        materialId: firstMaterialId,
+				        progress: firstProgress
+				    });
+				}
+				
+				// 동적으로 추가된 진도 내역 필드 처리
+				$("#progressEntries .progress-entry:not(:first)").each(function() {
+				    var materialId = $(this).find("select[name='material[]']").val();
+				    var progress = $(this).find("input[name='progress[]']").val();
+				    if (materialId && progress) {
+				        progressList.push({
+				            materialId: materialId,
+				            progress: progress
+				        });
+				    }
+				});
+			     console.log(progressList);
 
                 //유효성 검사
                 if (startTime == null || startTime == "") {
@@ -134,25 +155,23 @@ document.addEventListener('DOMContentLoaded', function() {
                   alert("학업 구분을 입력하세요");
                 } else if (subject == null || subject == "") {
                   alert("과목을 입력하세요");
-                } else if (material == null || material == "") {
-                  alert("학습 종류를 입력하세요");
-                } else if (progress == null || progress == "") {
-                  alert("진도 내역을 입력하세요");
-                } else if (achieveRate == null || achieveRate == "") {
-                  alert("달성율을 입력하세요");
-                } else if (new Date(endTime) - new Date(startTime) < 0) {
+                } else if (progressList.length === 0) {
+                  alert("최소 하나의 학습 내용을 입력하세요");
+                } else if (progressList.some(item => item.materialId == null || item.materialId == "")) {
+				  alert("모든 학습 종류를 선택하세요");
+				} else if (progressList.some(item => item.progress == null || item.progress.trim() == "")) {
+				  alert("모든 진도 내역을 입력하세요");
+				} else if (new Date(endTime) - new Date(startTime) < 0) {
                   alert("종료 시간이 시작 시간보다 먼저입니다");
                 } else {
                 	
                  var obj = { //전송할 객체 생성
-                   "startTime": startTime,
-                   "endTime": endTime,
-                   "studyway": studyway,
-                   "subject": subject,
-                   "material": material,
-                   "progress": progress,
-                   "achieveRate": achieveRate
-                 };
+	                    "startTime": startTime,
+	                    "endTime": endTime,
+	                    "studywayId": studyway,
+	                    "subjectId": subject,
+	                    "progresses": progressList
+	                  };
                  
             	 var newEvent = {
             			    start: new Date(startTime),
@@ -187,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
         },
-        eventClick:function(info){
+        eventClick:function(info){ // 주간에서는 수정 월간에서는 일일 상세페이지 부분 (날짜 & 시간 클릭 이벤트)
         	
         	var view = info.view.type;
         	
