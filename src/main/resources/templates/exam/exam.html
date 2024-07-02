@@ -37,13 +37,13 @@
         <!-- 페이지네이션 -->
         <div class="pagination">
             <span th:if="${examList.hasPrevious()}">
-                <a th:href="@{/exam/list/${examList.previousPageable().pageNumber+1}}" class="page-link">Previous</a>
+                <a th:href="@{/exam/list/{pageNo}(pageNo=${examList.previousPageable().pageNumber+1})}" class="page-link">Previous</a>
             </span>
             <span th:each="i : ${#numbers.sequence(1, examList.totalPages)}">
-                <a th:href="@{/exam/list/${i}}" th:class="${examList.number == i} ? 'active' : ''" class="page-link" th:text="${i + 1}"></a>
+                <a th:href="@{/exam/list/{pageNo}(pageNo=${i})}" th:class="${examList.number == i} ? 'active' : ''" class="page-link" th:text="${i}"></a>
             </span>
             <span th:if="${examList.hasNext()}">
-                <a th:href="@{/exam/list/${examList.nextPageable().pageNumber+1}}" class="page-link">Next</a>
+                <a th:href="@{/exam/list/{pageNo}(pageNo=${examList.nextPageable().pageNumber+1})}" class="page-link">Next</a>
             </span>
         </div>
     </div>

@@ -1,5 +1,6 @@
 package com.learnway.exam.domain;
 
+import com.learnway.global.domain.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,12 +19,13 @@ public class Score {
     @Column(name = "member_id", nullable = false)
     private Long memId;
 
-    @Column(name = "exam_id", nullable = false)
-    private Long examId;
+    @ManyToOne
+    @JoinColumn(name = "exam_id")
+    private Exam exam;
 
     @ManyToOne
     @JoinColumn(name = "subject_code")
-    private Subject subject
+    private Subject subject;
 
     @Column(name = "score_ex_score", nullable = false, columnDefinition = "TINYINT DEFAULT 100")
     private int scoreExScore;
@@ -41,10 +43,10 @@ public class Score {
     private String scoreMemo;
 
     @Builder
-    public Score(Long scoreId, Long examId, String subjectCode, int scoreExScore, int scoreScore, int scoreGrade, int scoreStdScore, String scoreMemo) {
+    public Score(Long scoreId, Exam exam, Subject subject, int scoreExScore, int scoreScore, int scoreGrade, int scoreStdScore, String scoreMemo) {
         this.scoreId = scoreId;
-        this.examId = examId;
-        this.subjectCode = subjectCode;
+        this.exam = exam;
+        this.subject = subject;
         this.scoreExScore = scoreExScore;
         this.scoreScore = scoreScore;
         this.scoreGrade = scoreGrade;

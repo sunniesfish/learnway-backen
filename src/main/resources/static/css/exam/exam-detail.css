@@ -1,3 +1,73 @@
 @import "../globalstyle.css";
 @import "../consult/sidebarConsultantList.css";
 @import "../consult/sidebarReservationList.css";
+
+.exam-detail__container{
+    width: 100%;
+    max-width: 800px;
+    height: 60vh;
+}
+.exam-detail__item{
+    width: 100%;
+    height: 12.5%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    
+    transition: background-color .1s ease-in-out;
+}
+.exam-detail__item-info{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+}
+.exam-detail__item-info>div{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0 15px 0 15px;
+}
+.exam-detail__modal__overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+}
+.exam-detail__modal__form{
+    position: fixed;
+    width: 40vw;
+    height: 60vh;
+    top: 10vh;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.exam-detail__modal__detail{
+    position: fixed;
+    width: 40vw;
+    height: 60vh;
+    top: 10vh;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}

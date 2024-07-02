@@ -90,7 +90,7 @@ public class ExamServiceImpl implements ExamService{
      * 시험id로 과목별 점수 페이지 가져옴
      * */
     public Page<Score> getScoreListByExam(Long examId, Long memId, Pageable pageable) {
-        return scoreRepository.findByMemIdAndExamId(memId, examId, pageable);
+        return scoreRepository.findByMemIdAndExam_ExamId(memId, examId, pageable);
     }
 
     //memId로 점수 페이지 가져오기
@@ -134,7 +134,7 @@ public class ExamServiceImpl implements ExamService{
             value.setScoreGrade(score.getScoreGrade());
             value.setScoreExScore(score.getScoreExScore());
             value.setScoreStdScore(score.getScoreStdScore());
-            value.setSubjectCode(score.getSubjectCode());
+            value.setSubject(score.getSubject());
             value.setScoreMemo(score.getScoreMemo());
             scoreRepository.save(value);
         });
@@ -146,7 +146,7 @@ public class ExamServiceImpl implements ExamService{
      * */
     @Override
     public void deleteScore(Long memId ,Long scoreId) {
-        scoreRepository.deleteByMemIdAndExamId(memId, scoreId);
+        scoreRepository.deleteByMemIdAndScoreId(memId, scoreId);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class ExamServiceImpl implements ExamService{
         if(!list.isEmpty()){
             list.stream()
                     .forEach(exam -> {
-                        Optional<Score> score = scoreRepository.findByMemIdAndExamId(memId, exam.getExamId());
+                        Optional<Score> score = scoreRepository.findByMemIdAndExam_ExamId(memId, exam.getExamId());
                         if(score.isPresent()){scores.add(score.get());}
                     });
         }
