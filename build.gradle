@@ -42,6 +42,8 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation group: 'io.awspring.cloud', name: 'spring-cloud-starter-aws', version: '2.4.4'
+
 	implementation("org.springframework.security:spring-security-messaging")
 	
 	 // Thymeleaf
