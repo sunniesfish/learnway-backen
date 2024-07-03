@@ -103,7 +103,7 @@ function fetchReservations() {
                     console.log("방 들어가기 요청 성공");
                     //window.open(`http://localhost:8080/video?roomId=${roomId}`, '_blank');
 					//window.open(`https://43.202.58.56:8095/video?roomId=${roomId}`, '_blank');//aws 테스트
-					window.open(`https://172.30.1.83:8443/consult/signaling/video?roomId=${roomId}`, '_blank');
+					window.open(`https://172.30.1.83:8443/signaling/video?roomId=${roomId}`, '_blank');
                 } else if (message === 'full') {
                     console.log("방 들어가기 요청 실패");
                     alert('이미 방이 가득 찼습니다.');
