@@ -23,5 +23,9 @@ public class Studyway {
     @Column(nullable = false)
     String studyway;           // 학업 구분명 (Not null)
     String studywayNote;       // 과목 비고
-
+    
+    // getName() 메서드 추가
+    public String getName() {
+        return this.studyway;
+    }
 }
