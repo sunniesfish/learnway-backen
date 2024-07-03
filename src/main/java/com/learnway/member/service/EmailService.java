@@ -71,6 +71,8 @@ public class EmailService {
     // 인증 코드 생성 메서드
     private String generateVerificationCode() {
         Random random = new Random();
-        return String.format("%06d", random.nextInt(1000000)); // 6자리 인증 코드 생성
+        String number = String.format("%06d", random.nextInt(1000000));
+        System.out.println(number + " : 이메일 인증번호");
+        return number; // 6자리 인증 코드 생성
     }
 }
