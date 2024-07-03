@@ -1,10 +1,16 @@
 /* 전체 테마*/
 :root {
-    --yellow: #fae100;
+    --hoverColor: #96C9F4;
 }
 
 
 /* 공통 스타일*/
+.clickable:hover{
+  cursor: pointer;
+}
+.hidden {
+  display: none;
+}
 .main__content {
   flex-grow: 1; /* 사이드바를 제외한 공간을 차지 */
   display: flex;
@@ -22,8 +28,9 @@
   border-bottom: 1px solid #ccc; /* 밑줄 스타일 */
   padding-top: 10px;
   padding-bottom: 20px; /* 밑줄 아래 여백 */
-  margin-top: 30px;
 }
+
+
 
 
 /* 스타일 리셋*/
@@ -77,9 +84,9 @@ table {
 a{
   text-decoration: none;
   color:inherit;
-}
-a:hover{
-  cursor: pointer;
+  &:hover{
+    cursor: pointer;
+  }
 }
 *{
   box-sizing: border-box;
