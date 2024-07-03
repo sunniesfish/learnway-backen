@@ -35,7 +35,7 @@ public class Progress {
 	@Column(nullable=true)
 	private double achieveRate;
 	
-	@Column(nullable=true)
+	@Column
 	private String progress;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
