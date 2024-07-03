@@ -37,15 +37,15 @@ function ChartType({cat}){
         const subjects = await fetch("/api/subject/").then(res => res.json());
         const option = {};
 
-        console.log("data",data)
+        console.log("data",data.content)
         console.log("subjects",subjects);
 
         let series = subjects.map(item => ({ name: item.subject, data: [] }));
         console.log("series",series)
-        let scoreSeries = [...series];
-        let gradeSeries = [...series];
-        let stdSeries = [...series];
-
+        let scoreSeries = series.map(item => ({ ...item }));
+        let gradeSeries = series.map(item => ({ ...item }));
+        let stdSeries = series.map(item => ({ ...item }));
+        
         let xasisCat = data.content.map(item => item.exam.examDate);
         console.log("xasisCat",xasisCat)
 
@@ -122,7 +122,7 @@ function setOption({series, xaxisCat, xaxisTitle, yaxisTitle }){
             curve: 'smooth'
         },
         title: {
-            text: 'Average High & Low Temperature',
+            text: '성적',
             align: 'left'
         },
         grid: {
