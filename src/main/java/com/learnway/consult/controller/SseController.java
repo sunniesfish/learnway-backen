@@ -7,15 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ConsultantService;
-
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/sse")
@@ -28,25 +28,27 @@ public class SseController {
     private ConsultantService consultantService;
 
     @GetMapping("/subscribe/{consultantId}")
-    public SseEmitter subscribe(@PathVariable("consultantId") Long consultantId, HttpSession session) {
+    public SseEmitter subscribe(@PathVariable("consultantId") Long consultantId,Authentication authentication) {
+    	ConsultantDetails consultant = (ConsultantDetails) authentication.getPrincipal();
+    	Long sessionId = consultant.getId();
     	System.out.println("1번 : " + consultantId );
-    	System.out.println("1번 : " + (Long)session.getAttribute("loggedInConsultantId"));
-        if (session.getAttribute("loggedInConsultantId") == null || !session.getAttribute("loggedInConsultantId").equals(consultantId)) {
+    	System.out.println("1번 : " + sessionId);
+        if (sessionId == null || !sessionId.equals(consultantId)) {
             // 상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리
         	System.out.println("상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리");
             return null;
         }
 
-        System.out.println("subscribe endpoint called for consultant ID: " + consultantId);
+        System.out.println("상담사id 요청 엔드포인트 : " + consultantId);
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        loggedInEmitters.put(consultantId, emitter);
+        loggedInEmitters.put(consultantId, emitter);//키값으로 상담사 pk값 벨류로 메세지
 
         emitter.onCompletion(() -> {
-            System.out.println("Emitter completed for consultant ID: " + consultantId);
+            System.out.println("상담사밀린메세지완료: " + consultantId);
             loggedInEmitters.remove(consultantId);
         });
         emitter.onTimeout(() -> {
-            System.out.println("Emitter timed out for consultant ID: " + consultantId);
+            System.out.println("상담사 타임아웃: " + consultantId);
             loggedInEmitters.remove(consultantId);
         });
 
@@ -57,7 +59,7 @@ public class SseController {
                 try {
                     emitter.send(SseEmitter.event().name("notification").data(notifications.poll()));
                 } catch (IOException e) {
-                    System.err.println("Error sending notification: " + e.getMessage());
+                    System.err.println("발송에러 실패 !! : " + e.getMessage());
                 }
             }
             notificationQueue.remove(consultantId);

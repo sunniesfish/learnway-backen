@@ -2,8 +2,6 @@ package com.learnway.consult.controller;
 
 import java.util.Optional;
 
-import com.learnway.consult.service.ConsultantService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,15 +15,10 @@ import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-
-@RequiredArgsConstructor
 @Controller
 public class ConsultController {
 	@Autowired
 	private ReservationService reservationService;
-	private final ConsultantService consultantService;
 	
 	//유저 마이페이지에 기생할 유저 예약리스트 확인하는모달
 	@GetMapping("/reservation")
@@ -91,29 +84,35 @@ public class ConsultController {
 		
 		return "/consult/video";
 	}
-	
-	//임시 멤버 관리
-	@GetMapping("/login")
-	public String loginP() {
-		
-		return "/member/login";
-	}
-	
+
 	//뷰화면 테스트
 	@GetMapping("/test")
-	public String test() {
+	public String test(Authentication authentication,Model model) {
+//    	String memberId = null;
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//            memberId = userDetails.getUsername();
+//            System.out.println(memberId);
+//        }
+//        model.addAttribute("memberId", memberId);
 		
-		return "/test";
+		return "/page";
 	}
 	
 	//로그인한 세션 정보 확인
 	   @GetMapping("/checkSession")
-	    public String checkSession(HttpServletRequest request) {
-	        HttpSession session = request.getSession(false); // false로 설정하여 새로운 세션이 생성되지 않도록 함
-	        if (session != null) {
-	            Long loggedInConsultantId = (Long) session.getAttribute("loggedInConsultantId");
-	            if (loggedInConsultantId != null) {
-	                return "현재 로그인한 상담사 ID: " + loggedInConsultantId;
+	    public String checkSession(Authentication authentication) {
+		   ConsultantDetails consultant = (ConsultantDetails) authentication.getPrincipal();
+		   //Long consultantId = consultant.getId();
+		   System.out.println("이게머야?1 "+ consultant.getId());
+		   System.out.println("이게머야?2 "+ authentication.getName());
+		   System.out.println("이게머야?3 "+ authentication.getAuthorities());
+		   System.out.println("이게머야?4 "+ authentication.getDetails());
+		  // HttpSession session = request.getSession(false); // false로 설정하여 새로운 세션이 생성되지 않도록 함
+	        if (consultant != null) {
+	        	Long consultantId = consultant.getId();
+	            if (consultantId != null) {
+	                return "현재 로그인한 상담사 ID: " + consultantId;
 	            } else {
 	                return "상담사가 로그인하지 않은 상태입니다.";
 	            }
@@ -143,5 +142,4 @@ public class ConsultController {
 	            return "세션에 로그인 정보가 없습니다.";
 	        }
 	    }
-
 }
