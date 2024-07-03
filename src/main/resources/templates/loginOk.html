@@ -22,11 +22,11 @@ Login OK
 <h2>로그인 정보</h2>
 <p>Username(ID): <span sec:authentication="name"></span></p>
 <p>User ID(PK): <span th:text="${#authentication.principal.memberId}"></span></p>
+<p><img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px"></p>
     <form th:action="@{/logout}" method="post">
         <button type="submit">로그아웃</button>
     </form>
 </div>
-
 <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
     <h2>관리자만 조회할 수 있는 버튼</h2>
     <button>ADMIN</button>

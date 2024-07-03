@@ -35,7 +35,7 @@ import com.learnway.schedule.service.ScheduleService;
 
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping("/api/schedule")
 public class ScheduleRestController {
 	
 	private static final Logger log = LoggerFactory.getLogger(ScheduleRestController.class);
