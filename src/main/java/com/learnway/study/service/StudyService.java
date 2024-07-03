@@ -1,11 +1,17 @@
 package com.learnway.study.service;
 
+import java.security.Principal;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.learnway.member.domain.Member;
+import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
+import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.ChatRoomDto;
 import com.learnway.study.dto.StudyDto;
 import com.learnway.study.dto.StudyProblemDto;
@@ -24,42 +30,91 @@ public class StudyService {
 	private StudyTagService studyTagService;
 	private StudyProblemService studyProblemService;
 	private StudyProblemImgService studyProblemImgService;
-	
+	private MemberRepository memberRepository;
+	private StudyRepository studyRepository;  
 	@Autowired
 	public StudyService(StudyPostService studyPostService, StudyChatService studyChatService,
 						StudyTagService studyTagService,StudyProblemService studyProblemService
-						,StudyProblemImgService studyProblemImgService) {
+						,StudyProblemImgService studyProblemImgService,MemberRepository memberRepository
+						,StudyRepository studyRepository) {
 		this.studyPostService = studyPostService;
 		this.studyChatService = studyChatService;
 		this.studyTagService = studyTagService;
 		this.studyProblemService = studyProblemService;
 		this.studyProblemImgService = studyProblemImgService;
+		this.memberRepository = memberRepository;
+		this.studyRepository = studyRepository;
 	}
 	
 	
 	
+	// 게시글 생성 메서드 
 	@Transactional
 	public void crateBoard(StudyDto dto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 						StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto
-						,MultipartFile[] files) {
+						,MultipartFile[] files,Principal principal) {
 		
 		System.out.println("게시글생성");
 		//게시글 생성
-		Study study = studyPostService.boardadd(dto);
+		Study study = studyPostService.boardadd(dto,principal);
 		int postid = study.getPostid();
 		
 		//채팅방 생성
-		studyChatService.chatRoomCreate(chatRoomDto, study);
+		studyChatService.chatRoomCreate(chatRoomDto, study,principal);
 		//태그값 저장
 		studyTagService.createTag(studyTagDto, study);
 		//문제 저장
-		int problemid = studyProblemService.problemAdd(studyProblemDto,postid);
+		int problemid = studyProblemService.problemAdd(studyProblemDto,postid,principal);
 		
 		System.out.println(problemid + "해당문제아이디");
 		
 		//문제이미지 저장
 		studyProblemImgService.problemImgAdd(studyProblemImgDto,files,problemid);
+	}
+
+	//게시글 수정view 데이터조회
+	public Optional<Study> updateView(StudyDto dto) {
+		return studyRepository.findById(dto.getPostid());
 		
+	}
+	
+	
+	//게시글 수정 메서드
+	@Transactional
+	public void updateBoard(StudyDto dto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
+			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto
+			,MultipartFile[] files,Principal principal) {
 		
+		//게시글 수정
+		Study study = studyPostService.boardUpdate(dto,principal);
+		int postid = study.getPostid();
+		
+		//채팅방 제목 수정 (수정중)
+		studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
+		//태그값 수정
+		studyTagService.updateTag(studyTagDto, study,postid);
+		
+		//문제 수정
+		int problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
+		
+		//문제이미지 저장
+		studyProblemImgService.problemImgUpdate(studyProblemImgDto,files,problemid);
+	}
+	
+	
+//	게시글 작성자 확인 메서드
+//  postId에 대한 member_id와 principal의 member_id 값일치 확인
+	public boolean boardCheck(int postId,Principal principal) {
+		
+		Member member = memberRepository.findByMemberId(principal.getName())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		int memberId =member.getId().intValue();
+		
+		int postMemberId = studyRepository.findById(postId).get().getMember().getId().intValue();
+		if(memberId==postMemberId) {
+		
+		return true;
+		}
+		return false;
 	}
 }

@@ -1,5 +1,7 @@
 package com.learnway.study.controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +19,13 @@ public class StudyRestController {
 	private StudyCorrectService studyCorrectService;
 	
 	@PostMapping("/correct")
-	public void correct(@RequestBody CorrectCheckDto dto) {
+	public void correct(@RequestBody CorrectCheckDto dto,Principal principal) {
 		System.out.println("진입");
 		System.out.println(dto.getStatus() + "상태값");
 		System.out.println(dto.getRoomId() + "채팅방번호");
 		System.out.println(dto.getPostId() + "게시글번호");
 		
-		studyCorrectService.updateStatus(dto);
+		studyCorrectService.updateStatus(dto,principal);
 		
 	}
 	
