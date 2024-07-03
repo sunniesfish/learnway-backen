@@ -1,6 +1,5 @@
 package com.learnway.study.controller;
 
-import java.lang.reflect.Member;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.learnway.member.service.CustomUserDetails;
 import com.learnway.study.domain.ChatRoom;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyProblemImg;
@@ -62,10 +60,6 @@ public class StudyController {
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
 	@GetMapping(value="/studylist")
 	public String study(@PageableDefault(size=2) Pageable pageable,Model model) {
-//		model.addAttribute("study",studyRepository.findAll(Sort.by(Sort.Direction.DESC,"postid")));
-//		model.addAttribute("studytag",studyTagService.findAllTag());
-
-//		List<Study> studies = studyPostService.findAll(); 페이징전 코드
 		Page<Study> studies = studyPostService.getBoardList(pageable);
 		
 		 int startPage = Math.max(1, studies.getPageable().getPageNumber() - 4);
@@ -76,7 +70,6 @@ public class StudyController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("list", studies);
 		
-		System.out.println("study list 진입");
 		return "/study/studylist";
 	}
 	
@@ -85,20 +78,40 @@ public class StudyController {
 		return "/study/studyadd";
 	}
 	
+	
+	//수정 view메서드
+	@PostMapping(value="/studyupdateview")
+	public String studyUpdateView(StudyDto dto,Model model) {
+	
+		System.out.println(dto.getPostid()+ " 게시글id");
+		
+		return "/study/studyupdate";
+	}
+	
 	@PostMapping(value="/studyadd")
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
 			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
-		System.out.println("컨트롤러진입");
-		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
-		System.out.println(studyTagDto.getTag()+"태그값");
 		
-		System.out.println("post studyadd 진입");
+
+		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		return "redirect:/studylist";
 	}
 	
+	//게시글 수정 메서드
+	@GetMapping(value="/studyupdate")
+	public String studyUpdate(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
+			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
+			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
+		
+		studyService.updateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
+		
+		return "redirect:/studylist";
+	}
+	
+	
 	@GetMapping(value="/study/detail/"+"{postid}")
-	public String studydetail(@PathVariable("postid") Integer postId,Model model) {
+	public String studydetail(@PathVariable("postid") Integer postId,Model model,Principal principal) {
 		Optional<Study> optionalStudy = studyRepository.findById(postId);
 		List<StudyTag> tagList = studyTagService.findTag(postId);
 		
@@ -109,23 +122,16 @@ public class StudyController {
 		//problemId로 problemImgPathId조회
 		List<StudyProblemImg> imgList = studyProblemImgService.problemImgPath(problemId);
 		
+		boolean result = studyService.boardCheck(problemId, principal);
 		
-		System.out.println(problemId + "문제아이디");
-		for(StudyProblemImg a : imgList) {
-			System.out.println(a.getImgpath() + "이미지값");
-		}
 		
-		for(ChatRoom a : chatRoom) {
-			System.out.println(a.getChatroomid() + "채팅방아이디");
-			System.out.println(a.getRoomname() + "채팅방이름");
-			
-		}
 		if(optionalStudy.isPresent()) {
 			Study study = optionalStudy.get();
 			model.addAttribute("study",study);
 			model.addAttribute("studyTag",tagList);
 			model.addAttribute("imgList",imgList);
 			model.addAttribute("chatRoom",chatRoom);
+			model.addAttribute("hostList",result);
 			return "study/studydetail";
 		}else {
 			model.addAttribute("errmsg","게시글을 찾을 수 없습니다.");

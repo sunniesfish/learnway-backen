@@ -89,6 +89,20 @@ public class StudyChatService {
 				.study(study).member(member).build());
 	}
 	
+	//채팅방 제목 수정
+	public ChatRoom chatRoomUpdate(ChatRoomDto dto,Study study,Principal principal) {
+		
+		Member member = memberRepository.findByMemberId(principal.getName())
+				.orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		
+		
+		ChatRoom room = ChatRoom.builder().roomname(dto.getRoomname())
+				.study(study).member(member).build();
+		
+		return studyChatRepository.save(ChatRoom.builder().roomname(dto.getRoomname())
+				.study(study).member(member).build());
+	}
+	
 	
 	
 	//채팅 보관 메서드

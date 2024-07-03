@@ -18,7 +18,7 @@
             <p><strong>종료일:</strong> <span th:text="${study.enddate}">종료일</span></p>
             <input type="hidden" th:value="${study.postid}" id="postId">
             <div class="mb-3">
-                <span th:each="member : ${study.member}" class="badge bg-primary me-1" th:text="${member.memberName}">Member</span>
+               <p> 작성자: <span th:each="member : ${study.member}" class="badge bg-primary me-1" th:text="${member.memberName}">Member</span></p>
             </div>
             <div class="mb-3" th:each="tag : ${studyTag}">
                 <span class="badge bg-secondary me-1" th:text="${tag.tag}">Tag</span>
@@ -28,7 +28,7 @@
                 <p><strong>채팅방 아이디:</strong> <span th:text="${chatRoom.chatroomid}">채팅방 아이디</span></p>
             </div>
             <div th:each="image : ${imgList}">
-    <img th:src="@{|/comFile/${image.imgpath}|}" class="img-fluid mb-3" style="max-width: 50%; height: auto;">
+    <!-- <img th:src="@{|/comFile/${image.imgpath}|}" class="img-fluid mb-3" style="max-width: 50%; height: auto;"> -->
     <p><strong>문제 정답:</strong> <span th:text="${image.correct}">문제 정답</span></p>
     <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}">
 </div>
@@ -36,6 +36,14 @@
                 채팅방 입장
             </button>
         </div>
+    </div>
+    <div th:if="${hostList==true}">
+    <!-- <form th:action="@{'/studyupdateview/'+${study.postid}}" method="post"> -->
+    <form action=/studyupdateview method="post">
+     <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
+    <input type="submit" value="수정">
+    </form>
+    <button onclick="window.location.href='/studyupdate'"> 삭제 </button>
     </div>
 </div>
 
@@ -66,10 +74,7 @@
     </div>
 </div>
 
-<form action="/joinRoom" method="get">
-방번호 : <input type="text" id="roomId" name="roomId">
-입장 <input type="submit">
-</form>
+
 <script>
 $(document).ready(function() {
     correct_ck();

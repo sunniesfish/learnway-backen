@@ -46,14 +46,10 @@ public class StudyPostService {
 	public Study boardadd(StudyDto dto,Principal principal) {
 		
 
-		//로그인한 값 가져와 수정예정
 		Member member = memberRepository.findByMemberId(principal.getName())
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
 		
 		
-//		memberRepository.findByMemberId(principal.getName()).get();
-		System.out.println("멤버아이디 " + memberRepository.findByMemberId(principal.getName()).get());
-		//멤버엔티티 연결해야함
 		
 		Study study = Study.builder().title(dto.getTitle())
 									       .content(dto.getContent())
@@ -63,6 +59,28 @@ public class StudyPostService {
 									       .isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
 		
 	    
+		return studyRepository.save(study);
+		
+		
+	}
+	
+	// 게시글 수정 메서드
+	public Study boardUpdate(StudyDto dto,Principal principal) {
+		
+		
+		Member member = memberRepository.findByMemberId(principal.getName())
+				.orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		
+		
+		
+		Study study = Study.builder().postid(dto.getPostid()).title(dto.getTitle())
+				.content(dto.getContent())
+				.viewcount(dto.getViewcount())
+				.startdate(dto.getStartdate())
+				.enddate(dto.getEnddate())
+				.isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
+		
+		
 		return studyRepository.save(study);
 		
 		
