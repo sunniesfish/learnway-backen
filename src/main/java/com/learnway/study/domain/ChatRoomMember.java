@@ -1,5 +1,7 @@
 package com.learnway.study.domain;
 
+import java.util.Optional;
+
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -15,37 +17,27 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Builder
 @Getter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="Problems")
-public class StudyProblem {
+@Builder
+@Table(name="Chatroommember")
+public class ChatRoomMember {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="study_problemid" , nullable = false)
-	private Integer problemid;
-	
-	@Column(name="study_subject" , nullable = false)
-	private String subject;
-	
-	@Column(name="study_level" , nullable = false)
-	private String level;
-	
-	@Column(name="study_content")
-	private String content;
-	
-	@Column(name="study_correct")
-	private String correct;
-	
-	@ManyToOne
-	@JoinColumn(name = "study_postid", nullable = false)
-	private Study study;
+	@Column(name="chatmem_id",nullable = false)
+	private Integer chatMemId;
 	
 	@ManyToOne
 	@JoinColumn(name = "id", nullable = false)
-	private Member memid;
+    private Member member;
 	
+	@ManyToOne
+	@JoinColumn(name = "study_chatroomid", nullable = false)
+    private ChatRoom chatRoom;
+	
+	@Column(name = "chatmem_has_entered", nullable = false)
+    private boolean hasEntered;
 }

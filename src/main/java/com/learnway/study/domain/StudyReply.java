@@ -1,5 +1,7 @@
 package com.learnway.study.domain;
 
+import java.time.LocalDateTime;
+
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -16,36 +18,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name="Problems")
-public class StudyProblem {
-
+@NoArgsConstructor
+@Builder
+@Table(name="studyReply")
+public class StudyReply {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="study_problemid" , nullable = false)
-	private Integer problemid;
+	@Column(name="comment_id" , nullable = false)
+	private Integer commentId;
 	
-	@Column(name="study_subject" , nullable = false)
-	private String subject;
-	
-	@Column(name="study_level" , nullable = false)
-	private String level;
-	
-	@Column(name="study_content")
+	@Column(name="content")
 	private String content;
 	
-	@Column(name="study_correct")
-	private String correct;
+	@Column(name="content_date")
+	private LocalDateTime title;
 	
-	@ManyToOne
-	@JoinColumn(name = "study_postid", nullable = false)
-	private Study study;
+	@Column(name="likes")
+	private String likes;
 	
 	@ManyToOne
 	@JoinColumn(name = "id", nullable = false)
-	private Member memid;
+    private Member member;
 	
+	@ManyToOne
+	@JoinColumn(name = "study_postid", nullable = false)
+    private Study study;
 }

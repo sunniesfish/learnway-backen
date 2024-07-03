@@ -47,42 +47,6 @@
 </style>
 
 <script>
-/* $(document).ready(function(){
-	var roomId = $("#roomId").text();
-	var name = $("#name").text();
-	
-	var sock = new SockJS("/stomp/chat")
-	var stomp = Stomp.over(sock);
-	
-	stomp.connect({},function(frame){
-		
-		stomp.subscribe("/sub/study/mychat/"+roomId,function(chat){
-			var content = JSON.parse(chat.body);
-			var str = "";
-			if(content.name==name){
-				 str = "<div class='message self'>";
-                 str += "<div class='bubble'>";
-                 str += "<b>" + content.name + " : " + content.message + "</b>";
-                 str += "</div></div>";
-             } else {
-                 str = "<div class='message other'>";
-                 str += "<div class='bubble'>";
-                 str += "<b>" + content.name + " : " + content.message + "</b>";
-                 str += "</div></div>";
-             }
-			$("#msgArea").append(str);	
-			
-		});
-		
-		 stomp.send('/pub/chat/enter',{},JSON.stringify({roomId: roomId,name: name})); 
-	});
-	$("button-send").on("click",function(){
-		var msg = $("#msg").val();
-		stomp.send('/pub/chat/message',{},JSON.stringify({roomId:roomId,name:name}));
-		$("#msg").val('');
-	});
-}); */
-
     function getFormattedTime() {
         var now = new Date();
 
@@ -96,77 +60,123 @@
 
         // 두 자리 숫자로 포맷
         minutes = minutes < 10 ? '0' + minutes : minutes;
-       
 
         var formattedTime = period + ' ' + hours + ':' + minutes;
         return formattedTime;
     }
-    
-$(document).ready(function () {
-    var roomId = $("#roomId").text();
-    var name = $("#name").text();
-//    var datetime = getFormattedTime();
-//    var datetime =Date().now();
-    
-    var now = new Date();
-    var year = now.getFullYear();
-    var month = ('0' + (now.getMonth() + 1)); // 월은 0부터 시작하므로 +1을 해준다. 두 자리로 표시하기 위해 slice를 사용
-    var day = ('0' + now.getDate()).slice(-2); // 일자도 두 자리로 표시하기 위해 slice를 사용
 
-    var hours = ('0' + now.getHours()).slice(-2); // 시간
-    var minutes = ('0' + now.getMinutes()).slice(-2); // 분
-    var seconds = ('0' + now.getSeconds()).slice(-2); // 초
- 
-    var datetime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-    
-    
-    var sock = new SockJS("/stomp/chat");
-    var stomp = Stomp.over(sock);
+    $(document).ready(function () {
+        var roomId = $("#roomId").text();
+        var name = $("#name").text();
 
-    stomp.connect({}, function (frame) {
-        console.log("Connected: 연결 " + frame);
+        function getCurrentDateTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2); // 월은 0부터 시작하므로 +1을 해준다. 두 자리로 표시하기 위해 slice를 사용
+            var day = ('0' + now.getDate()).slice(-2); // 일자도 두 자리로 표시하기 위해 slice를 사용
+            var hours = ('0' + now.getHours()).slice(-2); // 시간
+            var minutes = ('0' + now.getMinutes()).slice(-2); // 분
+            var seconds = ('0' + now.getSeconds()).slice(-2); // 초
 
-        stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
-            var content = JSON.parse(chat.body);
+            return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        }
+
+        function addMessageToUI(content) {
             var str = '';
 
             if (content.type === 'ENTER') {
                 str = "<div class='message enter'>";
                 str += "<div class='bubble'>";
-                str += "<b>" + content.message+ "</b><br/>";
+                str += "<b>" + content.message + "</b><br/>";
                 str += "</div></div>";
-            } else if(content.type==='CHAT') {
-            	if(content.name===name){
-            		 str = "<div class='message self'>";
-                     str += "<div class='bubble'>";
-                     str += "<b>" + content.name + " : " + content.message+ "</b><br/>";
-                     str += datetime;
-                     str += "</div></div>";
-            	} else{
-                str = "<div class='message other'>";
-                str += "<div class='bubble'>";
-                str += "<b>" + content.name + " : " + content.message+ "</b><br/>";
-                str += datetime;
-                str += "</div></div>";
-            	}
+            } else if (content.type === 'CHAT') {
+                if (content.name === name) {
+                    str = "<div class='message self'>";
+                    str += "<div class='bubble'>";
+                    str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                    str += content.date;
+                    str += "</div></div>";
+                } else {
+                    str = "<div class='message other'>";
+                    str += "<div class='bubble'>";
+                    str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                    str += content.date;
+                    str += "</div></div>";
+                }
             }
             $("#msgArea").append(str);
+        }
+
+        // 이전 채팅 내역 불러오기
+        $.getJSON("/chatroom/" + roomId + "/messages", function (data) {
+            data.forEach(function (message) {
+                var content = {
+                    type: 'CHAT',
+                    name: message.member.memberName,
+                    message: message.msg,
+                    date: message.datetime.replace("T", " ") // ISO 8601 형식에서 공백으로 변경
+                };
+                addMessageToUI(content);
+            });
         });
 
-        stomp.send('/pub/chat/enter', {}, JSON.stringify({type:'ENTER',roomId: roomId, name: name}));
-    });
+        var sock = new SockJS("/stomp/chat");
+        var stomp = Stomp.over(sock);
 
-    $("#button-send").on("click", function () {
-        var msg = $("#msg").val();
-        stomp.send('/pub/chat/message', {}, JSON.stringify({type:'CHAT',roomId: roomId, message: msg,name: name,date:datetime}));
-        $("#msg").val('');
+        stomp.connect({}, function (frame) {
+            console.log("Connected: 연결 " + frame);
+            var datetime = getCurrentDateTime();
+
+            stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+                var content = JSON.parse(chat.body);
+                addMessageToUI(content);
+            });
+
+            stomp.send('/pub/chat/enter', {}, JSON.stringify({ type: 'ENTER', roomId: roomId, name: name, date:datetime}));
+        });
+
+        function sendMessage() {
+            var msg = $("#msg").val();
+            var datetime = getCurrentDateTime();
+            stomp.send('/pub/chat/message', {}, JSON.stringify({ type: 'CHAT', roomId: roomId, message: msg, name: name, date: datetime }));
+            $("#msg").val('');
+        }
+
+        $("#button-send").on("click", function () {
+            sendMessage();
+        });
+
+        $("#msg").on("keypress", function (e) {
+            if (e.which == 13) { // Enter key pressed
+                sendMessage();
+                return false; // Prevent the default action (form submission)
+            }
+        });
     });
-});
 </script>
 </head>
 <body>
 방번호 <span id="roomId" th:text="${roomId}"></span>
 참여자 <span id="name" th:text="${name}"></span>
+<div id="participants">
+    <h3>참여자</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>이름</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="host : ${chatListHost}">
+                <td th:text="|방장 : ${host.member.memberName}|"></td>
+            </tr>
+            <tr th:each="guest : ${chatListGuest}">
+                <td th:text="|참여자 : ${guest.member.memberName}|"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 <div id="msgArea"></div>
 <input type="text" id="msg" placeholder="메시지 입력">
 <button id="button-send">전송</button>

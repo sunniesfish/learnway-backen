@@ -21,6 +21,7 @@
                 <th>글제목</th>
                 <th>태그</th>
                 <th>스터디 시작일</th>
+                <th>작성자</th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,9 @@
                     <span th:each="tag : ${study.tags}" th:text="${tag.tag}">Tag</span>
                 </td>
                 <td th:text="${study.startdate}">Start Date</td>
+                <td>
+                <span th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
+                </td>
             </tr>
         </tbody>
     </table>
