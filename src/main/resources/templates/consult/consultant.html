@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -197,7 +197,6 @@
         <hr>
         <img src="" alt="프로필 사진" class="consultantIMG">
         <div class="sidebar-header">
-            <span id="loginCon">👤 회원님</span>
         </div>
         <div class="sidebar-item">
             <span id="subject">담당 분야</span>
@@ -241,7 +240,7 @@
                     </tr>
                 </thead>
                 <tbody id="reservationList">
-                    <!-- 예약 리스트가 여기에 동적으로 추가됩니다. -->
+                    <!-- 예약 리스트 -->
                 </tbody>
             </table>
         </div>
@@ -257,7 +256,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <!-- 유저 정보가 여기에 표시됩니다. -->
+                        <!-- 유저 정보 디테일 -->
                         <div id="userInfoContent"></div>
                     </div>
                     <div class="modal-footer">
@@ -313,7 +312,7 @@
 	            </div>
 	            <div class="modal-body">
 	                <div class="memo-grid-container" id="memoListContainer">
-	                    <!-- 여기에 메모 리스트가 동적으로 추가됩니다. -->
+	                    <!-- 여기에 메모 리스트 -->
 	                </div>
 	            </div>
 	            <div class="modal-footer">
@@ -390,7 +389,7 @@
                 });
             });
             
-			// 메모리스트 클릭 시 처리
+			// 메모리스트 클릭 함수
 			$('.MemoList-link').click(function(e) {
 			    e.preventDefault();
 			    
@@ -399,7 +398,6 @@
 			        type: 'GET',
 			        dataType: 'json',
 			        success: function(data) {
-			            // 메모 리스트 가져오기 성공 시 처리
 			            var memoList = $('#memoListContainer');
 			            memoList.empty(); // 기존 메모 리스트 초기화
 			            
@@ -433,7 +431,7 @@
 		    $(document).on('click', '.memo-item', function() {
 		        var memoId = $(this).data('memo-id');
 		
-		        // AJAX 요청으로 해당 메모의 디테일 정보 가져오기
+		        // 해당 메모의 디테일(수정폼) 정보 가져오기
 		        $.ajax({
 		            url: '/api/memos/' + memoId,
 		            type: 'GET',
@@ -462,7 +460,7 @@
 		                    // 메모 업데이트
 		                    $.ajax({
 		                        url: '/api/memos/' + memoId,
-		                        type: 'PUT', // PUT 또는 PATCH에 따라 서버 구현에 맞게 선택
+		                        type: 'PUT',
 		                        contentType: 'application/json',
 		                        data: JSON.stringify({
 		                            memoTitle: updatedTitle,
@@ -598,8 +596,8 @@
 			
 							 // 현재 시간이 예약 시간 내에 있는지 확인
                             var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
-                            var linkClass = isWithinBookingTime ? '' : 'disabled-link';
-                            //var linkClass = isWithinBookingTime ? 'disabled-link' : '';
+                            //var linkClass = isWithinBookingTime ? '' : 'disabled-link';
+                            var linkClass = isWithinBookingTime ? 'disabled-link' : '';
                             var linkText = isWithinBookingTime ? '💻 입장하기' : '🚫 입장불가';
 
                             var row = `
@@ -626,8 +624,22 @@
                 var roomId = $(this).data('room-id');
                 var myKey = Math.random().toString(36).substring(2, 11);
                 // WebSocket 연결 설정
-                var socket = new SockJS('/signaling/video');
-                var stompClient = Stomp.over(socket);
+                //var socket = new SockJS('http://localhost:8095/signaling/video');
+                var socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+				
+				var stompClient = Stomp.over(socket);
+				
+				stompClient.connect({}, function (frame) {
+				    console.log('Connected: ' + frame);
+				    stompClient.subscribe('/topic/messages', function (message) {
+				        console.log(message.body);
+				    });
+				}, function (error) {
+				    console.error('Error: ' + error);
+				});
+                
+
+                
                 stompClient.debug = null;
 				
 				// 서버와의 WebSocket 연결
@@ -646,7 +658,7 @@
                         if (message === 'successfully') {
                             console.log("방 들어가기 요청 성공");
                             //window.open(`http://localhost:8095/video?roomId=${roomId}`, '_blank');
-                            window.open(`https://43.202.58.56:8095/video?roomId=${roomId}`, '_blank');//aws 테스트
+                            window.open(`https://172.30.1.83:8443/consult/signaling/video?roomId=${roomId}`, '_blank');
                         } else if (message === 'full') {
                             console.log("방 들어가기 요청 실패");
                             alert('이미 방이 가득 찼습니다.');

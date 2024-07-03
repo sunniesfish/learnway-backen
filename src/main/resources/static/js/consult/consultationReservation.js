@@ -61,7 +61,7 @@
 						link.textContent = '예약하기';
 						link.addEventListener('click', function() {
 						    // 예약하기 버튼 클릭 시 동작 설정
-						    window.location.href = `/reservationBoard?consultant=${consultant.id}`;
+						    window.location.href = `/consult/reservationBoard?consultant=${consultant.id}`;
 						});
 						
 						// 예약하기 버튼을 상담사 박스에 추가
