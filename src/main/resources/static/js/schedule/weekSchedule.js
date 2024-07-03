@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	    // 월간 뷰 데이터 리로드
     	    var start = calendar.view.currentStart;
     	    $.ajax({
-    	      url: "/schedule/getMonthlyAchievement",
+    	      url: "/api/schedule/getMonthlyAchievement",
     	      type: "GET",
     	      dataType: "json",
     	      data: {
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	  } else if (currentViewType === 'timeGridWeek') {
     	    // 주간 뷰 데이터 리로드
     	    $.ajax({
-    	      url: "/schedule/findAll",
+    	      url: "/api/schedule/findAll",
     	      type: "GET",
     	      dataType: "json",
     	      success: function(data) {
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
    			     }
 
                   $.ajax({
-                    url: "/schedule/add", // 데이터를 전송할 컨트롤러의 URL
+                    url: "/api/schedule/add", // 데이터를 전송할 컨트롤러의 URL
                     type: "POST",
                     data: JSON.stringify(obj),
                     contentType: "application/json",
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  events.push(obj);
                
                  $.ajax({
-                     url: "/schedule/getDetail",
+                     url: "/api/schedule/getDetail",
                      method: "GET",
                      dataType: "json",
                      data: { id: info.event.id },
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          $("#deleteCalendar").off("click").on("click", function() {
                              if (confirm("일정을 삭제하시겠습니까?")) {
                                $.ajax({
-                                 url: "/schedule/deleteSchedule",
+                                 url: "/api/schedule/deleteSchedule",
                                  method: "DELETE",
                                  dataType: "json",
                                  data: { id: info.event.id },
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	                    "achieveRate": achieveRate
 	       	                  };
                              $.ajax({
-                          	   url: "/schedule/updateSchedule",
+                          	   url: "/api/schedule/updateSchedule",
                                method: "PATCH",
                                dataType: "json",
                                data: JSON.stringify(data),
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	        	console.log(date);
 
 	            $.ajax({
-	                url: "/schedule/findByDate",
+	                url: "/api/schedule/findByDate",
 	                method: "GET",
 	                dataType: "json",
 	                data: { date: date },
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var clickedDate = info.dateStr;
 
             $.ajax({
-                url: "/schedule/findByDate",
+                url: "/api/schedule/findByDate",
                 method: "GET",
                 dataType: "json",
                 data: { date: clickedDate },
@@ -505,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	                  };
 						console.log(obj);
 	                  $.ajax({
-	                    url: "/schedule/add", // 데이터를 전송할 컨트롤러의 URL
+	                    url: "/api/schedule/add", // 데이터를 전송할 컨트롤러의 URL
 	                    type: "POST",
 	                    data: JSON.stringify(obj),
 	                    contentType: "application/json",
@@ -565,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	    console.log(scheduleDto);
 
     	    $.ajax({
-    	      url: "/schedule/updateTime",
+    	      url: "/api/schedule/updateTime",
     	      method: "PATCH",
     	      dataType: "json",
     	      data: JSON.stringify(scheduleDto),
@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', function() {
         	    console.log(scheduleDto);
 
         	    $.ajax({
-        	      url: "/schedule/updateTime",
+        	      url: "/api/schedule/updateTime",
         	      method: "PATCH",
         	      dataType: "json",
         	      data: JSON.stringify(scheduleDto),
@@ -675,8 +675,6 @@ document.addEventListener('DOMContentLoaded', function() {
        	  var view = arg.view.type; // 현재 뷰 타입 확인
        	  
        	  if (view === 'timeGridWeek') {
-	       	  var subject = event.extendedProps.subject || '';
-	       	  var material = event.extendedProps.material || '';
 	       	  var achieveRate = event.extendedProps.achieveRate || 0;
 	       	  var studyway = event.extendedProps.studyway || '';
 	          var progress = event.extendedProps.progress || '';
@@ -723,15 +721,13 @@ document.addEventListener('DOMContentLoaded', function() {
        	},datesSet: function(info) { //월간뷰 데이터 세팅 
        	  var view = info.view;
        	  var start = view.currentStart;
-          var end = view.currentEnd;
-       	  
 
        	  if (view.type === 'dayGridMonth') {
        		  
        		calendar.setOption('editable', false);
        	    // 월간 뷰에 대한 이벤트 데이터 로딩
        	    $.ajax({
-       	      url: "/schedule/getMonthlyAchievement",
+       	      url: "/api/schedule/getMonthlyAchievement",
        	      type: "GET",
        	      dataType: "json",
        	      data: {
@@ -763,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
        		  
        		calendar.setOption('editable', true);
        		$.ajax({
-       	        url: "/schedule/findAll",
+       	        url: "/api/schedule/findAll",
        	        type: "GET",
        	        dataType: "json",
        	        success: function(data) {

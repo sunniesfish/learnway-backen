@@ -51,7 +51,7 @@ body {
     margin-right: 15px;
     padding: 10px;
     border-radius: 20px;
-    background-color: #ffc107;
+    background-color: #a3d8f4;
     border: none;
     color: #343a40;
     font-weight: bold;
@@ -59,7 +59,7 @@ body {
 }
 
 #sidebar #empt:hover {
-    background-color: #ffcd39;
+    background-color: #a3d8f4;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }

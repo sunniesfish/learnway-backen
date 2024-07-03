@@ -1,10 +1,15 @@
 <div th:fragment="sidebar">
     <div id="sidebar">
         <div class="sidebar-header">
-            <span>🚀 LearnWay</span>
+            <img src="/img/mainLogo.png" alt="이미지 설명" style="width: 150px; height: auto;">
         </div>
         <hr>
         <div class="sidebar-item">
+            <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px">
+            <span class="ml-4" th:text="${#authentication.principal.name}"></span>
+            <div class="text-center">
+                <a href="/logout" class="text-secondary">로그아웃</a>
+            </div>
         </div>
         <hr>
         <div class="sidebar-item">

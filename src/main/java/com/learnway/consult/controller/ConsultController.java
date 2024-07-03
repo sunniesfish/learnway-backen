@@ -17,7 +17,7 @@ import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
 
 @Controller
-@RequestMapping("/consult")
+//@RequestMapping("/consult")
 public class ConsultController {
 	@Autowired
 	private ReservationService reservationService;
@@ -82,7 +82,21 @@ public class ConsultController {
 		System.out.println("video들어와?");
 		return "/consult/video";
 	}
-			
+
+	//뷰화면 테스트
+	@GetMapping("/test")
+	public String test(Authentication authentication,Model model) {
+//    	String memberId = null;
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//            memberId = userDetails.getUsername();
+//            System.out.println(memberId);
+//        }
+//        model.addAttribute("memberId", memberId);
+		
+		return "/page";
+	}
+	
 	//로그인한 세션 정보 확인
 	   @GetMapping("/checkSession")
 	    public String checkSession(Authentication authentication) {

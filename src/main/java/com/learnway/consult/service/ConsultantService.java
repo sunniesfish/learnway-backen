@@ -15,13 +15,14 @@ import com.learnway.consult.domain.MemoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+
 // Counselor 멀티 로그인 테스트 파일
 @RequiredArgsConstructor
 @Service
 public class ConsultantService  implements UserDetailsService {
-    
+
 	private final ConsultantRepository consultantRepository;
-    
+
     private final MemoRepository memoRepository;
 
     @Override
@@ -38,8 +39,9 @@ public class ConsultantService  implements UserDetailsService {
         return consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new IllegalArgumentException("상담사를 찾을 수 없습니다."));
     }
- 
-  //-------------------------메모관련메소드---------------------------------  
+
+  //-------------------------메모관련메소드---------------------------------
+
     //메모저장서비스
     public Memo saveMemo(Long consultantId, String memoTitle, String memoContents) {
         // 상담사 정보 가져오기
@@ -64,7 +66,8 @@ public class ConsultantService  implements UserDetailsService {
 	public List<Memo> getMemoDetail(Long memoId) {
 		return memoRepository.findByMemoId(memoId);
 	}
-	
+
+
 	//메모삭제 서비스
 	@Transactional
 	public void deleteBymemoId(Long memoId) {
@@ -73,10 +76,12 @@ public class ConsultantService  implements UserDetailsService {
 
 	//메모수정서비스
 	public Memo updateMemo(Long memoId,Long consultantId,String memoTitle, String memoContents) {
-        
+
+
         Consultant consultant = consultantRepository.findById(consultantId)
                 .orElseThrow(() -> new IllegalArgumentException("상담사를 찾을 수 없습니다. ID: " + consultantId));
-		
+
+
 		Memo memo = new Memo();
 		memo.setMemoId(memoId);
         memo.setMemoTitle(memoTitle);
