@@ -5,8 +5,10 @@
     <title>Counselor Home</title>
 </head>
 <body>
-<h1>카운셀러 로그인 홈 Test/h1>
-<a href="/counselor/logout">Logout</a>
+<h1>카운셀러 로그인 홈 Test</h1>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">로그아웃</button>
+    </form>
     <h2>로그인 정보</h2>
     <p>Username(ID): <span sec:authentication="name"></span></p>
     <p>User ID(PK): <span th:text="${#authentication.principal.id}"></span></p>
