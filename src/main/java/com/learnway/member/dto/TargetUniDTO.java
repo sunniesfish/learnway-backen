@@ -1,8 +1,7 @@
 package com.learnway.member.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 
 @Getter
 @Setter
@@ -11,4 +10,5 @@ import lombok.ToString;
 public class TargetUniDTO {
     private String collegeName;
     private String rank; // 지망 순위
+
 }

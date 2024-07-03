@@ -10,7 +10,7 @@ import java.util.List;
 
 // Member 관련 엔티티 클래스
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
