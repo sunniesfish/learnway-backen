@@ -28,6 +28,8 @@ public class SignalingController {
     public String PeerHandleOffer(@Payload String offer,
                                   @DestinationVariable(value = "roomId") String roomId,
                                   @DestinationVariable(value = "camKey") String camKey) {
+    	System.out.println("1");
+    	System.out.println("1번의 roomId" + roomId);
         log.info("[OFFER] {} : {}", camKey, offer);
         return offer;
     }
@@ -38,6 +40,8 @@ public class SignalingController {
     public String PeerHandleIceCandidate(@Payload String candidate,
                                          @DestinationVariable(value = "roomId") String roomId,
                                          @DestinationVariable(value = "camKey") String camKey) {
+    	System.out.println("2");
+    	System.out.println("2번의 roomId" + roomId);
         log.info("[ICECANDIDATE] {} : {}", camKey, candidate);
         return candidate;
     }
@@ -48,6 +52,8 @@ public class SignalingController {
     public String PeerHandleAnswer(@Payload String answer,
                                    @DestinationVariable(value = "roomId") String roomId,
                                    @DestinationVariable(value = "camKey") String camKey) {
+    	System.out.println("3");
+    	System.out.println("3번의 roomId" + roomId);
         log.info("[ANSWER] {} : {}", camKey, answer);
         return answer;
     }
@@ -56,6 +62,7 @@ public class SignalingController {
     @MessageMapping("/call/key")
     @SendTo("/topic/call/key")
     public String callKey(@Payload String message) {
+    	System.out.println("4");
         log.info("[Key] : {}", message);
         return message;
     }
@@ -64,6 +71,7 @@ public class SignalingController {
     @MessageMapping("/send/key")
     @SendTo("/topic/send/key")
     public String sendKey(@Payload String message) {
+    	System.out.println("5");
         log.info("[Send Key] : {}", message);
         return message;
     }
@@ -74,6 +82,7 @@ public class SignalingController {
     public String joinRoom(@DestinationVariable(value = "roomId") String roomId,
                            @DestinationVariable(value = "camKey") String camKey) {
         log.info("여기들어와?? : roomId={}, camKey={}", roomId, camKey);
+        System.out.println("join room 의 roomId" + roomId);
 
         // 해당 camKey에 대한 참여자 Set을 가져옵니다.
         roomParticipants.putIfAbsent(roomId, new HashSet<>());
@@ -87,7 +96,7 @@ public class SignalingController {
         }
  
         // 방(Room)에 참여 중인 인원 수 확인
-        if (participants.size() >= 2) {
+        if (participants.size() >= 50) {
             // 방이 가득 찼음을 클라이언트에게 알립니다.
             return "full";
         } else {

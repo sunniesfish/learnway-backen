@@ -15,8 +15,6 @@ import com.learnway.consult.domain.MemoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 
 // Counselor 멀티 로그인 테스트 파일
 @RequiredArgsConstructor
