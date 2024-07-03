@@ -11,18 +11,15 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.learnway.study.domain.ChatMessage;
 import com.learnway.study.domain.ChatMessageRepository;
 import com.learnway.study.domain.StudyChatRepository;
 import com.learnway.study.dto.ChatRoomDto;
-import com.learnway.study.dto.CorrectCheckDto;
 import com.learnway.study.service.StudyChatService;
 
 
@@ -48,7 +45,7 @@ public class StudyChatController {
 	// 리스트에 멤버id로 채팅방목록 가져와야함
 	@GetMapping(value="/learnway/chat")
 	public String chatList(Principal principal,Model model) {
-//		studyChatService.chatList(principal);
+
 		model.addAttribute("list",studyChatService.chatList(principal));
 		return "study/chatList";
 	}
@@ -89,6 +86,11 @@ public class StudyChatController {
 		return "/study/mychat";
 	}
 	
+	@GetMapping("/chatroom/{roomId}/messages")
+	@ResponseBody
+	public List<ChatMessage> getChatMessages(@PathVariable("roomId") int roomId) {
+	    return chatMessageRepository.findByChatroom_Chatroomid(roomId);
+	}
 	
 	@PostMapping(value="/joinRoom")
 //	@RequestMapping(value="/joinRoom",method= {RequestMethod.GET,RequestMethod.POST})
@@ -102,10 +104,9 @@ public class StudyChatController {
 		//채팅방 입장
 		System.out.println("save");
 		
-		model.addAttribute("name",principal.getName()); //채팅방-멤버테이블 가져올값
-		model.addAttribute("roomId",dto.getRoomId()); //수정해야됨
-		model.addAttribute("roomname","테스트");
-		//채팅방 저장
+//		model.addAttribute("name",principal.getName()); //채팅방-멤버테이블 가져올값
+//		model.addAttribute("roomId",dto.getRoomId()); //수정해야됨
+//		model.addAttribute("roomname","테스트");
 	
 
 		return "/study/mychat";
@@ -115,9 +116,18 @@ public class StudyChatController {
 	// 채팅방 입장 출력메세지 (첫입장에만 출력되게 수정예정)
 	@MessageMapping(value="/chat/enter")
 	public void chatenter(ChatRoomDto dto,Principal principal) {
+		
+		boolean result = studyChatService.chatFirstEnter(dto,principal);
+		
+		if(result == true) {
 		dto.setName(studyChatService.MemberName(principal));
 		dto.setMessage(dto.getName() + "님이 채팅방에 입장하셨습니다.");
+		LocalDateTime datetime = LocalDateTime.parse(dto.getDate(),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		dto.setDatetime(datetime);
+		chatMessageRepository.save(studyChatService.storechat(dto,principal));
 		template.convertAndSend("/sub/chat/room/"+dto.getRoomId(),dto);
+		}
+		
 	}
 	
 	@MessageMapping(value="/chat/message")

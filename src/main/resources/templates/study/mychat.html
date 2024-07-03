@@ -47,7 +47,6 @@
 </style>
 
 <script>
-
     function getFormattedTime() {
         var now = new Date();
 
@@ -61,12 +60,11 @@
 
         // 두 자리 숫자로 포맷
         minutes = minutes < 10 ? '0' + minutes : minutes;
-       
 
         var formattedTime = period + ' ' + hours + ':' + minutes;
         return formattedTime;
     }
-    
+
     $(document).ready(function () {
         var roomId = $("#roomId").text();
         var name = $("#name").text();
@@ -83,40 +81,58 @@
             return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
         }
 
+        function addMessageToUI(content) {
+            var str = '';
+
+            if (content.type === 'ENTER') {
+                str = "<div class='message enter'>";
+                str += "<div class='bubble'>";
+                str += "<b>" + content.message + "</b><br/>";
+                str += "</div></div>";
+            } else if (content.type === 'CHAT') {
+                if (content.name === name) {
+                    str = "<div class='message self'>";
+                    str += "<div class='bubble'>";
+                    str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                    str += content.date;
+                    str += "</div></div>";
+                } else {
+                    str = "<div class='message other'>";
+                    str += "<div class='bubble'>";
+                    str += "<b>" + content.name + " : " + content.message + "</b><br/>";
+                    str += content.date;
+                    str += "</div></div>";
+                }
+            }
+            $("#msgArea").append(str);
+        }
+
+        // 이전 채팅 내역 불러오기
+        $.getJSON("/chatroom/" + roomId + "/messages", function (data) {
+            data.forEach(function (message) {
+                var content = {
+                    type: 'CHAT',
+                    name: message.member.memberName,
+                    message: message.msg,
+                    date: message.datetime.replace("T", " ") // ISO 8601 형식에서 공백으로 변경
+                };
+                addMessageToUI(content);
+            });
+        });
+
         var sock = new SockJS("/stomp/chat");
         var stomp = Stomp.over(sock);
 
         stomp.connect({}, function (frame) {
             console.log("Connected: 연결 " + frame);
+            var datetime = getCurrentDateTime();
 
             stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
                 var content = JSON.parse(chat.body);
-                var str = '';
-
-                if (content.type === 'ENTER') {
-                    str = "<div class='message enter'>";
-                    str += "<div class='bubble'>";
-                    str += "<b>" + content.message + "</b><br/>";
-                    str += "</div></div>";
-                } else if (content.type === 'CHAT') {
-                    if (content.name === name) {
-                        str = "<div class='message self'>";
-                        str += "<div class='bubble'>";
-                        str += "<b>" + content.name + " : " + content.message + "</b><br/>";
-                        str += content.date;
-                        str += "</div></div>";
-                    } else {
-                        str = "<div class='message other'>";
-                        str += "<div class='bubble'>";
-                        str += "<b>" + content.name + " : " + content.message + "</b><br/>";
-                        str += content.date;
-                        str += "</div></div>";
-                    }
-                }
-                $("#msgArea").append(str);
+                addMessageToUI(content);
             });
 
-            stomp.send('/pub/chat/enter', {}, JSON.stringify({ type: 'ENTER', roomId: roomId, name: name }));
+            stomp.send('/pub/chat/enter', {}, JSON.stringify({ type: 'ENTER', roomId: roomId, name: name, date:datetime}));
         });
 
         function sendMessage() {
@@ -160,33 +176,7 @@
         </tbody>
     </table>
 </div>
-<div th:if="${chatListHost!=null}">
-    <p>채팅방장 값 넘어옴</p>
-</div>
-<div th:if="${chatListGuest!=null}">
-    <p>채팅멤버값 넘어옴</p>
-</div>
 
-<div id="chatMessages">
-        <h2>이전 채팅 내역</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>작성자</th>
-                    <th>메시지</th>
-                    <th>작성 시간</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="chatMessage : ${chatMessageList}">
-                 <td th:text="${chatMessage.member.memberName}"></td>
-                    <td th:text="${chatMessage.msg}"></td> 
-                    <td th:text="${#temporals.format(chatMessage.datetime, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    
 <div id="msgArea"></div>
 <input type="text" id="msg" placeholder="메시지 입력">
 <button id="button-send">전송</button>

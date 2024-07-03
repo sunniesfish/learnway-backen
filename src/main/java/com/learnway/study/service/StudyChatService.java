@@ -17,6 +17,7 @@ import com.learnway.study.domain.ChatRoomRepository;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyChatRepository;
 import com.learnway.study.dto.ChatRoomDto;
+import com.learnway.study.dto.ChatRoomMemberDto;
 
 @Service
 public class StudyChatService {
@@ -49,8 +50,6 @@ public class StudyChatService {
 	//채팅방 리스트 조회
 	public List<ChatRoomMember> chatList(Principal principal) {
 		
-//		List<ChatRoomMember> list = chatRoomMemberRepository.findByMemberId(
-//								memberRepository.findByMemberId(principal.getName()).get());
 		List<ChatRoomMember> list = chatRoomMemberRepository.findByMember_MemberId(
 				principal.getName());
 		return list;
@@ -68,10 +67,12 @@ public class StudyChatService {
 		
 		
 		ChatRoomMember room = ChatRoomMember.builder().member(member)
-				  				.chatRoom(chatRoom).build();
+				  				.chatRoom(chatRoom).hasEntered(true).build();
 		
 		return chatRoomMemberRepository.save(room);
+		
 	}
+	
 	
 	//채팅방 생성 메서드
 	public ChatRoom chatRoomCreate(ChatRoomDto dto,Study study,Principal principal) {
@@ -112,9 +113,9 @@ public class StudyChatService {
 		return chatRoomRepository.findById(dto.getRoomId()).get();
 	}
 	//채팅방 참여자 리스트(멤버)
-	public ChatRoomMember chatListGuest(ChatRoomDto dto) {
+	public List<ChatRoomMember> chatListGuest(ChatRoomDto dto) {
 		
-		return chatRoomMemberRepository.findById((long) dto.getRoomId()).get();
+		return chatRoomMemberRepository.findByChatRoom_Chatroomid(dto.getRoomId());
 	}
 	
 	//이전채팅 가져오기
@@ -122,4 +123,34 @@ public class StudyChatService {
 		return chatMessageRepository.findByChatroom_Chatroomid(dto.getRoomId());
 	}
 	
+	//채팅방 처음입장 검사 처음입장시 return값 true / 아닐시 false반환
+	public boolean chatFirstEnter(ChatRoomDto dto,Principal principal) {
+		List<ChatRoomMember> list = chatRoomMemberRepository.findByMember_MemberId(principal.getName());
+		 ChatRoomMemberDto chatDto = new ChatRoomMemberDto();
+		
+		for(ChatRoomMember chat : list) {
+			chatDto.setHasEntered(chat.isHasEntered());
+		}
+		
+		if(chatDto.isHasEntered()==false){
+			
+			return false;
+		} else {
+			
+			Member member = memberRepository.findByMemberId(principal.getName())
+		            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+			
+			ChatRoom chatRoom = studyChatRepository.findById(dto.getRoomId()).get();
+			
+			
+			ChatRoomMember room = ChatRoomMember.builder().member(member).chatMemId(member.getId().intValue())
+					  				.chatRoom(chatRoom).hasEntered(false).build();
+			
+			chatRoomMemberRepository.save(room);
+			
+			return true;
+		}
+			
+			
+	}
 }

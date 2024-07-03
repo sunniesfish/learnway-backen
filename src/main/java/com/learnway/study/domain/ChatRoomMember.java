@@ -37,4 +37,7 @@ public class ChatRoomMember {
 	@ManyToOne
 	@JoinColumn(name = "study_chatroomid", nullable = false)
     private ChatRoom chatRoom;
+	
+	@Column(name = "chatmem_has_entered", nullable = false)
+    private boolean hasEntered;
 }
