@@ -7,11 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
+import com.learnway.consult.domain.Consultant;
+import com.learnway.consult.domain.ConsultantRepository;
 import com.learnway.consult.domain.Memo;
 import com.learnway.consult.domain.MemoRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
