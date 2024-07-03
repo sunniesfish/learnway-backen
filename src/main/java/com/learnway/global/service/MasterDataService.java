@@ -5,6 +5,8 @@ import com.learnway.global.dto.MasterDataDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 // 기준 정보(Material/Subject/StudyWay)를 관리하는 서비스 클래스
 @Service
 @RequiredArgsConstructor
@@ -51,5 +53,9 @@ public class MasterDataService {
             default: // IllegalArgumentException (잘못 된 매개변수가 전달되었을 때 예외)
                 throw new IllegalArgumentException("잘못된 카테고리입니다 : " + masterDataDTO.getCategory());
         }
+    }
+
+    public List<Subject> getSubjects() {
+        return subjectRepository.findAll();
     }
 }
