@@ -84,10 +84,20 @@ public class StudyController {
 	public String studyUpdateView(StudyDto dto,Model model) {
 	
 		System.out.println(dto.getPostid()+ " 게시글id");
-		
-		return "/study/studyupdate";
+		Optional<Study> study =  studyService.updateView(dto);
+		if(study.isPresent()) {
+			model.addAttribute("study",study.get());
+			model.addAttribute("postid",dto.getPostid());
+			return "/study/studyupdate";
+		}
+		else {
+			model.addAttribute("errmsg","게시글을 찾을 수 없습니다.");
+			return "error/404";
+		}
 	}
 	
+	
+	//게시글 추가 메서드
 	@PostMapping(value="/studyadd")
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
@@ -99,11 +109,12 @@ public class StudyController {
 	}
 	
 	//게시글 수정 메서드
-	@GetMapping(value="/studyupdate")
+	@PostMapping(value="/studyupdate")
 	public String studyUpdate(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
 			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
 		
+		System.out.println("게시글 id 수정창" + studyDto.getPostid());
 		studyService.updateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		
 		return "redirect:/studylist";

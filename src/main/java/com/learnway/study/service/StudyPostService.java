@@ -10,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
-import com.learnway.member.service.CustomUserDetails;
-import com.learnway.member.service.CustomUserDetailsService;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.StudyDto;
@@ -45,12 +42,6 @@ public class StudyPostService {
 	//현재메서드는 게시글작성 및  return 값으로는 작성중인 potsId값 반환
 	public Study boardadd(StudyDto dto,Principal principal) {
 		
-
-		Member member = memberRepository.findByMemberId(principal.getName())
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		
-		
-		
 		Study study = Study.builder().title(dto.getTitle())
 									       .content(dto.getContent())
 									       .viewcount("0")
@@ -66,12 +57,6 @@ public class StudyPostService {
 	
 	// 게시글 수정 메서드
 	public Study boardUpdate(StudyDto dto,Principal principal) {
-		
-		
-		Member member = memberRepository.findByMemberId(principal.getName())
-				.orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		
-		
 		
 		Study study = Study.builder().postid(dto.getPostid()).title(dto.getTitle())
 				.content(dto.getContent())

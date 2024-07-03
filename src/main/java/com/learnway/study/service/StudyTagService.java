@@ -3,7 +3,6 @@ package com.learnway.study.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.learnway.study.domain.Study;
@@ -33,9 +32,14 @@ public class StudyTagService {
 	}
 	
 	//게시글 태그 수정
-	public void updateTag(StudyTagDto studyTagDto,Study study) {
-		
-		StudyTag tag = StudyTag.builder().tag(studyTagDto.getTag()).study(study).build();
+	public void updateTag(StudyTagDto studyTagDto,Study study,int postid) {
+		List<StudyTag> list = studyTagRepository.findByStudyPostid(postid);
+		int tagId = 0;
+		for(StudyTag a : list) {
+			tagId = a.getTagId();
+		}
+		StudyTag tag = StudyTag.builder().tagId(tagId).
+				tag(studyTagDto.getTag()).study(study).build();
 		studyTagRepository.save(tag);
 	}
 	

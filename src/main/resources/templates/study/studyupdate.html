@@ -125,7 +125,7 @@
         var popup = window.open('/createRoom', 'popup', 'width=600,height=400');
         popup.onunload = function() {
             if (popup.closed) {
-                alert("채팅방 생성 완료");
+                alert("채팅방 수정 완료");
                 var roomname = popup.document.getElementById('roomname').value;
                 document.getElementById('roomname').value = roomname;
             }
@@ -269,20 +269,21 @@
 <body>
     <div id="form-container">
         <form action="/studyupdate" method="post" enctype="multipart/form-data">
+        <input type="hidden" id="postid" name="postid" th:value="${postid}">
             <label for="title">제목:</label>
-            <input type="text" id="title" name="title">
+            <input type="text" id="title" name="title" th:value="${study.title}">
             
             <label for="content">내용:</label>
-            <input type="text" id="content" name="content">
+            <input type="text" id="content" name="content" th:value="${study.content}">
             
             <label for="startdate">시작일:</label>
-            <input type="date" id="startdate" name="startdate">
+            <input type="date" id="startdate" name="startdate" th:value="${study.startdate}">
             
             <label for="enddate">종료일:</label>
-            <input type="date" id="enddate" name="enddate">
+            <input type="date" id="enddate" name="enddate" th:value="${study.enddate}">
             
-            <label for="roomname">채팅방 생성:</label>
-            <button type="button" onclick="showPopup(event);">생성하기</button><br>
+            <label for="roomname">채팅방 제목 수정:</label>
+            <button type="button" onclick="showPopup(event);">수정하기</button><br>
             
             <input type="hidden" name="roomname" id="roomname">
             <input type="hidden" name="name" id="name">
@@ -301,8 +302,8 @@
                 <input type="radio" name="problemtype" value="1"> 직접출제
                 <input type="radio" name="problemtype" value="2"> 랜덤
                 <br>
-                <input type="radio" name="isjoin" value="1"> 참여가능
-                <input type="radio" name="isjoin" value="0"> 참여불가
+            <!--     <input type="radio" name="isjoin" value="1"> 참여가능
+                <input type="radio" name="isjoin" value="0"> 참여불가 -->
                 <br>
                 <div class="mb-3">
                     <label for="imgpath">이미지 파일 업로드:</label>
@@ -313,7 +314,7 @@
                 <div id="additional-fields">
                     <label for="correct">정답:</label>
                     <input type="text" id="correct" name="correct">
-                    
+                    <br/>
                     <label for="subject">과목:</label>
                     <select id="subject" name="subject">
                         <option value="과목">과목</option>

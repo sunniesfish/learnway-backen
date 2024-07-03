@@ -26,13 +26,32 @@ public class StudyProblemService {
 		//로그인한 값 가져와 수정예정
 		Member member = memberRepository.findByMemberId(principal.getName())
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		System.out.println(dto.getSubject() + "과목");
-		System.out.println(dto.getLevel() + "난이도");
 		
 		StudyProblem studyProblem = StudyProblem.builder().subject(dto.getSubject())
 									.level(dto.getLevel()).content(dto.getContent())
 									.correct(dto.getCorrect()).study(Study.builder().postid(postid).build())
 									.memid(member).build();
+		studyProblemRepository.save(studyProblem);
+		
+		//해당문제 번호 구하기
+		StudyProblem sp=studyProblemRepository.findByStudyPostid(postid);
+		return sp.getProblemid(); //문제번호(문제이미지 테이블에서 사용)
+		
+	}
+	
+	//문제수정 메서드
+	public Integer problemUpdate(StudyProblemDto dto,int postid,Principal principal) {
+		
+		//로그인한 값 가져와 수정예정
+		Member member = memberRepository.findByMemberId(principal.getName())
+				.orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		StudyProblem problem = studyProblemRepository.findByStudyPostid(postid);
+		
+		StudyProblem studyProblem = StudyProblem.builder().subject(dto.getSubject())
+				.problemid(problem.getProblemid())
+				.level(dto.getLevel()).content(dto.getContent())
+				.correct(dto.getCorrect()).study(Study.builder().postid(postid).build())
+				.memid(member).build();
 		studyProblemRepository.save(studyProblem);
 		
 		//해당문제 번호 구하기

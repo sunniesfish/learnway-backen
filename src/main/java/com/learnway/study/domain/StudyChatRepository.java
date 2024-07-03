@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface StudyChatRepository extends JpaRepository<ChatRoom, Integer> {
 
 	List<ChatRoom> findByStudyPostid(int postid);
+	
 	 @Query("SELECT c.roomname FROM ChatRoom c WHERE c.chatroomid = :roomId")
 	    String findRoomNameByRoomId(@Param("roomId") Integer roomId);
 	

@@ -1,6 +1,7 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,29 +72,33 @@ public class StudyService {
 		studyProblemImgService.problemImgAdd(studyProblemImgDto,files,problemid);
 	}
 
+	//게시글 수정view 데이터조회
+	public Optional<Study> updateView(StudyDto dto) {
+		return studyRepository.findById(dto.getPostid());
+		
+	}
+	
+	
 	//게시글 수정 메서드
 	@Transactional
 	public void updateBoard(StudyDto dto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto
 			,MultipartFile[] files,Principal principal) {
 		
-		System.out.println("게시글수정");
 		//게시글 수정
 		Study study = studyPostService.boardUpdate(dto,principal);
 		int postid = study.getPostid();
-		System.out.println("post id : " + postid);
 		
 		//채팅방 제목 수정 (수정중)
-		studyChatService.chatRoomUpdate(chatRoomDto, study,principal);
+		studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
 		//태그값 수정
-		studyTagService.createTag(studyTagDto, study);
-		//문제 수정
-		int problemid = studyProblemService.problemAdd(studyProblemDto,postid,principal);
+		studyTagService.updateTag(studyTagDto, study,postid);
 		
-		System.out.println(problemid + "해당문제아이디");
+		//문제 수정
+		int problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
 		
 		//문제이미지 저장
-		studyProblemImgService.problemImgAdd(studyProblemImgDto,files,problemid);
+		studyProblemImgService.problemImgUpdate(studyProblemImgDto,files,problemid);
 	}
 	
 	

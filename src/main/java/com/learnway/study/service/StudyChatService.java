@@ -90,17 +90,18 @@ public class StudyChatService {
 	}
 	
 	//채팅방 제목 수정
-	public ChatRoom chatRoomUpdate(ChatRoomDto dto,Study study,Principal principal) {
+	public ChatRoom chatRoomUpdate(ChatRoomDto dto,Study study,Principal principal,int postId) {
 		
 		Member member = memberRepository.findByMemberId(principal.getName())
 				.orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		
-		
-		ChatRoom room = ChatRoom.builder().roomname(dto.getRoomname())
-				.study(study).member(member).build();
+		int roomId = 0;
+		List<ChatRoom> list = studyChatRepository.findByStudyPostid(postId);
+		for(ChatRoom a : list) {
+			roomId = a.getChatroomid();
+		}
 		
 		return studyChatRepository.save(ChatRoom.builder().roomname(dto.getRoomname())
-				.study(study).member(member).build());
+				.chatroomid(roomId).study(study).member(member).build());
 	}
 	
 	
