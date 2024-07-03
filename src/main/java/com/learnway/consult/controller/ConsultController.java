@@ -60,7 +60,7 @@ public class ConsultController {
 		return "consult/reservationBoard";
 	}
 	//상담사 페이지
-	@GetMapping("/consultant")
+	@GetMapping("/consult/consultant")
 	public String consultantPage(Authentication authentication,Model model) {
 		//현제 상담사 pk값 1  사용중  상담사 로그인 구현되지않음 (pk1번은 박준영상담사 심리상담 )
 	  	Long consultantId = null;
@@ -84,7 +84,7 @@ public class ConsultController {
 		
 		return "/consult/video";
 	}
-		
+
 	//뷰화면 테스트
 	@GetMapping("/test")
 	public String test(Authentication authentication,Model model) {

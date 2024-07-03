@@ -37,7 +37,7 @@ public class SecurityConfig {
     @Bean // Static(정적 리소스 ) 정상 로드를 위해 하기 요청은 시큐리티 필터체인 Ignoring 적용
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers("/css/**", "/image/**", "/js/**");
+                .requestMatchers("/css/**", "/img/**", "/js/**");
     }
 
     @Bean
@@ -46,24 +46,24 @@ public class SecurityConfig {
         logger.info("counselor security filter chain");
         // 상담사 보안 설정 test
         http
-                .securityMatcher("/counselor/**")
+                .securityMatcher("/consult/**")
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/counselor/login").permitAll()
-                                .requestMatchers("/counselor/**").hasRole("COUNSELOR")
+                                .requestMatchers("/index-consult","/loginChange/consult","/login-consult").permitAll()
+                                .requestMatchers("/consult/**").hasRole("COUNSELOR")
                 )
                 .formLogin(formLogin ->
                         formLogin
-                                .loginPage("/counselor-login")
-                                .loginProcessingUrl("/counselor/login")
-                                .defaultSuccessUrl("/counselor/home", true)
-                                .failureUrl("/counselor/login?error=true")
+                                .loginPage("/consult/loginChange/consult")      //로그인 페이지 경로
+                                .loginProcessingUrl("/consult/login-consult")   //
+                                .defaultSuccessUrl("/consult/consultant", true)
+                                .failureUrl("/loginChange/consult?error=true")
                                 .permitAll()
                 )
                 .logout(logout ->
                         logout
                                 .logoutUrl("/counselor/logout")
-                                .logoutSuccessUrl("/counselor/login")
+                                .logoutSuccessUrl("/index-consult")
                                 .permitAll()
                 )
                 .userDetailsService(consultantService)
@@ -90,7 +90,7 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/member/join","/**","/api/**").permitAll() // 비회원 포함 모든 권한 접근 가능
                                 .requestMatchers("/admin/**").hasRole("ADMIN")      // Admin 권한만 접근 가능
                                 .requestMatchers("/counselor/**").denyAll()         // 일반 사용자 counselor 접근 제한
-                                .requestMatchers("/haha/**","/loginOk","/api/**").hasAnyRole("ADMIN", "USER")
+                                .requestMatchers("/loginOk","/api/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().authenticated()                         // 그 외 조건은 인증 필요
                 )
 
@@ -118,6 +118,17 @@ public class SecurityConfig {
                                 .maximumSessions(1)                 // 최대 동시 세션 수
                 ).csrf().disable();
 
+        return http.build();
+    }
+    @Bean
+    @Order(3)
+    public SecurityFilterChain httpsSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .requiresChannel(requiresChannel ->
+                        requiresChannel
+                                .requestMatchers("/signaling/**").requiresSecure()  // HTTPS가 필요한 URL 패턴
+                                .anyRequest().requiresInsecure()  // 나머지 URL은 HTTP로
+                );
         return http.build();
     }
 

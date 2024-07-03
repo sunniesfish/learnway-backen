@@ -24,7 +24,7 @@ public class MasterDataService {
                 Material materialClass = Material.builder()
                         .materialCode(masterDataDTO.getCode())
                         .material(masterDataDTO.getName())
-                        .material(masterDataDTO.getNote())
+                        .materialNote(masterDataDTO.getNote())
                         .build();
                 materialRepository.save(materialClass);
                 System.out.println("학습 종류 추가 완료");
