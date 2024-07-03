@@ -197,6 +197,7 @@ public class ScheduleService {
 		        }
 	    }
 		
+		//하루 평균 달성율 구하기
 		public double DailyAvgAchieve(LocalDateTime dateTime) {
 		    LocalDateTime endTime = dateTime.plusDays(1).minusSeconds(1); //;
 		    List<Schedule> schedules = scheduleRepository.findByStartTimeBetween(dateTime, endTime);
@@ -221,6 +222,34 @@ public class ScheduleService {
 		    }
 		    
 		    return totalAchieveRate / schedules.size();
+		}
+		
+		//한 일정 달성율 구하기
+		public double scheduleAchieveRate(Long id) {
+			Schedule schedule = scheduleRepository.findById(id).orElseThrow(() 
+					-> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + id));
+			
+			List<Progress> progresses = schedule.getProgresses();
+			
+			if(progresses.isEmpty()) {
+				return 0.0;
+			}
+			
+			double totalAchieveRate = 0.0;
+			int totalProgresses = 0;
+			double scheduleAchieveRate = 0.0;
+			
+			for(Progress progress : progresses) {
+				totalAchieveRate += progress.getAchieveRate();
+				totalProgresses++;
+			}
+			
+			ScheduleDto dto = new ScheduleDto();
+			scheduleAchieveRate = totalAchieveRate / progresses.size();
+			dto.setScheduleAchieveRate(scheduleAchieveRate); 
+	
+			return scheduleAchieveRate;
+		
 		}
 		
 		

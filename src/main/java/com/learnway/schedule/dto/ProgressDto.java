@@ -15,6 +15,7 @@ public class ProgressDto {
 	private double achieveRate;
 	private String materialId;
 	private String progress;
+
 	@Override
 	public String toString() {
 		return "ProgressDto [progressId=" + progressId + ", achieveRate=" + achieveRate + ", materialId=" + materialId

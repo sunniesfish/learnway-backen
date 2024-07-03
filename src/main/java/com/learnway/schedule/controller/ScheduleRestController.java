@@ -125,16 +125,28 @@ public class ScheduleRestController {
 	        event.put("studyway", schedule.getStudywayId().getName());
 	        event.put("studywayId", schedule.getStudywayId().getStudywayCode());
 	        
+	        double scheduleAchieveRate = scheduleService.scheduleAchieveRate(schedule.getScheduleId());
+	        event.put("scheduleAchieveRate", scheduleAchieveRate);
+	        
 
 	        List<Map<String, Object>> progressList = new ArrayList<>();
 	        List<Progress> progresses = schedule.getProgresses();
-	        for (Progress progress : progresses) {
-	            Map<String, Object> progressData = new HashMap<>();
+	        for (int i = 0; i < progresses.size(); i++) {
+	        	Progress progress = progresses.get(i);
+	        	Map<String, Object> progressData = new HashMap<>();
 	            progressData.put("id", progress.getProgressId());
 	            progressData.put("material", progress.getMaterialId().getName());
 	            progressData.put("achieveRate", progress.getAchieveRate());
 	            progressData.put("progress", progress.getProgress());
+	            
+	            // 첫 번째 progress만 event에 추가
+	            if (i == 0) {
+	            event.put("subTitle", progress.getMaterialId().getName());
+	            
 	            progressList.add(progressData);
+	            }
+	            
+	            
 	        }
 
 	        event.put("progresses", progressList);

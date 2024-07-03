@@ -170,10 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	                    "endTime": endTime,
 	                    "studywayId": studyway,
 	                    "subjectId": subject,
-	                    "progresses": progressList,
-	                    "extendedProps": {
-						    "studywayId": studyway
-						    }
+	                    "progresses": progressList
 	                  };
                  
             	 var newEvent = {
@@ -430,10 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	                    "endTime": endTime,
 	       	                    "studywayId": studyway,
 	       	                    "subjectId": subject,
-	       	                    "progresses": progresses,
-	       	                    "extendedProps": {
-							    "studywayId": studyway
-							    }
+	       	                    "progresses": progresses
 	       	                  };
 	       	                  
                              $.ajax({
@@ -782,7 +776,7 @@ document.addEventListener('DOMContentLoaded', function() {
         		  var event = info.event;
        	          var scheduleDto = {
        	               scheduleId: event.id,
-       	               studyway: event.title,
+       	               studywayId: event.extendedProps.studywayId,
        	               startTime: startTimeStr,
                        endTime: endTimeStr
         	         };
@@ -812,6 +806,8 @@ document.addEventListener('DOMContentLoaded', function() {
        	      var event = info.event;
        	      var eventSubject = event.extendedProps ? event.extendedProps.subject : null; // 일정 데이터에서 과목명 가져오기
        	      var eventColor = getSubjectColor(eventSubject);
+       	      var eventElement = info.el;
+ 			  var eventDuration = info.event.end - info.event.start;
 
        	      info.el.style.backgroundColor = eventColor; // 일정 칸의 배경색 설정
        	      info.el.style.borderColor = 'white'; // 일정 칸의 보더 색상을 흰색으로 설정
@@ -837,6 +833,23 @@ document.addEventListener('DOMContentLoaded', function() {
        	            }
        	        }
        	      }
+       	      
+       	      //30분만 일정 등록했을때, 컨텐츠가 칸 밖으로 넘어가는 것 처리 
+       	      if (eventDuration <= 30 * 60 * 1000) { // 30분 이하의 이벤트인 경우
+			    var eventContent = eventElement.querySelector('.fc-event-content');
+			    eventContent.style.maxHeight = '28px';
+			    eventContent.style.overflow = 'hidden';
+			
+			    eventElement.addEventListener('mouseover', function() {
+			      eventContent.style.maxHeight = 'none';
+			      eventContent.style.overflow = 'visible';
+			    });
+			
+			    eventElement.addEventListener('mouseout', function() {
+			      eventContent.style.maxHeight = '28px';
+			      eventContent.style.overflow = 'hidden';
+			    });
+			  }
        	    },
        	 eventContent: function(arg) { //주간 일정표 칸 커스텀 
        		 
@@ -844,16 +857,16 @@ document.addEventListener('DOMContentLoaded', function() {
        	  var view = arg.view.type; // 현재 뷰 타입 확인
        	  
        	  if (view === 'timeGridWeek') {
-	       	  var achieveRate = event.extendedProps.achieveRate || 0;
 	       	  var studyway = event.extendedProps.studyway || '';
-	          var progress = event.extendedProps.progress || '';
+	          var scheduleAchieveRate = event.extendedProps.scheduleAchieveRate || 0;
+	          var subTitle = event.extendedProps.subTitle || '';
 	
 	          var html =  '<div class="fc-event-content">' +
 				          '<div class="fc-event-top">'+
 				          '<div class="fc-event-studyway">' + studyway + '</div>' +
-				          '<div class="fc-event-achieveRate">' + achieveRate + '%</div>' + '</div>' +
-				          '<div class="progress-bar" style="--progress: ' + achieveRate + '%;"></div>' +
-				          '<div class="fc-event-progress">' + progress + '</div>' +
+				          '<div class="fc-event-achieveRate">' + scheduleAchieveRate + '%</div>' + '</div>' +
+				          '<div class="progress-bar" style="--progress: ' + scheduleAchieveRate + '%;"></div>' +
+				          '<div class="fc-event-subtitle">' + subTitle + '</div>' +
 				          '</div>';
 	          
 	          return { html: html };
@@ -890,6 +903,7 @@ document.addEventListener('DOMContentLoaded', function() {
        	},datesSet: function(info) { //월간뷰 데이터 세팅 
        	  var view = info.view;
        	  var start = view.currentStart;
+       	  var event = info.event;
 
        	  if (view.type === 'dayGridMonth') {
        		  
@@ -934,7 +948,11 @@ document.addEventListener('DOMContentLoaded', function() {
        	        success: function(data) {
        	          weeklyEvents = data.map(function(event) {
 				    event.extendedProps = {
-				      studywayId: event.studywayId
+				      studywayId: event.studywayId,
+				      progress: event.progresses.progress,
+                      achieveRate: event.progresses.achieveRate,
+                      scheduleAchieveRate: event.scheduleAchieveRate,
+                      subTitle: event.progresses.subTitle
 				    };
 				    return event;
 				  });

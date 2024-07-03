@@ -28,6 +28,7 @@ public class ScheduleDto {
 	private LocalDateTime  endTime;
 	private String studywayId;
 	private String subjectId;
+	private double scheduleAchieveRate;
 	private List<ProgressDto> progresses;
 	@Override
 	public String toString() {

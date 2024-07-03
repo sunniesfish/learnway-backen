@@ -40,6 +40,9 @@ public class Schedule {
 	
 	@Column(nullable=true)
 	private LocalDateTime  endTime;
+		
+	@Column(nullable=true)
+	private double scheduleAchieveRate;
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(columnDefinition = "VARCHAR(4)", unique = false)
