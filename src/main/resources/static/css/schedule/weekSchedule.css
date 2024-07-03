@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 .fc-event-main {
     color: #2C3E50 !important;
   }
@@ -13,7 +12,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px;
+  padding: 5px 10px;
 }
 
 .fc-event-top {
@@ -28,27 +27,29 @@
 }
 
 .fc-event-studyway {
-  font-size: 16px;	
+  font-size: 13px;	
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .fc-event-achieveRate {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;	
   text-align: right;
+  margin-bottom: 5px;
 }
 
-.fc-event-progress {
-  font-size: 15px;
+.fc-event-subtitle {
+  font-size: 10px;
   font-weight: bold;
-  margin-top: 2px;
+  margin: 2px 0px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 10px;
+  height: 5px;
   background: linear-gradient(to right, #F48FB1 var(--progress), #e0e0e0 var(--progress));
+  margin-bottom: 4px;
   
   /*
   E68FAC
@@ -116,5 +117,38 @@
 #monthlyScheduleModal .modal-dialog {
     max-width: 500px !important;
     width: 90% !important;
+}
+
+.fc-col-header-cell.fc-day-sun {
+    background-color: #ffebee;
+}
+
+.fc-col-header-cell.fc-day-sat {
+    background-color: #e3f2fd;
+}
+
+/* 전체 캘린더 테두리 스타일 */
+.fc-scrollgrid {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid #666;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.fc-col-header-cell.fc-day-sun {
+    background-color: #ffebee;
+}
+
+.fc-col-header-cell.fc-day-sat {
+    background-color: #e3f2fd;
+}
+
+.fc-col-header-cell {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 

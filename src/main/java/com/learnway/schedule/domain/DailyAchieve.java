@@ -20,7 +20,7 @@ public class DailyAchieve {
 	@Id
 	private String DailyAchieveId;
 	
-	@Column(nullable=true)
+	@Column
 	private LocalDateTime date;
 	
 	@Column(nullable=true)
