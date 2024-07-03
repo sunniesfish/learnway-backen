@@ -56,7 +56,7 @@ public class SecurityConfig {
                         formLogin
                                 .loginPage("/consult/loginChange/consult")      //로그인 페이지 경로
                                 .loginProcessingUrl("/consult/login-consult")   //
-                                .defaultSuccessUrl("/consult/consultant", true)
+                                .defaultSuccessUrl("/consultant", true)
                                 .failureUrl("/loginChange/consult?error=true")
                                 .permitAll()
                 )

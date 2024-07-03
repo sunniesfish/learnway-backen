@@ -113,11 +113,22 @@ public class ReservationController {
     
     //예약취소메서드
     @DeleteMapping("/reservations/{deleteId}")
-    public ResponseEntity<String> deleteReservations(@PathVariable("deleteId") Long deleteId) {
+    public ResponseEntity<String> deleteReservations(@PathVariable("deleteId") Long deleteId,Authentication authentication) {
         System.out.println("deleteId : " + deleteId);
-        try {
-        	Optional<ReservationEntity> deleteList = reservationService.findById(deleteId);
-            reservationService.deleteById(deleteId);
+        Member member = null;
+        Optional<ReservationEntity> deleteList = reservationService.findById(deleteId);
+        if (authentication != null && authentication.isAuthenticated()) {
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            member = userDetails.getMember();
+        }
+        String loginMemberId = member.getMemberId();
+        String loginMemberPw = member.getMemberPw();
+        String dbMemberId = deleteList.get().getMember().getMemberId();
+        String dbMemberPw = deleteList.get().getMember().getMemberPw();
+        
+        if(loginMemberId.equals(dbMemberId) || loginMemberPw.equals(dbMemberPw)) {
+            
+        	reservationService.deleteById(deleteId);
             
             // 알림보내기
             // 예약 생성 후 알림 발송
@@ -135,9 +146,6 @@ public class ReservationController {
                 .toFormatter(Locale.KOREAN);
 
             String formattedDate = startTime.format(formatter);
-            System.out.println("취소알림."); 
-            System.out.println(formattedDate + " " + name + " 님의"); 
-            System.out.println("예약이 취소되었습니다.");
             
             String message = "취소알림"+"<br/>" + formattedDate + " " + name + " 님의" +"<br/>" +
                              "예약이 취소되었습니다.";
@@ -146,7 +154,7 @@ public class ReservationController {
             sseController.sendNotificationToConsultant(consultantId, message);
             
             return ResponseEntity.ok("예약이 성공적으로 취소되었습니다.");
-        } catch (Exception e) {
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("예약 취소 중 오류가 발생했습니다.");
         }
