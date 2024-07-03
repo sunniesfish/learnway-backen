@@ -16,7 +16,7 @@ public class EmailRestController {
     // 이메일 인증 코드 발송
     @PostMapping("/send")
     @ResponseBody
-    public ResponseEntity<String> sendVerificationEmail(@RequestParam String email) {
+    public ResponseEntity<String> sendVerificationEmail(@RequestParam("email") String email) {
         boolean isSent = emailService.sendVerificationEmail(email);
         if (isSent) {
             return ResponseEntity.ok("인증 코드가 이메일로 발송되었습니다.");
