@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -169,17 +170,13 @@ public class ExamServiceImpl implements ExamService{
      * 시험 유형별 점수 목록
      * */
     @Override
-    @org.springframework.transaction.annotation.Transactional
-    public List<Score> getScoreListByExamType(Long memId, String examType) {
+    @Transactional
+    public Page<Score> getScoreListByExamType(Long memId, String examType, Pageable pageable) {
         List<Exam> list = null;
-        List<Score> scores = null;
+        Page<Score> scores = null;
         list = getExamsByExamType(memId, examType);
         if(!list.isEmpty()){
-            list.stream()
-                    .forEach(exam -> {
-                        Optional<Score> score = scoreRepository.findByMemIdAndExam_ExamId(memId, exam.getExamId());
-                        if(score.isPresent()){scores.add(score.get());}
-                    });
+            scores = scoreRepository.findByMemIdAndExam_ExamIdIn(memId, list.stream().map(Exam::getExamId).toList(),pageable );
         }
         return scores;
     }

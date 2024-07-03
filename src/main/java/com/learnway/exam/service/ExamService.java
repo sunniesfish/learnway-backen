@@ -28,6 +28,6 @@ public interface ExamService {
     public void deleteScore(Long memId, Long scoreId);
     public List<Score> getScoreListBySubjectCode(Long memId, String subjectCode);
     public List<Score> getGrades(Long memId);
-    public List<Score> getScoreListByExamType(Long memId, String examType);
+    public Page<Score> getScoreListByExamType(Long memId, String examType,Pageable pageable);
     public List<Integer> getAvgScores(Long memId);
 }

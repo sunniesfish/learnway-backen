@@ -20,12 +20,10 @@ const examId = parts[parts.length - 1];
 window.addEventListener("load",()=>render(examId));
 
 function render(examId){
-    console.log("rendering")
     ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
 }
 
 function Subjects({examId}){
-    console.log("Subjects Rendered ",examId)
     const [ pageNo, setPageNo ] = React.useState(1);
     const [ pages, setPages ] = React.useState(0);
     const [ showModal1, setShowModal1 ] = React.useState(false);

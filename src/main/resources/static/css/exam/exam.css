@@ -1,6 +1,6 @@
-@import "../globalstyle.css";
-@import "../consult/sidebarConsultantList.css";
-@import "../consult/sidebarReservationList.css";
+@import "/css/globalstyle.css";
+@import "/css/consult/sidebarConsultantList.css";
+@import "/css/consult/sidebarReservationList.css";
 
 
 .exam__container{

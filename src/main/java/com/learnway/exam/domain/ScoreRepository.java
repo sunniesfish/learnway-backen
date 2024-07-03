@@ -15,6 +15,6 @@ public interface ScoreRepository extends JpaRepository<Score, Long> {
     Page<Score> findByMemId(Long memId, Pageable pageable);
     Optional<Score> findByMemIdAndScoreId(Long memId, Long scoreId);
     void deleteByMemIdAndScoreId(Long memId, Long scoreId);
-    Optional<Score> findByMemIdAndExam_ExamId(Long memId, Long examId);
+    Page<Score> findByMemIdAndExam_ExamIdIn(Long memId, List<Long> examIds, Pageable pageable);
     List<Score> findAllByMemId(Long memId);
 }
