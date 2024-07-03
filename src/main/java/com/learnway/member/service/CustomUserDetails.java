@@ -22,6 +22,14 @@ public class CustomUserDetails implements UserDetails {
     public long getMemberId() {
         return member.getId();
     }
+    // 사용자 이름 반환 메서드
+    public String getName() {
+        return member.getMemberName();
+    }
+    // 프로필 이미지 반환 메서드
+    public String getImage() {
+        return member.getMemberImage();
+    }
 
     // --------------------------- 하기는 UserDetails 의 필수 구현 메서드 --------------------------------
     @Override
@@ -62,8 +70,4 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
-    // 추가적인 사용자 정보를 반환하기 위한 메서드
-    public String getName() {
-        return member.getMemberName();
-    }
 }
