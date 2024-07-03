@@ -58,7 +58,7 @@ public class Study {
 	private byte isjoin;
 	
 	@ManyToOne
-	@JoinColumn(name = "member_id", nullable = false)
+	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
 	@OneToMany(mappedBy = "study")
