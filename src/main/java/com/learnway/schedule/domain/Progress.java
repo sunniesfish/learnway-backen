@@ -2,7 +2,6 @@ package com.learnway.schedule.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import com.learnway.global.domain.Material;
 import com.learnway.global.domain.Studyway;
@@ -17,8 +16,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,36 +26,23 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Schedule {
+public class Progress {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)//자동증가
-	private Long scheduleId;
+	private Long progressId;
 	
-	@Column
-	private LocalDateTime  startTime;
-	
-	@Column
-	private LocalDateTime  endTime;
-		
 	@Column(nullable=true)
-	private double scheduleAchieveRate;
+	private double achieveRate;
+	
+	@Column
+	private String progress;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "scheduleId")
+	private Schedule scheduleId;
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "subjectId", unique = false)
-	private Subject subjectId;
-	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "studywayIdLo",unique = false)
-	private Studyway studywayId;
-	
-	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL)
-	private List<Progress> progresses;
-
-
-	
-	
-	
-	
-	
+	@JoinColumn(name = "materialId",unique = false)
+	private Material materialId;
 }
