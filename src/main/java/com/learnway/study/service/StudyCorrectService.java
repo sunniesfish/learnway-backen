@@ -1,5 +1,7 @@
 package com.learnway.study.service;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +26,11 @@ public class StudyCorrectService {
 	
 	
 	
-	public void updateStatus(CorrectCheckDto dto) {
+	public void updateStatus(CorrectCheckDto dto,Principal principal) {
 		
 		//멤버넘어올시 변경
-		Member member = memberRepository.findById((long) 1)
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
+		Member member = memberRepository.findByMemberId(principal.getName())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
 		
 		Study study = studyRepository.findById(dto.getPostId())
 				.orElseThrow(() -> new IllegalArgumentException("게시글 번호 " + dto.getPostId()));

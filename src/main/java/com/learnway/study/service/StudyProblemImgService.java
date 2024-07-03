@@ -48,11 +48,49 @@ public class StudyProblemImgService {
 					}
 					
 					file.transferTo(Paths.get(uploadPath,storename));
-					System.out.println(dto.getCorrect() + "정답");
 					StudyProblemImg studyProblemImg = StudyProblemImg.builder().imgdir(uploadPath)
 							  .imgpath(storename).correct(dto.getCorrect()).
 						      studyProblem(StudyProblem.builder().problemid(problemid).build()).build();
 
+					studyProblemImgRepository.save(studyProblemImg);
+					
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		
+	}
+	
+	//문제수정 이미지업로드
+	public void problemImgUpdate(StudyProblemImgDto dto,MultipartFile[] files,int problemid) {
+		for(MultipartFile file : files) {
+			if(!file.isEmpty()&&file.getContentType().startsWith("image")) {
+				String orgfile = file.getOriginalFilename();
+				String filename = orgfile.substring(orgfile.lastIndexOf("/")+1);
+				String storename = UUID.randomUUID().toString()+"_"+filename.substring(filename.lastIndexOf("."));
+				try {
+					File uploadPathFolder = new File(uploadPath);
+					
+					if(uploadPathFolder.exists()==false) {
+						uploadPathFolder.mkdirs();
+					}
+					
+					file.transferTo(Paths.get(uploadPath,storename));
+					
+					List<StudyProblemImg> list = studyProblemImgRepository.findByStudyProblemProblemid(problemid);
+					int pbimgId = 0;
+					for(StudyProblemImg a : list) {
+						pbimgId = a.getPbimgid();
+					}
+					
+					StudyProblemImg studyProblemImg = StudyProblemImg.builder().pbimgid(pbimgId)
+							.imgdir(uploadPath).imgpath(storename).correct(dto.getCorrect())
+							.studyProblem(StudyProblem.builder().problemid(problemid).build()).build();
+					
 					studyProblemImgRepository.save(studyProblemImg);
 					
 				} catch (IllegalStateException e) {

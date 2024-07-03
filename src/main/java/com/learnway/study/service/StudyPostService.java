@@ -1,5 +1,6 @@
 package com.learnway.study.service;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyRepository;
@@ -22,7 +22,6 @@ public class StudyPostService {
 	private StudyRepository studyRepository;
 	@Autowired
 	private MemberRepository memberRepository;
-	
 	
 	
 	public List<Study> findAll() {
@@ -41,22 +40,32 @@ public class StudyPostService {
 	
 	//게시글 작성(게시글,지도,스터디채팅방,태그,문제 트랜젝션처리)
 	//현재메서드는 게시글작성 및  return 값으로는 작성중인 potsId값 반환
-	public Study boardadd(StudyDto dto) {
-		
-		//로그인한 값 가져와 수정예정
-		Member member = memberRepository.findById((long) 1)
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + "1"));
-		
-		//멤버엔티티 연결해야함
+	public Study boardadd(StudyDto dto,Principal principal) {
 		
 		Study study = Study.builder().title(dto.getTitle())
 									       .content(dto.getContent())
 									       .viewcount("0")
 									       .startdate(dto.getStartdate())
 									       .enddate(dto.getEnddate())
-									       .isjoin((byte) dto.getIsjoin()).member(member).build();
+									       .isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
 		
 	    
+		return studyRepository.save(study);
+		
+		
+	}
+	
+	// 게시글 수정 메서드
+	public Study boardUpdate(StudyDto dto,Principal principal) {
+		
+		Study study = Study.builder().postid(dto.getPostid()).title(dto.getTitle())
+				.content(dto.getContent())
+				.viewcount(dto.getViewcount())
+				.startdate(dto.getStartdate())
+				.enddate(dto.getEnddate())
+				.isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
+		
+		
 		return studyRepository.save(study);
 		
 		
