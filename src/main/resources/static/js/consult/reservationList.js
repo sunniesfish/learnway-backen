@@ -39,17 +39,32 @@ function fetchReservations() {
 
                 // 현재 시간이 예약 시간 내에 있는지 확인
                 var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
-                var linkClass = isWithinBookingTime ? 'join-link' : 'disabled-link';
                 var linkText = isWithinBookingTime ? '입장하기' : '입장불가';
-
                 var row = `
                     <tr>
                         <td>${subject}</td>
                         <td>${counselorName} 상담사</td>
                         <td>${formattedTime}</td>
-                        <td><button type="button" class="btn ${isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" data-room-id="${roomId}" ${isWithinBookingTime ? '' : 'disabled'}>${linkText}</button></td>
+						<td><button type="button" class="btn ${isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" data-room-id="${roomId}" ${isWithinBookingTime ? '' : 'disabled'}>${linkText}</button></td>
+                        
+
                     </tr>
                 `;
+                /*  입장조건 반대로
+                      	<td>
+						  <button 
+						    type="button" 
+						    class="btn ${!isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" 
+						    data-room-id="${roomId}" 
+						    ${!isWithinBookingTime ? '' : 'disabled'}
+						  >
+						    ${linkText}
+						  </button>
+						</td>
+                */
+                
+						//정상작동코드
+						//<td><button type="button" class="btn ${isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" data-room-id="${roomId}" ${isWithinBookingTime ? '' : 'disabled'}>${linkText}</button></td>
                 reservationList.append(row);
             });
         },
@@ -66,7 +81,8 @@ function fetchReservations() {
         var myKey = Math.random().toString(36).substring(2, 11);
         // WebSocket 연결 설정
         //var socket = new SockJS('/signaling/video');
-        var socket = new SockJS('https://43.202.58.56:8095/signaling/video');//aws 테스트
+        var socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+        //var socket = new SockJS('https://43.202.58.56:8095/signaling/video');//aws 테스트
         var stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
@@ -86,7 +102,8 @@ function fetchReservations() {
                 if (message === 'successfully') {
                     console.log("방 들어가기 요청 성공");
                     //window.open(`http://localhost:8080/video?roomId=${roomId}`, '_blank');
-                    window.open(`https://43.202.58.56:8095/video?roomId=${roomId}`, '_blank');//aws 테스트
+					//window.open(`https://43.202.58.56:8095/video?roomId=${roomId}`, '_blank');//aws 테스트
+					window.open(`https://172.30.1.83:8443/consult/signaling/video?roomId=${roomId}`, '_blank');
                 } else if (message === 'full') {
                     console.log("방 들어가기 요청 실패");
                     alert('이미 방이 가득 찼습니다.');

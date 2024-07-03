@@ -84,11 +84,9 @@ table {
 a{
   text-decoration: none;
   color:inherit;
-}
-a:hover{
-  cursor: pointer;
-  text-decoration: none;
-  color:inherit;
+  &:hover{
+    cursor: pointer;
+  }
 }
 *{
   box-sizing: border-box;

@@ -17,7 +17,7 @@ public class MemberRestController {
 
     // ID 중복 체크
     @GetMapping("/check-id")
-    public ResponseEntity<String> checkId(@RequestParam String username) {
+    public ResponseEntity<String> checkId(@RequestParam("username") String username) {
         if (username.length() < 4 || username.length() > 20) {
             return ResponseEntity.badRequest().body("아이디는 4자 이상, 20자 이하로 입력해주세요.");
         }
