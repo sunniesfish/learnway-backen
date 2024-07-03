@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        
         body {
             display: flex;
             flex-direction: column;
@@ -57,6 +58,7 @@
             margin: 5px;
             border-radius: 5px;
         }
+    
     </style>
 </head>
 <body>
@@ -78,24 +80,28 @@
     let otherKeyList = [];
     let localStream = undefined;
     let stompClient;
+    let videoEnabled = true;
+    let audioEnabled = true;
 
     const startCam = async () => {
         if (navigator.mediaDevices !== undefined) {
-            await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-                .then(async (stream) => {
-                    localStream = stream;
-                    stream.getAudioTracks()[0].enabled = true;
-                    localStreamElement.srcObject = localStream;
-                })
-                .catch(error => {
-                    console.error("Error accessing media devices:", error);
-                });
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: audioEnabled, video: videoEnabled });
+                if (audioEnabled) {
+                    localStream.getAudioTracks()[0].enabled = true;
+                }
+                localStreamElement.srcObject = localStream;
+                localStreamElement.style.display = 'block'; // 화면에 카메라 활성화를 보이도록 설정
+            } catch (error) {
+                console.error("Error accessing media devices:", error);
+            }
         }
-    }
+    };
 
     const connectSocket = async () => {
-        //const socket = new SockJS('/signaling/video');
-        const socket = new SockJS('https://43.202.58.56:8095/signaling/video');//aws 테스트
+		//const socket = new SockJS('/signaling/video');
+        const socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+        //const socket = new SockJS('https://43.202.58.56:8095/signaling/video');//aws 테스트
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
@@ -143,14 +149,29 @@
                 if (myKey !== key && !otherKeyList.includes(key)) {
                     otherKeyList.push(key);
                     console.log('Added key to otherKeyList:', key);
-                    // 상대방 입장 알림을 시각적으로 표시
                     showNotification(`상대방이 입장했습니다: ${key}`);
                 }
             });
-        });
-    }
 
-    // 알림을 시각적으로 표시하는 함수
+            // 여기서 연결이 완료 다른작업수행 
+            document.querySelector('#startStreamBtn').addEventListener('click', async () => {
+                const startStreamBtn = document.querySelector('#startStreamBtn');
+                stompClient.send(`/app/call/key`, {}, {});
+                setTimeout(() => {
+                    otherKeyList.forEach((key) => {
+                        if (!pcListMap.has(key)) {
+                            pcListMap.set(key, createPeerConnection(key));
+                            sendOffer(pcListMap.get(key), key);
+                        }
+                    });
+                    startStreamBtn.textContent = '상담중';
+                    startStreamBtn.classList.add('active');
+                    startStreamBtn.disabled = true;
+                }, 1000);
+            });
+        });
+    };
+
     const showNotification = (message) => {
         const notificationArea = document.querySelector('#notificationArea');
         const notification = document.createElement('div');
@@ -159,8 +180,8 @@
         notificationArea.appendChild(notification);
         setTimeout(() => {
             notification.remove();
-        }, 5000); // 5초 후에 알림을 제거
-    }
+        }, 5000);
+    };
 
     const createPeerConnection = (otherKey) => {
         const pc = new RTCPeerConnection();
@@ -181,7 +202,7 @@
             console.error('PeerConnection failed: ', error);
         }
         return pc;
-    }
+    };
 
     let onIceCandidate = (event, otherKey) => {
         if (event.candidate) {
@@ -217,7 +238,7 @@
 
     const setLocalAndSendMessage = (pc, sessionDescription) => {
         pc.setLocalDescription(sessionDescription);
-    }
+    };
 
     let onTrack = (event, otherKey) => {
         console.log('onTrack event from key:', otherKey, event);
@@ -236,68 +257,30 @@
         roomId = urlParams.get('roomId');
         if (roomId) {
             await startCam();
-            if (localStream !== undefined) {
-                localStreamElement.style.display = 'block';
-                await connectSocket();
-                console.log('Requesting initial keys...');
-                stompClient.send(`/app/call/key`, {}, {});
-            }
+            await connectSocket();
         }
     };
 
-    document.querySelector('#startStreamBtn').addEventListener('click', async () => {
-        const startStreamBtn = document.querySelector('#startStreamBtn');
-        stompClient.send(`/app/call/key`, {}, {});
-        setTimeout(() => {
-            otherKeyList.forEach((key) => {
-                if (!pcListMap.has(key)) {
-                    pcListMap.set(key, createPeerConnection(key));
-                    sendOffer(pcListMap.get(key), key);
-                }
-            });
-            // "시작하기" 버튼 텍스트와 스타일 변경
-            startStreamBtn.textContent = '상담중';
-            startStreamBtn.classList.add('active');
-            startStreamBtn.disabled = true; // 버튼 비활성화
-        }, 1000);
-    });
-
-    // 카메라 켜고 끄는 기능
     document.querySelector('#toggleCameraBtn').addEventListener('click', async () => {
-        if (localStream) {
-            const videoTrack = localStream.getVideoTracks()[0];
-            const toggleCameraBtn = document.querySelector('#toggleCameraBtn');
-            if (videoTrack.enabled) {
-                videoTrack.enabled = false;
-                toggleCameraBtn.textContent = '카메라Off';
-                toggleCameraBtn.classList.remove('active');
-                console.log('카메라를 끕니다.');
-            } else {
-                videoTrack.enabled = true;
-                toggleCameraBtn.textContent = '카메라On';
-                toggleCameraBtn.classList.add('active');
-                console.log('카메라를 켭니다.');
-            }
+        videoEnabled = !videoEnabled;
+        if (videoEnabled) {
+            await startCam();
+        } else if (localStream) {
+            localStream.getVideoTracks().forEach(track => track.stop());
         }
+        const toggleCameraBtn = document.querySelector('#toggleCameraBtn');
+        toggleCameraBtn.textContent = videoEnabled ? '카메라On' : '카메라Off';
     });
 
-    // 마이크 켜고 끄는 기능
     document.querySelector('#toggleMicBtn').addEventListener('click', async () => {
-        if (localStream) {
-            const audioTrack = localStream.getAudioTracks()[0];
-            const toggleMicBtn = document.querySelector('#toggleMicBtn');
-            if (audioTrack.enabled) {
-                audioTrack.enabled = false;
-                toggleMicBtn.textContent = '마이크Off';
-                toggleMicBtn.classList.remove('active');
-                console.log('마이크를 끕니다.');
-            } else {
-                audioTrack.enabled = true;
-                toggleMicBtn.textContent = '마이크On';
-                toggleMicBtn.classList.add('active');
-                console.log('마이크를 켭니다.');
-            }
+        audioEnabled = !audioEnabled;
+        if (audioEnabled) {
+            await startCam();
+        } else if (localStream) {
+            localStream.getAudioTracks().forEach(track => track.stop());
         }
+        const toggleMicBtn = document.querySelector('#toggleMicBtn');
+        toggleMicBtn.textContent = audioEnabled ? '마이크On' : '마이크Off';
     });
 </script>
 </body>

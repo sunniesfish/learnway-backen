@@ -11,6 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+   /* position:fixed;*/
 }
 
 #sidebar .sidebar-header {
@@ -155,3 +156,4 @@ body.modal-open {
 #myModal .modal-consultant-box a:hover {
     text-decoration: underline;
 }
+

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.learnway.consult.domain.Consultant;
@@ -16,6 +17,7 @@ import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
 
 @Controller
+//@RequestMapping("/consult")
 public class ConsultController {
 	@Autowired
 	private ReservationService reservationService;
@@ -34,6 +36,7 @@ public class ConsultController {
 
 		return "consult/reservation";
 	}
+	
 	//임시메인페이지 나중에 메인페이지가 마이페이지이기때문에 여기 추가되는 사이드바에 기생할예정
 	@GetMapping("/main")
 	public String main(Authentication authentication,Model model) {
@@ -59,6 +62,7 @@ public class ConsultController {
 		
 		return "consult/reservationBoard";
 	}
+	
 	//상담사 페이지
 	@GetMapping("/consult/consultant")
 	public String consultantPage(Authentication authentication,Model model) {
@@ -72,16 +76,10 @@ public class ConsultController {
 		model.addAttribute("counselor_id", consultantId);
 		return "consult/consultant";
 	}
-
-	//로그인한사용자의 예약리스트페이지 (지금 사용중이지않음 마이페이지에 모달창으로 대체)
-	@GetMapping("/userReservation")
-	public String userReservationPage() {
-		return "consult/userReservationLIst";
-	}
 	
-	@GetMapping("/video")
+	@GetMapping("/signaling/video")
 	public String video() {
-		
+		System.out.println("video들어와?");
 		return "/consult/video";
 	}
 

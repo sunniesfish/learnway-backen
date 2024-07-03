@@ -28,7 +28,7 @@ public class EmailRestController {
     // 이메일 인증 코드 확인
     @PostMapping("/verify")
     @ResponseBody
-    public ResponseEntity<String> verifyEmail(@RequestParam String email, @RequestParam String code) {
+    public ResponseEntity<String> verifyEmail(@RequestParam("email") String email, @RequestParam("code") String code) {
         boolean isVerified = emailService.verifyEmail(email, code);
         if (isVerified) {
             return ResponseEntity.ok("이메일 인증이 완료되었습니다.");
