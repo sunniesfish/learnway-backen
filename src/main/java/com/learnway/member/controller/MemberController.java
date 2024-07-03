@@ -89,14 +89,12 @@ public class MemberController {
             }
             return "member/update";
         }
-
         try {
             memberService.updateMemberInfo(userDetails.getUsername(), memberUpdateDTO);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "member/update";
         }
-
         return "redirect:/loginOk"; // 수정 성공 시 loginOk 페이지로 리다이렉트
     }
 }
