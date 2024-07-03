@@ -46,7 +46,7 @@ public class ScheduleService {
     @Autowired 
     private ProgressRepository progressRepository;
 
-	// 스케쥴 추가하기
+	    // 스케쥴 추가하기 (주간)
     	@Transactional
 		public void add(ScheduleDto dto) {
 
@@ -77,7 +77,7 @@ public class ScheduleService {
 			return scheduleRepository.findAll();
 		}
 		
-		//일정 시간만 변경하기
+		//일정 시간만 변경하기 (주간)
 		public void updateScheduleTime(ScheduleDto dto) {
 			
 			Schedule schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() 
@@ -98,7 +98,7 @@ public class ScheduleService {
 		}
 		
 		@Transactional
-		//일정 전부 변경하기
+		//일정 전부 변경하기 (주간)
 		public void updateSchedule(ScheduleDto dto) {
 		    Optional<Schedule> existingSchedule = scheduleRepository.findById(dto.getScheduleId());
 		    if (existingSchedule.isPresent()) {
@@ -141,10 +141,16 @@ public class ScheduleService {
 		
 		//스케쥴 삭제하기
 		public void deleteSchedule(Long id) {
+			// 연관된 Progress 엔티티 먼저 삭제
+			Schedule schedule = scheduleRepository.findById(id)
+		            .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + id));
+		    
+		    // 연관된 Progress 엔티티 먼저 삭제
+		    progressRepository.deleteByScheduleId(schedule);
 			scheduleRepository.deleteById(id);
 		}
 		
-		//일달성율 평균 구하기
+		//일달성율 평균 리스트 조회 
 		public List<DailyAchieveDto> AchieveList(LocalDateTime start, LocalDateTime  end) {
 			
 			List<DailyAchieve> dailyAchieves = dailyAchieveRepository.findByDateBetween(start, end);
@@ -210,11 +216,8 @@ public class ScheduleService {
 		    int totalProgresses = 0;
 		    
 		    for (Schedule schedule : schedules) {
-		    	List<Progress> progresses = schedule.getProgresses();
-		    	for(Progress progress : progresses) {
-		        totalAchieveRate += progress.getAchieveRate();
+		        totalAchieveRate += schedule.getScheduleAchieveRate();
 		        totalProgresses++;
-		      }
 		    }
 		    
 		    if (totalProgresses == 0) {
@@ -243,10 +246,13 @@ public class ScheduleService {
 				totalAchieveRate += progress.getAchieveRate();
 				totalProgresses++;
 			}
+			scheduleAchieveRate = totalAchieveRate / progresses.size();
 			
 			ScheduleDto dto = new ScheduleDto();
-			scheduleAchieveRate = totalAchieveRate / progresses.size();
+			dto.setScheduleId(id);
 			dto.setScheduleAchieveRate(scheduleAchieveRate); 
+			schedule.setScheduleAchieveRate(scheduleAchieveRate);
+			scheduleRepository.save(schedule);
 	
 			return scheduleAchieveRate;
 		

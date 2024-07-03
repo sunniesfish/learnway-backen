@@ -1,9 +1,15 @@
 package com.learnway.global.domain;
 
 
+import java.util.List;
+
+import com.learnway.schedule.domain.Progress;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,6 +30,9 @@ public class Material {
     @Column(nullable = false)
     String material;       // 학습 종류명 (Not null)
     String materialNote;         // 학습 종류 비고
+    
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Progress> progresses;
     
     // getName() 메서드 추가
     public String getName() {

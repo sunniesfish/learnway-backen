@@ -82,14 +82,16 @@ public class ScheduleRestController {
 	            for (Progress progress : progresses) {
 	            	Map<String, Object> progressData = new HashMap<>();
 	            	progressData.put("id", progress.getProgressId());
-	                progressData.put("studyway", schedule.getStudywayId());
-	                progressData.put("subject", schedule.getSubjectId());
-	                progressData.put("material", progress.getMaterialId());
+	                progressData.put("studyway", schedule.getStudywayId().getName());
+	                progressData.put("subject", schedule.getSubjectId().getName());
+	                progressData.put("material", progress.getMaterialId().getName());
 	                progressData.put("achieveRate", progress.getAchieveRate());
+	                progressData.put("progress", progress.getProgress());
 	                responseData.add(progressData);
 	            }
 	        }
-	        
+	       
+	       //일일달성율을 구하기 위해 달성율id 만들기(자동으로 증가로 만들지 않음)
 	       String existingId = scheduleService.generateDailyAchieveId(startDateTime);
 	       Optional<DailyAchieve> achieve = dailyAchieveRepository.findById(existingId); 
 	       
@@ -141,7 +143,7 @@ public class ScheduleRestController {
 	            
 	            // 첫 번째 progress만 event에 추가
 	            if (i == 0) {
-	            event.put("subTitle", progress.getMaterialId().getName());
+	            event.put("subTitle", progress.getProgress());
 	            
 	            progressList.add(progressData);
 	            }

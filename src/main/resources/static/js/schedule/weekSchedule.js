@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
    	    nextDayThreshold: '06:00:00',
    	    slotDuration: '00:30:00', 
     	allDaySlot: false,
-        initialView: 'timeGridWeek',
+        initialView: 'dayGridMonth',
         initialDate: new Date(),
         headerToolbar: {
           left: 'prev,next today',
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         customButtons: {
           addEventButton: {
-            text: "일정 추가",
+            text: "일정 +",
             click: function() {
               $("#calendarModal").modal("show"); // 모달 나타내기
               
@@ -666,7 +666,6 @@ document.addEventListener('DOMContentLoaded', function() {
 						    "studywayId": studyway
 						    }
 	                  };
-						console.log(obj);
 	                  $.ajax({
 	                    url: "/api/schedule/add", // 데이터를 전송할 컨트롤러의 URL
 	                    type: "POST",
@@ -832,23 +831,24 @@ document.addEventListener('DOMContentLoaded', function() {
        	                eventContent.style.display = 'none';
        	            }
        	        }
-       	      }
+       	      }else{
        	      
-       	      //30분만 일정 등록했을때, 컨텐츠가 칸 밖으로 넘어가는 것 처리 
-       	      if (eventDuration <= 30 * 60 * 1000) { // 30분 이하의 이벤트인 경우
-			    var eventContent = eventElement.querySelector('.fc-event-content');
-			    eventContent.style.maxHeight = '28px';
-			    eventContent.style.overflow = 'hidden';
-			
-			    eventElement.addEventListener('mouseover', function() {
-			      eventContent.style.maxHeight = 'none';
-			      eventContent.style.overflow = 'visible';
-			    });
-			
-			    eventElement.addEventListener('mouseout', function() {
-			      eventContent.style.maxHeight = '28px';
-			      eventContent.style.overflow = 'hidden';
-			    });
+	       	      //30분만 일정 등록했을때, 컨텐츠가 칸 밖으로 넘어가는 것 처리 
+	       	      if (eventDuration <= 30 * 60 * 1000) { // 30분 이하의 이벤트인 경우
+				    var eventContent = eventElement.querySelector('.fc-event-content');
+				    eventContent.style.maxHeight = '28px';
+				    eventContent.style.overflow = 'hidden';
+				
+				    eventElement.addEventListener('mouseover', function() {
+				      eventContent.style.maxHeight = 'none';
+				      eventContent.style.overflow = 'visible';
+				    });
+				
+				    eventElement.addEventListener('mouseout', function() {
+				      eventContent.style.maxHeight = '28px';
+				      eventContent.style.overflow = 'hidden';
+				    });
+				  }
 			  }
        	    },
        	 eventContent: function(arg) { //주간 일정표 칸 커스텀 

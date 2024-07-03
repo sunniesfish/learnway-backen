@@ -35,21 +35,21 @@ public class Schedule {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)//자동증가
 	private Long scheduleId;
 	
-	@Column(nullable=true)
+	@Column
 	private LocalDateTime  startTime;
 	
-	@Column(nullable=true)
+	@Column
 	private LocalDateTime  endTime;
 		
 	@Column(nullable=true)
 	private double scheduleAchieveRate;
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(columnDefinition = "VARCHAR(4)", unique = false)
+	@JoinColumn(name = "subjectId", unique = false)
 	private Subject subjectId;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(columnDefinition = "VARCHAR(4)",unique = false)
+	@JoinColumn(name = "studywayIdLo",unique = false)
 	private Studyway studywayId;
 	
 	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL)
