@@ -15,9 +15,5 @@ public class ScheduleController {
 			return "/schedule/weekSchedule";
 		}
 		
-		
-		
-		
-		
-		
+
 }

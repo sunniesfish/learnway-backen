@@ -23,4 +23,9 @@ public class Subject {
     @Column(nullable = false)
     String subject;         // 과목명 (Not null)
     String subjectNote;     // 과목 비고
+    
+ // getName() 메서드 추가
+    public String getName() {
+        return this.subject;
+    }
 }
