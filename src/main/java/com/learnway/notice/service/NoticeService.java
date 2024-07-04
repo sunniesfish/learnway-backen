@@ -62,7 +62,6 @@ public class NoticeService {
 		notice.setNoticeContent(dto.getNoticeContent());
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
-		notice.setCreateDate(LocalDateTime.now());
 		notice.setPriority(dto.isPriority());
 		
 		noticeRepository.save(notice);
@@ -82,6 +81,11 @@ public class NoticeService {
 		}else {
 			throw new DataNotExeption("notice not found");
 		}
+	}
+	
+	//글 삭제
+	public void delete(NoticeDto dto) {
+		noticeRepository.deleteById(dto.getNoticeId());
 	}
 	
 	

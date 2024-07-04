@@ -131,19 +131,25 @@ public class NoticeController {
 		return "/notice/noticeDetailView";
 	}
 	
+	//글수정 페이지
+	@GetMapping("/rewriteView/{noticeId}")
+	public String rewriteView(@PathVariable("noticeId") Long noticeId,Model model,Principal principal) throws DataNotExeption{
+		NoticeDto dto = noticeService.findDetail(noticeId);
+		model.addAttribute("notice",dto);
+		
+		return "/notice/noticeReView";
+	}
+	
 	//글 수정
-	@PostMapping("/rewrite/{id}")
-	public String postMethodName(@RequestBody NoticeDto dto, @ModelAttribute NoticeDto updateDto,@RequestParam("comFile") MultipartFile[] files) {
+	@PostMapping("/rewrite/{noticeId}")
+	public String postMethodName( @ModelAttribute NoticeDto dto,@RequestParam("comFile") MultipartFile[] files) {
 		
 //		if(!comDTO.getMemberId().equals(principal.getName())){
 //			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"수정 권한이 없습니다.");
 //		}
 		String noticeImgPath = dto.getNoticeImgPath();
 		String noticeImgUname = dto.getNoticeImgUname();
-		
-		updateDto.setNoticeImgPath(noticeImgPath);
-		updateDto.setNoticeImgUname(noticeImgUname);
-		
+
 		if(files != null && files.length > 0 && !files[0].isEmpty()) {
 			MultipartFile File = files[0];
 			
@@ -180,15 +186,25 @@ public class NoticeController {
 	        }
 		  }
 		}else {//이미지 수정하는 if문 끝 & 새로운 파일을 업로드하지 않은 경우, 기존 파일명과 경로를 그대로 유지
-			updateDto.setNoticeImgPath(noticeImgPath);
-			updateDto.setNoticeImgUname(noticeImgUname);	
+			dto.setNoticeImgPath(noticeImgPath);
+			dto.setNoticeImgUname(noticeImgUname);	
 		}
 		
-		updateDto.setNoticeId(dto.getNoticeId());
-		updateDto.setPriority(dto.isPriority());
-		noticeService.rewrite(updateDto);
+		dto.setNoticeId(dto.getNoticeId());
+		dto.setPriority(dto.isPriority());
+		noticeService.rewrite(dto);
 		
-		return "redirect:/notice/detail/" + updateDto.getNoticeId();
+		return "redirect:/notice/detail/" + dto.getNoticeId();
+	}
+	
+	//글 삭제하기
+	@GetMapping("delete/{noticeId}")
+	public String delete(@PathVariable("noticeId") Long noticeId,Principal principal) throws DataNotExeption {
+		
+		NoticeDto dto = noticeService.findDetail(noticeId);//멤버아이디들어가야함
+		noticeService.delete(dto);
+		
+		return "redirect:/notice/noticeList";
 	}
 	
 
