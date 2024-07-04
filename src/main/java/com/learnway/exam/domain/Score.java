@@ -1,5 +1,6 @@
 package com.learnway.exam.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.learnway.global.domain.Subject;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,6 +21,7 @@ public class Score {
     private Long memId;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "exam_id")
     private Exam exam;
 

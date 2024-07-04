@@ -15,10 +15,11 @@ function render(){
 
 function Stats(){
     const [ cat, setCat ] = React.useState("score");
-    const [ examType, setExamtype ] = React.useState("mid");
+    const [ examType, setExamType ] = React.useState("all");
+    const [ examTypeList, setExamTypeList ] = React.useState([]); 
 
     const [ pageNo, setPageNo ] = React.useState(1);
-    const [ pagees, setPages ] = React.useState(1);
+    const [ pages, setPages ] = React.useState(0);
 
     const [ scoreOption, setScoreOption ] = React.useState();
     const [ gradeOption, setGradeOption ] = React.useState();
@@ -32,47 +33,96 @@ function Stats(){
     React.useEffect(async () => {
         const statdata = await fetchTypeStats(examType,pageNo);
         console.log("data",statdata);
+        setPages(statdata.totalPages);
         const subjects = await fetch("/api/subject/").then(res => res.json());
 
         let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
         let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
         let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
         
-        let xasisCat = [...new Set(statdata.content.map(item => item.exam.examDate))];
+        let xasisCat = [...new Set(statdata.content.map(item => item.examDate))];
 
 
-        statdata.content.forEach(content => {
+        statdata.content.forEach(exam => {
             scoreSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreScore)
-                }
+                exam.scoreList.forEach(score => {
+                    if(item.name === score.subject.subject){
+                        item.data.push(score.scoreScore)
+                    }
+                })
+            })
+        })
+        statdata.content.forEach(exam => {
+            gradeSeries.map(item => {
+                exam.scoreList.forEach(score => {
+                    if(item.name === score.subject.subject){
+                        item.data.push(score.scoreGrade)
+                    }
+                })
+            })
+        })
+        statdata.content.forEach(exam => {
+            stdSeries.map(item => {
+                exam.scoreList.forEach(score => {
+                    if(item.name === score.subject.subject){
+                        item.data.push(score.scoreStdScore)
+                    }
+                })
             })
         })
         console.log("scoreSeries",scoreSeries)
-        statdata.content.forEach(content => {
-            gradeSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreGrade)
-                }
-            })
-        })
-        statdata.content.forEach(content => {
-            stdSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreStdScore)
-                }
-            })
-        })
+        console.log("gradeSeries",gradeSeries)
+        console.log("stdSeries",stdSeries)
+
         setScoreOption(createOption(scoreSeries,xasisCat, 0, 100, "시험 일자", "점수", false))
-        setGradeOption(createOption(gradeSeries,xasisCat, 9, 1, "시험 일자", "등급", true))
+        setGradeOption(createOption(gradeSeries,xasisCat, 1, 9, "시험 일자", "등급", true))
         setStdOption(createOption(stdSeries,xasisCat, 0, 150, "시험 일자", "점수", false))
 
+    },[pageNo, examType]);
+    React.useEffect(async ()=>{
+        console.log("getting type")
+        const examTypeData = await fetch("/api/examtype/all").then(res => res.json());
+        console.log("examTypeData",examTypeData)
+        setExamTypeList(examTypeData);
     },[]);
+    console.log("examTypeList",examTypeList)
+
+    const handlePrevClick = () => {
+        console.log("prev click")
+        if(pages){
+            console.log("prev pages",pages)
+            pageNo < pages && setPageNo(prev => prev + 1)
+        }
+    }
+    const handleNextClick = () => {
+        console.log("next click")
+        if(pages){
+            console.log("next pages",pages)
+            pageNo > 1 && setPageNo(prev => prev - 1)            
+        }
+    }
+    const handleExamTypeChange = (event) => {
+        setExamType(event.target.value)
+    }
+
     return(
-        <>
-        <button onClick={() => setCat("score")}>score</button>
-        <button onClick={() => setCat("grade")}>grade</button>
-        <button onClick={() => setCat("std")}>std</button>
+    <>
+    <select
+        onChange={handleExamTypeChange} 
+        defaultValue={"all"}
+    >
+        <option value="all">All</option>
+        {examTypeList?.map( item => 
+            <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+        )}
+    </select>
+
+    <button onClick={() => setCat("score")}>score</button>
+    <button onClick={() => setCat("grade")}>grade</button>
+    <button onClick={() => setCat("std")}>std</button>
+    <div className="chart-container">
+        <button onClick={handlePrevClick}>Prev</button>
+        <button onClick={handleNextClick}>Next</button>
         {isOption? 
             <ChartType cat={cat} option={
                 cat === "score"? scoreOption : 
@@ -80,7 +130,8 @@ function Stats(){
                 cat === "std" ? stdOption : null
             }/> 
         : null}
-        </>
+    </div>
+    </>
     )
 }
 
@@ -92,7 +143,7 @@ function ChartType({cat, option}){
         const chart = new ApexCharts(document.querySelector(".chart"), option);
         chart.render();
         return () => chart.destroy();
-    },[cat]);
+    },[cat, option]);
 
     return(
         <div className="chart" ref={chartRef}>

@@ -5,6 +5,8 @@ import com.learnway.exam.domain.ExamRepository;
 import com.learnway.exam.domain.Score;
 import com.learnway.exam.domain.ScoreRepository;
 import com.learnway.exam.dto.ExamDetailDTO;
+import com.learnway.global.domain.ExamType;
+import com.learnway.global.domain.ExamTypeRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,27 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ExamServiceImpl implements ExamService{
 
+    private final ExamTypeRepository examTypeRepository;
     private final ExamRepository examRepository;
     private final ScoreRepository scoreRepository;
 //    private final ScoreService scoreService;
 
     //시험 등록
     @Override
+    @Transactional
     public void writeExam(Exam exam) {
+        // Save ExamType first if it is not already persisted
+        ExamType examType = exam.getExamType();
+        if (examType.getExamTypeId() == null) { // Assuming ExamType has an ID field to check if it's persisted
+            Optional<ExamType> examTypeOptional = examTypeRepository.findByExamTypeName(examType.getExamTypeName());
+            if (examTypeOptional.isPresent()) {
+                exam.setExamType(examTypeOptional.get());
+            } else {
+                exam.setExamType(examTypeRepository.save(examType));
+            }
+        }
+
+        // Now save the Exam
         examRepository.save(exam);
     }
 
@@ -76,7 +92,10 @@ public class ExamServiceImpl implements ExamService{
                 Page<Score> scores = getScoreListByExam(examId, memId, PageRequest.of(1,10));
                 dto.setExamId(exam.getExamId());
                 dto.setExamName(exam.getExamName());
-                dto.setExamType(exam.getExamType());
+                dto.setExamType(
+                        ExamType.builder()
+                                .examTypeName(exam.getExamType().getExamTypeName()).build()
+                );
                 dto.setExamDate(exam.getExamDate());
                 dto.setExamRange(exam.getExamRange());
                 dto.setExamMemo(exam.getExamMemo());
@@ -88,7 +107,33 @@ public class ExamServiceImpl implements ExamService{
 
     @Override
     public List<Exam> getExamsByExamType(Long memId, String examType) {
-        return examRepository.findByMemIdAndExamType(memId, examType);
+        return examRepository.findByMemIdAndExamType_ExamTypeName(memId, examType);
+    }
+
+    @Override
+    public Page<Exam> getExamsByExamType(Long memId, String examTypeName, Pageable pageable) {
+        return examRepository.findByMemIdAndExamType_ExamTypeNameOrderByExamDateDesc(memId, examTypeName, pageable);
+    }
+
+    @Override
+    @Transactional
+    public Page<Exam> findScoreListByExamType(Long memId, String examTypeName, Pageable pageable) {
+        Page<Exam> page = getExamsByExamType(memId, examTypeName, pageable);
+        page.get().forEach(exam -> {
+            exam.setScoreList(
+                    scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId())
+            );
+        });
+        return page;
+    }
+
+    @Override
+    public Page<Exam> findScoreList(Long memId, Pageable pageable) {
+        Page<Exam> page = examRepository.findByMemIdOrderByExamDateDesc(memId, pageable);
+        page.get().forEach(exam -> {
+            exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+        });
+        return page;
     }
 
     /*
@@ -109,6 +154,7 @@ public class ExamServiceImpl implements ExamService{
     public List<Score> getScoreListByMemId(Long memId) {
         return scoreRepository.findAllByMemId(memId);
     }
+
 
     /*
      * 점수 상세
