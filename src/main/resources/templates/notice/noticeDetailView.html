@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>글 상세페이지</title>
+    <style>
+        .author-info {
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="mb-3" th:text="${notice.noticeTitle}">글 제목</div>
+            <div class="media mb-3">
+                <img th:src="${notice.noticeImgPath}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64">
+                <div class="media-body">
+                    <!-- <p class="mt-0 author-info" th:text="${notice.member.memberName}">작성자명</p> -->
+                    <p class="mt-0 author-info">작성자명</p>
+                    <p class="author-info" th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}">작성일자</p>
+                </div>
+            </div>
+            <hr>
+            <div class="mb-3">
+                <img th:if="${notice.noticeImgPath}" th:src="${notice.noticeImgPath}" class="img-fluid" alt="글 이미지">
+            </div>
+            <p th:text="${notice.noticeContent}">글 내용이 여기에 들어갑니다.</p>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <a th:href="@{/notice/detail/{id}(id=${notice.preNotice?.noticeId})}" class="text-secondary"
+                       th:if="${notice.preNotice != null}">
+                        이전글: <span th:text="${notice.preNotice.noticeTitle}"></span>
+                    </a>
+                    <span class="text-secondary" th:if="${notice.preNotice == null}">이전글이 없습니다.</span>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="row">
+                <div class="col-12">
+                    <a th:href="@{/notice/detail/{id}(id=${notice.nextNotice?.noticeId})}" class="text-secondary"
+                       th:if="${notice.nextNotice != null}">
+                        다음글: <span th:text="${notice.nextNotice.noticeTitle}"></span>
+                    </a>
+                    <span class="text-secondary" th:if="${notice.nextNotice == null}">다음글이 없습니다.</span>
+                </div>
+            </div>
+            <div class="text-right mt-3">
+                <a th:href="@{/notice/noticeList}" class="btn btn-secondary">목록</a>
+                <a th:href="@{/notice/rewrite/{id}(id=${notice.noticeId})}" class="btn btn-primary">수정</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

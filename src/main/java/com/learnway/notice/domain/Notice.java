@@ -1,10 +1,13 @@
 package com.learnway.notice.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,15 @@ public class Notice {
 	@Column
 	private String noticeContent;
 	
+	@Column
+	private LocalDateTime createDate;
+	
+	@Transient
+	private Notice preNotice;
+	
+	@Transient
+	private Notice nextNotice;
+	
 	@Column(nullable=true)
 	private String noticeImgUname;
 	
@@ -34,6 +46,6 @@ public class Notice {
 	private String noticeImgPath;
 	
 	@Column(nullable=true)
-	private boolean topNotice;
+	private boolean priority = false;
 	
 }

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>공지사항 목록</title>
+  <style>
+    .notice-priority {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+<!-- Priority 공지사항 -->
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>제목</th>
+                <th>작성일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="priNotice : ${priNotice}" class="notice-priority">
+                <td>
+                    <span>[공지]</span>
+                    <a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" th:text="${priNotice.noticeTitle}"></a>
+                </td>
+                <td th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- 일반 공지사항 -->
+    <table class="table table-hover mt-4">
+        <tbody>
+            <tr th:each="notice : ${notice}">
+                <td>
+                    <a th:href="@{/notice/detail/{id}(id=${notice.noticeId})}" th:text="${notice.noticeTitle}"></a>
+                </td>
+                <td th:text="${#temporals.format(notice.createDate, 'yyyy.MM.dd')}"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="text-right">
+        <a href="/notice/writeView" class="btn btn-primary">글쓰기</a>
+    </div>    
+    <!-- 페이징 처리 코드 추가 -->
+    <nav aria-label="Page navigation" th:if="${notice.totalPages > 0}">   
+	    <ul class="pagination justify-content-center">
+	    	<!-- 이전 페이지 처리 -->
+		    <li class="page-item" th:classappend="${notice.first} ? 'disabled'">
+	            <a class="page-link" 
+	               th:href="@{/notice/noticeList(page=${notice.number - 1})}" 
+	               aria-label="Previous">
+	                <span aria-hidden="true">&laquo;</span>
+	                <span class="sr-only">Previous</span>
+	            </a>
+		    </li>
+	        <li class="page-item" 
+	        th:each="pageNum : ${#numbers.sequence(0, notice.totalPages - 1)}"
+	        th:classappend="${pageNum == notice.number} ? 'active'">
+	        <a class="page-link" 
+	           th:href="@{/notice/noticeList(page=${pageNum})}" 
+	           th:text="${pageNum + 1}"></a>
+		    </li>
+		    <!-- 다음 페이지 처리 -->
+		    <li class="page-item" th:classappend="${notice.last} ? 'disabled'">
+		        <a class="page-link" 
+		           th:href="@{/notice/noticeList(page=${notice.number + 1})}" 
+		           aria-label="Next">
+		            <span aria-hidden="true">&raquo;</span>
+		            <span class="sr-only">Next</span>
+		        </a>
+		    </li>
+		</ul>
+	</nav>
+    <!-- 페이징 처리 끝 -->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</html>
