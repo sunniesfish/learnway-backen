@@ -46,7 +46,7 @@
         // 태그 추가 함수
         function addHashtag(tag) {
             tag = tag.replace(/[\[\]]/g, '').trim();
-            if (tag && !hashtags.includes(tag)) {
+            if (tag && !hashtags.includes("#" + tag)) { // 중복된 해시태그 방지
                 const span = document.createElement("span");
                 span.innerText = "#" + tag;
                 span.classList.add("hashtag");
@@ -57,14 +57,36 @@
                 removeButton.addEventListener("click", () => {
                     hashtagsContainer.removeChild(span);
                     hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
-                    hiddenHashtagsInput.value = hashtags.join(",");
+                    hiddenHashtagsInput.value = hashtags.map(tag => tag.substring(1)).join(",");
+                    // 해시태그 제거 후 서버로 보내기
+                    sendHashtagsToServer(hashtags);
                 });
 
                 span.appendChild(removeButton);
                 hashtagsContainer.appendChild(span);
                 hashtags.push("#" + tag);
-                hiddenHashtagsInput.value = hashtags.join(",");
+                hiddenHashtagsInput.value = hashtags.map(tag => tag.substring(1)).join(",");
+                
+                // AJAX 요청
+                sendHashtagsToServer(hashtags);
             }
+        }
+
+        // 해시태그를 서버로 보내는 함수
+        function sendHashtagsToServer(hashtags) {
+            $.ajax({
+                type: "POST",
+                url: "/api/study/searchHashtags",
+                data: JSON.stringify({tags: hashtags}),
+                contentType: "application/json",
+                datatype: "json",
+                success: function(data) {
+                    console.log("해시태그 업데이트 성공:", data);
+                },
+                error: function(error) {
+                    console.log('해시태그 업데이트 실패:', error);
+                }
+            });
         }
 
         // 엔터 키 이벤트 처리
@@ -85,14 +107,14 @@
             $.ajax({
                 type: "POST",
                 url: "/api/study/searchList",
-                data: JSON.stringify({title : searchValue}),
+                data: JSON.stringify({title: searchValue}),
                 contentType: "application/json",
-                datatype : "json",
+                datatype: "json",
                 success: function(data) {
-                    console.log("성공");
+                    console.log("검색 성공");
                 },
                 error: function(error) {
-                    console.log('에러');
+                    console.log('검색 실패');
                 }
             });
         }

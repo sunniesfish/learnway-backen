@@ -49,4 +49,9 @@ public class StudyTagService {
 	public List<StudyTag> findTag(int postid) {
 		return studyTagRepository.findByStudyPostid(postid);
 	}
+	
+	public void searchHashtags(StudyTagDto dto) {
+		
+		System.out.println(dto.getTags());
+	}
 }

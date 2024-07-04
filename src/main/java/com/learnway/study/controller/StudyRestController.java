@@ -14,9 +14,11 @@ import com.learnway.study.dto.CorrectCheckDto;
 import com.learnway.study.dto.StudyDto;
 import com.learnway.study.dto.StudyReplyDto;
 import com.learnway.study.dto.StudyReplyResponseDto;
+import com.learnway.study.dto.StudyTagDto;
 import com.learnway.study.service.StudyCorrectService;
 import com.learnway.study.service.StudyPostService;
 import com.learnway.study.service.StudyReplyService;
+import com.learnway.study.service.StudyTagService;
 
 @RestController
 @RequestMapping("/api")
@@ -28,6 +30,8 @@ public class StudyRestController {
 	private StudyReplyService studyReplyService;
 	@Autowired
 	private StudyPostService studyPostService;
+	@Autowired
+	private StudyTagService studyTagService;
 	
 	
 	@PostMapping("/member/correct")
@@ -63,6 +67,14 @@ public class StudyRestController {
 		
 		System.out.println(dto.getTitle());
 		return studyPostService.searchBoardList(dto);
+	}
+	
+	@PostMapping("/study/searchHashtags")
+	public void searchHashtags(@RequestBody StudyTagDto dto) {
+		
+		System.out.println(dto.getTags() + "태그값");
+		
+//		return studyPostService.searchBoardList(dto);
 	}
 	
 }
