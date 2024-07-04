@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ScoreRepository extends JpaRepository<Score, Long> {
 
-    Page<Score> findByMemIdAndExam_ExamId(Long memId, Long examId, Pageable pageable);
-    Page<Score> findByMemId(Long memId, Pageable pageable);
+    Page<Score> findByMemIdAndExam_ExamIdOrderByExam_ExamDateDesc(Long memId, Long examId, Pageable pageable);
+    Page<Score> findByMemIdOrderByExam_ExamDateDesc(Long memId, Pageable pageable);
     Optional<Score> findByMemIdAndScoreId(Long memId, Long scoreId);
     void deleteByMemIdAndScoreId(Long memId, Long scoreId);
     Page<Score> findByMemIdAndExam_ExamIdIn(Long memId, List<Long> examIds, Pageable pageable);

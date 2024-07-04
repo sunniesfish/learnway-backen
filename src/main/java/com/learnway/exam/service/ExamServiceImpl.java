@@ -95,13 +95,13 @@ public class ExamServiceImpl implements ExamService{
      * 시험id로 과목별 점수 페이지 가져옴
      * */
     public Page<Score> getScoreListByExam(Long examId, Long memId, Pageable pageable) {
-        return scoreRepository.findByMemIdAndExam_ExamId(memId, examId, pageable);
+        return scoreRepository.findByMemIdAndExam_ExamIdOrderByExam_ExamDateDesc(memId, examId, pageable);
     }
 
     //memId로 점수 페이지 가져오기
     @Override
     public Page<Score> getScoresByMemId(Long memId, Pageable pageable) {
-        return scoreRepository.findByMemId(memId, pageable);
+        return scoreRepository.findByMemIdOrderByExam_ExamDateDesc(memId, pageable);
     }
 
     //memId로 점수 리스트 가져오기
@@ -176,7 +176,7 @@ public class ExamServiceImpl implements ExamService{
         Page<Score> scores = null;
         list = getExamsByExamType(memId, examType);
         if(!list.isEmpty()){
-            scores = scoreRepository.findByMemIdAndExam_ExamIdIn(memId, list.stream().map(Exam::getExamId).toList(),pageable );
+            scores = scoreRepository.findByMemIdAndExam_ExamIdIn (memId, list.stream().map(Exam::getExamId).toList(),pageable );
         }
         return scores;
     }
