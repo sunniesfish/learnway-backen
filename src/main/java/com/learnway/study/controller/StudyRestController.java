@@ -1,6 +1,7 @@
 package com.learnway.study.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learnway.study.dto.CorrectCheckDto;
+import com.learnway.study.dto.StudyReplyDto;
+import com.learnway.study.dto.StudyReplyResponseDto;
 import com.learnway.study.service.StudyCorrectService;
+import com.learnway.study.service.StudyReplyService;
 
 @RestController
 @RequestMapping("/api/member")
@@ -17,6 +21,9 @@ public class StudyRestController {
 
 	@Autowired
 	private StudyCorrectService studyCorrectService;
+	@Autowired
+	private StudyReplyService studyReplyService;
+	
 	
 	@PostMapping("/correct")
 	public void correct(@RequestBody CorrectCheckDto dto,Principal principal) {
@@ -27,6 +34,23 @@ public class StudyRestController {
 		
 		studyCorrectService.updateStatus(dto,principal);
 		
+	}
+	
+	
+	//댓글 추가 메서드
+	@PostMapping("/replyadd")
+	public List<StudyReplyResponseDto> replyAdd(@RequestBody StudyReplyDto dto,Principal principal) {
+		
+		
+//			System.out.println(e
+		
+	        //댓글입력
+	        studyReplyService.addReply(dto,principal);
+	        
+	        //추가된 댓글리스트 출력
+	        List<StudyReplyResponseDto> list = studyReplyService.replyList(dto);
+	        
+	        return list;
 	}
 	
 }

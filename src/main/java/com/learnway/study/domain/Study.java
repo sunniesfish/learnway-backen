@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -63,4 +64,8 @@ public class Study {
 	
 	@OneToMany(mappedBy = "study")
 	private List<StudyTag> tags;
+	
+	@OneToMany(mappedBy = "study")
+    @JsonManagedReference
+    private List<StudyReply> replies;
 }

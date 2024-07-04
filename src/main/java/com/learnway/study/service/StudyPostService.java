@@ -47,7 +47,8 @@ public class StudyPostService {
 									       .viewcount("0")
 									       .startdate(dto.getStartdate())
 									       .enddate(dto.getEnddate())
-									       .isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
+									       .isjoin((byte) dto.getIsjoin()).
+									       member(memberRepository.findByMemberId(principal.getName()).get()).build();
 		
 	    
 		return studyRepository.save(study);
