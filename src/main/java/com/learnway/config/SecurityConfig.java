@@ -93,8 +93,6 @@ public class SecurityConfig {
                                 .requestMatchers("/loginOk","/api/**").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().authenticated()                         // 그 외 조건은 인증 필요
                 )
-
-
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/")                 // 로그인 페이지

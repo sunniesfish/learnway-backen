@@ -28,7 +28,9 @@ public class CustomUserDetails implements UserDetails {
     }
     // 프로필 이미지 반환 메서드
     public String getImage() {
-        return member.getMemberImage();
+        // 이미지 경로를 외부 파일 제공 경로로 변경
+        return "/api/member/uploads/" + member.getMemberImage();
+        /*return member.getMemberImage();*/
     }
 
     // --------------------------- 하기는 UserDetails 의 필수 구현 메서드 --------------------------------
