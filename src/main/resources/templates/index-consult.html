@@ -39,5 +39,33 @@
         <p class="text-danger">상담사 전용 로그인 모드입니다.</p>
     </div>
 </div>
+
+<!-- 로그인 실패 시 모달 창 -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">로그인 오류</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                아이디 혹은 비밀번호가 잘못되었습니다.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 로그인 실패 시 모달
+    $(document).ready(function() {
+        if (window.location.search.includes('error=true')) {
+            $('#errorModal').modal('show');
+        }
+    });
+</script>
 </body>
 </html>

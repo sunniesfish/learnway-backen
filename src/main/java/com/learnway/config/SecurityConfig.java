@@ -57,7 +57,7 @@ public class SecurityConfig {
                                 .loginPage("/consult/loginChange/consult")      //로그인 페이지 경로
                                 .loginProcessingUrl("/consult/login-consult")   //
                                 .defaultSuccessUrl("/consult/consultant", true)
-                                .failureUrl("/loginChange/consult?error=true")
+                                .failureUrl("/consult/loginChange/consult?error=true")
                                 .permitAll()
                 )
                 .logout(logout ->
@@ -100,7 +100,7 @@ public class SecurityConfig {
                                 .loginPage("/")                 // 로그인 페이지
                                 .loginProcessingUrl("/login")   // 로그인 요청 경로
                                 .defaultSuccessUrl("/loginOk", true)   // 성공 시 리디렉션 경로
-                                .failureUrl("/")                              // 실패 시 경로
+                                .failureUrl("/?error=true")                              // 실패 시 경로
                                 .permitAll()
                 )
                 .logout(logout ->
