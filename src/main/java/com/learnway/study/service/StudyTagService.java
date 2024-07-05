@@ -50,8 +50,14 @@ public class StudyTagService {
 		return studyTagRepository.findByStudyPostid(postid);
 	}
 	
-	public void searchHashtags(StudyTagDto dto) {
+	public List<StudyTag> searchHashtags(StudyTagDto dto) {
 		
-		System.out.println(dto.getTags());
+		List<StudyTag> list = studyTagRepository.findByTag(dto.getTags());
+		
+		for(StudyTag a : list) {
+			 System.out.println(a.getStudy().getPostid()+" : 게시글 아이디");
+		}
+		
+		return list;
 	}
 }

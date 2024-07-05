@@ -1,5 +1,8 @@
 package com.learnway.study.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,5 +33,6 @@ public class StudyTag {
 	
 	@ManyToOne
 	@JoinColumn(name = "study_postid", nullable = false)
+	@JsonBackReference	
 	private Study study;
 }

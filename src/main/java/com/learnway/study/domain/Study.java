@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.learnway.member.domain.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -62,7 +63,8 @@ public class Study {
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@OneToMany(mappedBy = "study")
+	@OneToMany(mappedBy = "study" , cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private List<StudyTag> tags;
 	
 	@OneToMany(mappedBy = "study")

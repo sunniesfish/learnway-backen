@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learnway.study.domain.Study;
+import com.learnway.study.domain.StudyTag;
 import com.learnway.study.dto.CorrectCheckDto;
 import com.learnway.study.dto.StudyDto;
 import com.learnway.study.dto.StudyReplyDto;
@@ -69,12 +70,14 @@ public class StudyRestController {
 		return studyPostService.searchBoardList(dto);
 	}
 	
+	
+	//태그값 검색 메서드
 	@PostMapping("/study/searchHashtags")
-	public void searchHashtags(@RequestBody StudyTagDto dto) {
+	public List<StudyTag> searchHashtags(@RequestBody StudyTagDto dto) {
 		
 		System.out.println(dto.getTags() + "태그값");
 		
-//		return studyPostService.searchBoardList(dto);
+		return studyTagService.searchHashtags(dto);
 	}
 	
 }

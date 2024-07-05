@@ -8,6 +8,6 @@ import lombok.Data;
 public class StudyTagDto {
 
 	private Integer postid; 
-	private List tags;
+	private List<String> tags;
 	private String tag;
 }
