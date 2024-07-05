@@ -63,16 +63,14 @@ public class MemberController {
         return "member/joinSuccess";
     }
 
-
+    // 수정 폼 조회
     @GetMapping("/update")
     public String updateForm(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
         MemberUpdateDTO memberUpdateDTO = memberService.getMemberInfo(userDetails.getUsername());
-
         // 목표대학은 3개
         while (memberUpdateDTO.getTargetUnis().size() < 3) {
             memberUpdateDTO.getTargetUnis().add(new TargetUniDTO());
         }
-
         model.addAttribute("memberUpdateDTO", memberUpdateDTO);
         return "member/update";
     }

@@ -237,13 +237,14 @@ function SubjectDetailModal({handleOverlayClick ,scoreId, handleOnModify}){
     React.useEffect(()=>{
         fetchData(scoreId);
     },[]);
+    console.log(data)
     return(
         <>
         <div className="exam-detail__modal__overlay" onClick={handleOverlayClick}></div>
         <div className="exam-detail__modal__detail">
             {data ?
             <>
-            <div>{data.exam.examName}</div>
+            <div>{data.subject.subject}</div>
             <div>{data.scoreGrade}등급</div>
             <div>점수 {data.scoreScore}/{data.scoreExScore}</div>
             <div>표준점수 {data.scoreStdScore}</div>

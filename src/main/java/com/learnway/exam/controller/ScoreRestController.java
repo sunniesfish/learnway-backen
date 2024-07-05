@@ -35,8 +35,10 @@ public class ScoreRestController {
         //get memId
         Long memId = userDetails.getMemberId();
         System.out.println("memId = " + memId);
+        System.out.println("exmId = " + examId);
 
-        Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo,10));
+        Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo-1,10));
+        page.get().forEach(System.out::println);
         if (memId == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } else {
@@ -52,7 +54,8 @@ public class ScoreRestController {
         //get memId
         Long memId = userDetails.getMemberId();
         Optional<Score> score = examService.getScoreById(scoreId, memId);
-        return new ResponseEntity<>(score.get(), HttpStatus.OK);
+        return score.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /*

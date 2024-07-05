@@ -27,6 +27,15 @@ public class ConsultantDetails implements UserDetails {
         this.consultant = consultant;
     }
 
+    public String getImage() {
+
+        String consultImage = consultant.getImageUrl();
+        if (consultImage != null && !consultImage.isEmpty() && !consultImage.equals("/img/member/member-default.png")) {
+            return "/api/member/uploads/" + consultImage;
+        } else {
+            return "/img/member/member-default.png"; // 기본 이미지 경로로 설정
+        }
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_COUNSELOR"));

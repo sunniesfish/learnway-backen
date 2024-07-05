@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, Long> {
     Page<Exam> findByMemIdOrderByExamDateDesc(Long memId, Pageable pageable);
-
+    Page<Exam> findByMemIdAndExamType_ExamTypeNameOrderByExamDateDesc(Long memId, String examType, Pageable pageable);
     void deleteByMemIdAndExamId(Long memId, Long examId);
     Optional<Exam> findByMemIdAndExamId(Long memId, Long examId);
-    List<Exam> findByMemIdAndExamType(Long memId, String examType);
+    List<Exam> findByMemIdAndExamType_ExamTypeName(Long memId, String examType);
 }

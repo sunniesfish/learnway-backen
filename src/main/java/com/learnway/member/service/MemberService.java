@@ -7,6 +7,8 @@ import com.learnway.member.dto.MemberUpdateDTO;
 import com.learnway.member.dto.TargetUniDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -154,6 +156,7 @@ public class MemberService {
                 .memberDetailadd(memberUpdateDTO.getMemberDetailadd())
                 .memberImage(imagePath)
                 .build();
+        memberRepository.save(member);
         // 목표 대학 업데이트
         List<TargetUni> currentTargetUnis = member.getTargetUnis();
         // 목표 대학 컬럼 갯수 3개
@@ -174,10 +177,40 @@ public class MemberService {
                 targetUniRepository.save(targetUni);
             }
         }
-        memberRepository.save(member);
+        // 현재 세션의 사용자 정보를 업데이트
+        CustomUserDetails updatedUserDetails = new CustomUserDetails(member);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(updatedUserDetails, null, updatedUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     // 이미지 생성 메서드
+    private String saveImage(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
+            return "/img/member/member-default.png"; // 기본 이미지 경로
+        }
+        // 중복 문제 해결 : 현재시간을 파일 이름에 추가
+        String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+        Path imagePath = Paths.get(uploadPath, filename);
+        Files.createDirectories(imagePath.getParent());
+        Files.copy(image.getInputStream(), imagePath);
+
+        return filename;
+    }
+
+    // 이미지 삭제 메서드
+    private void deleteImage(String imagePath) {
+        if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
+            try {
+                Path filePath = Paths.get(uploadPath).resolve(imagePath.replace("/uploads/", ""));
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /*// 이미지 생성 메서드
     private String saveImage(MultipartFile image) throws IOException {
         if (image == null || image.isEmpty()) {
             return "/img/member/member-default.png"; // 기본 이미지 경로
@@ -202,7 +235,7 @@ public class MemberService {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
 
 }

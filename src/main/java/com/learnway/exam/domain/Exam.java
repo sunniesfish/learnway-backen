@@ -1,5 +1,7 @@
 package com.learnway.exam.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.learnway.global.domain.ExamType;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,8 +29,9 @@ public class Exam {
     @Column(name = "exam_name", nullable = false)
     private String examName;
 
-    @Column(name = "exam_type", nullable = false)
-    private String examType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "exam_type_name")
+    private ExamType examType;
 
     @Column(name = "exam_range", nullable = true)
     private String examRange;
@@ -38,8 +42,12 @@ public class Exam {
     @Column(name = "exam_memo", nullable = true)
     private String examMemo;
 
+    @Transient
+    @JsonManagedReference
+    private List<Score> scoreList;
+
     @Builder
-    public Exam(Long examId, Long memId, String examName, String examType, String examRange, Date examDate, String examMemo) {
+    public Exam(Long examId, Long memId, String examName, ExamType examType, String examRange, Date examDate, String examMemo, List<Score> scoreList) {
         this.examId = examId;
         this.memId = memId;
         this.examName = examName;
@@ -47,5 +55,6 @@ public class Exam {
         this.examRange = examRange;
         this.examDate = examDate;
         this.examMemo = examMemo;
+        this.scoreList = scoreList;
     }
 }
