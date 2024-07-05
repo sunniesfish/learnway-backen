@@ -2,6 +2,7 @@ package com.learnway.study.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.Column;
@@ -34,7 +35,7 @@ public class StudyReply {
 	private String content;
 	
 	@Column(name="content_date")
-	private LocalDateTime title;
+	private LocalDateTime date;
 	
 	@Column(name="likes")
 	private String likes;
@@ -45,5 +46,6 @@ public class StudyReply {
 	
 	@ManyToOne
 	@JoinColumn(name = "study_postid", nullable = false)
+	@JsonBackReference
     private Study study;
 }

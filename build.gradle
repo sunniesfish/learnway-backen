@@ -51,6 +51,7 @@ dependencies {
     
     // Thymeleaf Extras for Java 8 Time
     implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
+    
 }
 
 tasks.named('test') {

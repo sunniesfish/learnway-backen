@@ -23,7 +23,7 @@ public class StudyPostService {
 	@Autowired
 	private MemberRepository memberRepository;
 	
-	
+	//모든게시글 출력
 	public List<Study> findAll() {
         return studyRepository.findAll(Sort.by(Sort.Direction.DESC,"postid"));
     }
@@ -47,7 +47,8 @@ public class StudyPostService {
 									       .viewcount("0")
 									       .startdate(dto.getStartdate())
 									       .enddate(dto.getEnddate())
-									       .isjoin((byte) dto.getIsjoin()).member(memberRepository.findByMemberId(principal.getName()).get()).build();
+									       .isjoin((byte) dto.getIsjoin()).
+									       member(memberRepository.findByMemberId(principal.getName()).get()).build();
 		
 	    
 		return studyRepository.save(study);
@@ -71,6 +72,9 @@ public class StudyPostService {
 		
 	}
 	
-
+	//게시글 제목검색 메서드
+	public List<Study> searchBoardList(StudyDto dto) {
+		return studyRepository.findByTitle(dto.getTitle());
+	}
 
 }
