@@ -43,8 +43,8 @@ public class StatsRestController {
     //시험 유형별 성적 추이
     @GetMapping("/{examTypeName}/{pageNo}")
     public ResponseEntity<Page> getScoreByExamType(
-            @PathVariable String examTypeName,
-            @PathVariable int pageNo,
+            @PathVariable("examTypeName") String examTypeName,
+            @PathVariable("pageNo") int pageNo,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long memId = userDetails.getMemberId();
