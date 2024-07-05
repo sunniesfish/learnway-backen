@@ -496,7 +496,6 @@
 		                alert('메모가 삭제되었습니다.');
 		                $('#memoDetailModal').modal('hide');
 		                $('.memo-item[data-memo-id="' + memoId + '"]').remove();
-		                // 필요 시 추가적인 처리 구현
 		            },
 		            error: function(xhr, status, error) {
 		                console.error('메모 삭제에 실패했습니다. 오류: ', error);
@@ -685,12 +684,12 @@
                     dataType: 'json',
                     success: function(user) {
                         var userInfoContent = `
+                            <p><img src="${user.userImg}" alt="User Image" style="max-width: 100%; height: auto;"></p>
                             <p>이름: ${user.userName}</p>
-                            <p>나이: ${user.userAge}</p>
-                            <p>성별: ${user.sex}</p>
+                            <p>나이:  ${user.userAge} 세</p>
                             <p>성적통계: ${user.stats}</p>
                             <p>목표대학: ${user.targetUniversity}</p>
-                            <p>이수강좌: ${user.completedCourses}</p>
+                            <p>상담요청내용: ${user.requestContents}</p>
                         `;
                         $('#userInfoContent').html(userInfoContent);
                         

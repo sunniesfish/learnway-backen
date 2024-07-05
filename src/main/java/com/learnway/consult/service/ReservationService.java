@@ -1,5 +1,9 @@
 package com.learnway.consult.service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -84,24 +88,41 @@ public class ReservationService {
 	    return reservationDTO;
 	}
     
-    //상담사 예약리스트에서 유저 정보 확인
+    // 상담사 예약리스트에서 유저 정보 확인
     public UserInfoDTO getUserInfo(Long userId) {
         Optional<Member> memberOptional = memberRepository.findById(userId);
         
         if (memberOptional.isPresent()) {
-        	Member member = memberOptional.get();
+            Member member = memberOptional.get();
+            List<ReservationEntity> list = reservationRepository.findBymember_id(member.getId());
+            System.out.println("컨텐츠 : " + list.toString());
+            System.out.println("컨텐츠 : " + list.get(0).getReservationContent());
+            String requestContents = list.get(0).getReservationContent();
+            String userImg = member.getMemberImage();
+            LocalDate memberBirth = member.getMemberBirth();
+            String age = String.valueOf(calculateAge(memberBirth));
             return new UserInfoDTO(
                 member.getId(),
-                member.getMemberName()
-
+                member.getMemberName(),
+                age,
+                requestContents,
+                userImg
+                
             );
         } else {
             throw new NoSuchElementException("User not found with id: " + userId);
         }
     }
 
+    // 나이 계산 메서드
+    private int calculateAge(LocalDate birthdate) {
+        LocalDate today = LocalDate.now();
+        Period period = Period.between(birthdate, today);
+        return period.getYears();
+    }
+    
     //예약페이지 와 상담사이드바  consultant 정보 가져오기
-	public Optional<Consultant> getConsultants(Long consultantId) {
-		return consultantRepository.findById(consultantId);
-	}
+    public Optional<Consultant> getConsultants(Long consultantId) {
+    	return consultantRepository.findById(consultantId);
+    }
 }
