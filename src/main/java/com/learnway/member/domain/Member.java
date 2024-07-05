@@ -56,8 +56,7 @@ public class Member {
     private MemberRole memberRole;      // 회원 관리자 구분 (Enum : ROLE_ADMIN, ROLE_USER)
 
     // JOIN : 목표 대학
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true , fetch = FetchType.EAGER)
-    //@OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default // 빌드 시 해당 필드 초기화
     private List<TargetUni> targetUnis = new ArrayList<>();
 

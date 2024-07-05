@@ -196,6 +196,7 @@
         </div>
         <hr>
         <img src="" alt="프로필 사진" class="consultantIMG">
+        <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
         <div class="sidebar-header">
         </div>
         <div class="sidebar-item">
@@ -218,7 +219,9 @@
         </div>
         <div class="button-group">
 	        <button id="editProfile" class="btn btn-outline-success">정보수정</button>
-	        <button id="logout" name="logout" class="btn btn-outline-danger" >로그아웃</button>
+	        <form method="post" action="/logout">
+                <button type="submit" id="logout" name="logout" class="btn btn-outline-danger" >로그아웃</button>
+            </form>
         </div>
     </div>
 
