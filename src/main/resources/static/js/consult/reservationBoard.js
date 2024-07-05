@@ -96,12 +96,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('예약 가능한 시간이 아닙니다.');
                     return;
                 }
-				/*
+				
                 if (day === 0 || day === 6) {
                     alert('토요일/일요일/공휴일 은 예약이 불가능합니다.');
                     return;
                 }
-				*/
+				
                 if (hour >= 12 && hour < 14) {
                     alert('12:00 ~ 14:00 까지 점심시간 입니다.');
                     return;
@@ -250,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showConsultantInfoModal() {
         if (consultantData) {
             $("#consultantPhoto").attr("src", consultantData.imageUrl); // 사진 URL 설정
+            console.log("이미지경로 : "+consultantData.imageUrl);
             $("#consultantName").text(consultantData.name + " 상담사");
             $("#consultantEmail").text(consultantData.subject);
             $("#consultantPhone").text(consultantData.description);
