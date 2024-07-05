@@ -10,7 +10,8 @@
             border-radius: 5px;
             transition: all 0.3s ease;
         }
-        .btn-write:hover {
-            background-color: #007bff;
-            color: #fff;
-        }
+        
+.btn-write:hover {
+    background-color: #007bff;
+    color: #fff;
+}
