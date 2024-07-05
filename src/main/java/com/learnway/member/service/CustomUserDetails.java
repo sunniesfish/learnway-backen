@@ -26,13 +26,15 @@ public class CustomUserDetails implements UserDetails {
     public String getName() {
         return member.getMemberName();
     }
-    // 프로필 이미지 반환 메서드
-    public String getImage() {
-        // 이미지 경로를 외부 파일 제공 경로로 변경
-        return "/api/member/uploads/" + member.getMemberImage();
-        /*return member.getMemberImage();*/
-    }
 
+    public String getImage() {
+        String memberImage = member.getMemberImage();
+        if (memberImage != null && !memberImage.isEmpty() && !memberImage.equals("/img/member/member-default.png")) {
+            return "/api/member/uploads/" + memberImage;
+        } else {
+            return "/img/member/member-default.png"; // 기본 이미지 경로로 설정
+        }
+    }
     // --------------------------- 하기는 UserDetails 의 필수 구현 메서드 --------------------------------
     @Override
     // 사용자가 가진 권한을 컬렉션의 형태로 반환

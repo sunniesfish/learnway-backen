@@ -195,18 +195,14 @@ public class MemberService {
         Files.createDirectories(imagePath.getParent());
         Files.copy(image.getInputStream(), imagePath);
 
-        // 변경된 부분 시작
-        return /*"/uploads/" +*/ filename;
-        // 변경된 부분 끝
+        return filename;
     }
 
     // 이미지 삭제 메서드
     private void deleteImage(String imagePath) {
         if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
             try {
-                // 변경된 부분 시작
                 Path filePath = Paths.get(uploadPath).resolve(imagePath.replace("/uploads/", ""));
-                // 변경된 부분 끝
                 Files.deleteIfExists(filePath);
             } catch (IOException e) {
                 e.printStackTrace();
