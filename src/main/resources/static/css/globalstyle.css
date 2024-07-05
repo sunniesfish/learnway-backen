@@ -4,7 +4,14 @@
 /*style*/
 /* 전체 테마*/
 :root {
-    --hoverColor: #96C9F4;
+    --hoverColor: #aec6d9;
+    --lineGray: #ccc;
+    --learnwayBlack: #343A40;
+    --learnwayLightBlue: #A3D8F4;
+    --learnwayLightPink: #FFC7ED;
+    --learnwayBlue: #3FA2F6;
+    --learnwayDarkBlue: #527afc;
+    --learnwayRed: tomato;
 }
 
 
@@ -16,6 +23,15 @@
   font-weight: 400;
   font-style: normal;
 }
+.learnway-btn{
+  background-color: var(--learnwayBlack);
+  border: none;
+  border-radius: 5px;
+}
+.learnway-btn:hover{
+  background-color: var(--learnwayBlue);
+  outline: none;
+}
 
 .clickable:hover{
   cursor: pointer;
@@ -23,6 +39,7 @@
 .hidden {
   display: none;
 }
+
 .main__content {
   flex-grow: 1; /* 사이드바를 제외한 공간을 차지 */
   display: flex;
@@ -30,16 +47,22 @@
   justify-content: flex-start; /* 상단 정렬 */
   align-items: center; /* 수평 중앙 정렬 */
 }
-
 .main__content__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 1000px; /* 제목의 최대 너비 설정 */
-  text-align: center;
-  font-size: 2em; /* 제목 글꼴 크기 */
   margin-bottom: 40px; /* 제목과 내용 사이의 간격 */
   border-bottom: 1px solid #ccc; /* 밑줄 스타일 */
-  padding-top: 10px;
-  padding-bottom: 20px; /* 밑줄 아래 여백 */
+  padding-top: 15px;
+  padding-bottom: 15px; /* 밑줄 아래 여백 */
+}
+.main__content__title>span{
+  text-align: center;
+  font-size: 2em; /* 제목 글꼴 크기 */
+  width: 100%;
+  max-width: 1200px;
+  margin-left: 15px;
 }
 
 
@@ -96,9 +119,11 @@ table {
 a{
   text-decoration: none;
   color:inherit;
-  &:hover{
-    cursor: pointer;
-  }
+}
+a:hover{
+  text-decoration: none;
+  color:inherit;
+  cursor: pointer;
 }
 *{
   box-sizing: border-box;

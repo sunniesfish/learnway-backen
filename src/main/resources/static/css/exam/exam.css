@@ -6,42 +6,115 @@
 .exam__container{
     width: 100%;
     max-width: 800px;
-    height: 60vh;
+    min-height: 600px;
+    height: auto;
+    margin: 0 5px 0 5px;
+}
+.exam__container__btn-container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.exam__container__btn-container>button{
+    height: 35px;
+    width: 60px;
+    color: white;
+} 
+
+.exam__item__label{
+    margin-bottom: 10px;
+
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+
+    background-color: var(--learnwayBlack);
+    color: white;
+}
+.exam__item__label-box, .exam__item__info-box{
+    width: 90%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__item__label-box, .exam__item__info-box>div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__item__label-space, .exam__item__delete-btn-container{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .exam__item{
     width: 100%;
-    height: 12.5%;
+    height: 30px;
+    margin-bottom: 10px;
 
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
+
+    border-radius: 15px;
     
     transition: background-color .1s ease-in-out;
-}
-.exam__item>a{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 60%;
-    height: 100%;
-}
-.exam__item>a>div{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: 0 15px 0 15px;
-}
-.exam__item>form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80%;
-    width: 60px;
 }
 .exam__item:hover{
     background-color: var(--hoverColor);
 }
+
+.exam__item__type{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15%;
+    height: 100%;
+    min-width: 100px;
+    text-overflow: ellipsis;
+}
+.exam__item__name{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 100%;
+    min-width: 200px;
+    text-overflow: ellipsis;
+}
+.exam__item__date{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    height: 100%;
+    min-width: 200px;
+    text-overflow: ellipsis;
+}
+.exam__item__delete-btn{
+    border: none;
+    background-color: transparent;
+}
+.exam__item__delete-btn:hover{
+    outline: none;
+}
+.exam__item__delete-btn>svg{
+    width: 15px;
+    fill: var(--learnwayBlack);
+    transition: fill .1 ease-in-out;
+}
+.exam__item__delete-btn>svg:hover{
+    fill: var(--learnwayRed);
+}
+
 
 .pagination{
     margin: 30px;
