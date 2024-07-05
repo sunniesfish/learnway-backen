@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.learnway.global.domain.Material;
 import com.learnway.global.domain.Studyway;
 import com.learnway.global.domain.Subject;
+import com.learnway.member.domain.Member;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,13 +44,17 @@ public class Schedule {
 		
 	@Column(nullable=true)
 	private double scheduleAchieveRate;
+	
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "memberId", unique = false)
+	private Member memberId; 
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "subjectId", unique = false)
 	private Subject subjectId;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "studywayIdLo",unique = false)
+	@JoinColumn(name = "studywayId",unique = false)
 	private Studyway studywayId;
 	
 	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL)

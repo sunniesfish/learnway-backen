@@ -1,5 +1,9 @@
 package com.learnway.notice.dto;
 
+import java.time.LocalDateTime;
+
+import com.learnway.notice.domain.Notice;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +20,10 @@ public class NoticeDto {
 	private String noticeContent;
 	private String noticeImgUname;
 	private String noticeImgPath;
-	private boolean topNotice;
+	private Notice preNotice;
+	private Notice nextNotice;
+	private LocalDateTime createDate;
+	private boolean priority;
+	private String memberId; 
 
 }
