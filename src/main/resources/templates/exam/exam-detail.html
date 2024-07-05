@@ -37,7 +37,7 @@
             <div>
                 <label>
                     <span>시험명</span>
-                    <input type="text" th:value="${exam.getExamName()}" name="examName"/>
+                    <input type="text" th:value="${exam.getExamName()}" name="examName" required/>
                 </label>
             </div>
             <div>
@@ -51,19 +51,19 @@
             <div>
                 <label>
                     <span>시험날짜</span>
-                    <input type="date" th:value="${exam.getExamDate()}" name="examDate"/>
+                    <input type="date" th:value="${exam.getExamDate()}" name="examDate" required/>
                 </label>
             </div>
             <div>
                 <label>
                     <span>시험범위</span>
-                    <input type="text" th:value="${exam.getExamRange()}" name="examRange"/>
+                    <input type="text" th:value="${exam.getExamRange()}" name="examRange" required/>
                 </label>
             </div>
             <div>
                 <label>
                     <span>메모</span>
-                    <input type="text" th:value="${exam.getExamMemo()}" name="examMemo"/>
+                    <input type="text" th:value="${exam.getExamMemo()}" name="examMemo" required/>
                 </label>
             </div>
             <button>수정하기</button>
