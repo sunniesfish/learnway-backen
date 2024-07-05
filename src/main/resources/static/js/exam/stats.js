@@ -3,6 +3,8 @@ async function fetchTypeStats(examType,pageNo){
     return fetch(`/api/stats/${examType}/${pageNo}`).then(res => res.json());
 }
 
+
+
 //page
 console.log("loading")
 const statsRoot = document.getElementById("stats-root");
@@ -40,18 +42,19 @@ function Stats(){
         let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
         let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
         
-        let xasisCat = [...new Set(statdata.content.map(item => item.examDate))];
+        let xasisCat = statdata.content.map(exam => exam.examDate);
 
 
         statdata.content.forEach(exam => {
-            scoreSeries.map(item => {
-                exam.scoreList.forEach(score => {
-                    if(item.name === score.subject.subject){
-                        item.data.push(score.scoreScore)
-                    }
-                })
+            scoreSeries.forEach(seriesData => {
+                exam.scoreList.map(score => {})
             })
         })
+
+        scoreSeries.forEach(seriesData => {
+            statdata.content.forEach(score => {})
+        })
+
         statdata.content.forEach(exam => {
             gradeSeries.map(item => {
                 exam.scoreList.forEach(score => {
@@ -70,9 +73,6 @@ function Stats(){
                 })
             })
         })
-        console.log("scoreSeries",scoreSeries)
-        console.log("gradeSeries",gradeSeries)
-        console.log("stdSeries",stdSeries)
 
         setScoreOption(createOption(scoreSeries,xasisCat, 0, 100, "시험 일자", "점수", false))
         setGradeOption(createOption(gradeSeries,xasisCat, 1, 9, "시험 일자", "등급", true))
@@ -80,29 +80,25 @@ function Stats(){
 
     },[pageNo, examType]);
     React.useEffect(async ()=>{
-        console.log("getting type")
         const examTypeData = await fetch("/api/examtype/all").then(res => res.json());
-        console.log("examTypeData",examTypeData)
         setExamTypeList(examTypeData);
     },[]);
-    console.log("examTypeList",examTypeList)
 
     const handlePrevClick = () => {
-        console.log("prev click")
         if(pages){
             console.log("prev pages",pages)
             pageNo < pages && setPageNo(prev => prev + 1)
         }
     }
     const handleNextClick = () => {
-        console.log("next click")
         if(pages){
             console.log("next pages",pages)
             pageNo > 1 && setPageNo(prev => prev - 1)            
         }
     }
     const handleExamTypeChange = (event) => {
-        setExamType(event.target.value)
+        setPageNo(1);
+        setExamType(event.target.value);
     }
 
     return(
