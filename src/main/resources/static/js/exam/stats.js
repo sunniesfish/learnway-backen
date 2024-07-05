@@ -1,99 +1,110 @@
-//api
-async function fetchTypeStats(examType,pageNo){
-    return fetch(`/api/stats/${examType}/${pageNo}`).then(res => res.json());
+async function fetchTypeStats(examType, pageNo) {
+    const response = await fetch(`/api/stats/${examType}/${pageNo}`);
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    return response.json();
 }
 
-
-
-//page
-console.log("loading")
+console.log("stas page")
 const statsRoot = document.getElementById("stats-root");
 
-window.addEventListener("load",render);
+window.addEventListener("load", render);
 
-function render(){
-    ReactDOM.render(<Stats/>,statsRoot);
+function render() {
+    console.log("render")
+    ReactDOM.render(<Stats />, statsRoot);
 }
 
-function Stats(){
-    const [ cat, setCat ] = React.useState("score");
-    const [ examType, setExamType ] = React.useState("all");
-    const [ examTypeList, setExamTypeList ] = React.useState([]); 
+function Stats() {
+    const [cat, setCat] = React.useState("score");
+    const [examType, setExamType] = React.useState("all");
+    const [examTypeList, setExamTypeList] = React.useState([]);
+    const [pageNo, setPageNo] = React.useState(1);
+    const [pages, setPages] = React.useState(0);
+    const [scoreOption, setScoreOption] = React.useState();
+    const [gradeOption, setGradeOption] = React.useState();
+    const [stdOption, setStdOption] = React.useState();
+    const [isOption, setIsOption] = React.useState(false);
 
-    const [ pageNo, setPageNo ] = React.useState(1);
-    const [ pages, setPages ] = React.useState(0);
+    console.log("stat")
 
-    const [ scoreOption, setScoreOption ] = React.useState();
-    const [ gradeOption, setGradeOption ] = React.useState();
-    const [ stdOption, setStdOption ] = React.useState();
-    const [ isOption, setIsOption ] = React.useState(false);
+    React.useEffect(() => {
+        setIsOption(scoreOption || gradeOption || stdOption ? true : false);
+    }, [scoreOption, gradeOption, stdOption]);
 
-    React.useEffect(()=>{
-        setIsOption( scoreOption || gradeOption || stdOption ? true : false);
-    },[scoreOption, gradeOption, stdOption]);
-
-    React.useEffect(async () => {
-        const statdata = await fetchTypeStats(examType,pageNo);
-        console.log("data",statdata);
-        setPages(statdata.totalPages);
-        const subjects = await fetch("/api/subject/").then(res => res.json());
-
-        let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-        let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-        let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-        
-        let xasisCat = statdata.content.map(exam => exam.examDate);
+    React.useEffect(() => {
+        console.log("in useEffect")
+        const fetchData = async () => {
+            console.log("fetchData")
+            try {
+                const statdata = await fetchTypeStats(examType, pageNo);
+                setPages(statdata.totalPages);
+                console.log("data", statdata)
+                const subjects = await fetch("/api/subject/").then(res => {
+                    if (!res.ok) throw new Error('Failed to fetch subjects');
+                    return res.json();
+                });
 
 
-        statdata.content.forEach(exam => {
-            scoreSeries.forEach(seriesData => {
-                exam.scoreList.map(score => {})
-            })
-        })
 
-        scoreSeries.forEach(seriesData => {
-            statdata.content.forEach(score => {})
-        })
+                let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+                let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+                let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
 
-        statdata.content.forEach(exam => {
-            gradeSeries.map(item => {
-                exam.scoreList.forEach(score => {
-                    if(item.name === score.subject.subject){
-                        item.data.push(score.scoreGrade)
-                    }
-                })
-            })
-        })
-        statdata.content.forEach(exam => {
-            stdSeries.map(item => {
-                exam.scoreList.forEach(score => {
-                    if(item.name === score.subject.subject){
-                        item.data.push(score.scoreStdScore)
-                    }
-                })
-            })
-        })
+                let xasisCat = statdata.content.map(exam => exam.examDate);
 
-        setScoreOption(createOption(scoreSeries,xasisCat, 0, 100, "시험 일자", "점수", false))
-        setGradeOption(createOption(gradeSeries,xasisCat, 1, 9, "시험 일자", "등급", true))
-        setStdOption(createOption(stdSeries,xasisCat, 0, 150, "시험 일자", "점수", false))
+                const addDataToSeries = (series, dataKey) => {
+                    statdata.content.forEach(exam => {
+                        series.forEach(seriesData => {
+                            exam.scoreList.forEach(score => {
+                                if (seriesData.name === score.subject.subject) {
+                                    seriesData.data.push(score[dataKey]);
+                                }
+                            });
+                        });
+                    });
+                };
 
-    },[pageNo, examType]);
-    React.useEffect(async ()=>{
-        const examTypeData = await fetch("/api/examtype/all").then(res => res.json());
-        setExamTypeList(examTypeData);
-    },[]);
+                addDataToSeries(scoreSeries, 'scoreScore');
+                addDataToSeries(gradeSeries, 'scoreGrade');
+                addDataToSeries(stdSeries, 'scoreStdScore');
+
+                setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
+                setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
+                setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [pageNo, examType]);
+
+    React.useEffect(() => {
+        const fetchExamTypeData = async () => {
+            console.log("fetch type data")
+            try {
+                const examTypeData = await fetch("/api/examtype/all").then(res => {
+                    if (!res.ok) throw new Error('Failed to fetch exam types');
+                    console.log("examTypeData",examTypeData)
+                    return res.json();
+                });
+                setExamTypeList(examTypeData);
+            } catch (error) {
+                console.error('Error fetching exam types:', error);
+            }
+        };
+
+        fetchExamTypeData();
+    }, []);
 
     const handlePrevClick = () => {
-        if(pages){
-            console.log("prev pages",pages)
-            pageNo < pages && setPageNo(prev => prev + 1)
+        if (pageNo > 1) {
+            setPageNo(prev => prev - 1);
         }
     }
     const handleNextClick = () => {
-        if(pages){
-            console.log("next pages",pages)
-            pageNo > 1 && setPageNo(prev => prev - 1)            
+        if (pageNo < pages) {
+            setPageNo(prev => prev + 1);
         }
     }
     const handleExamTypeChange = (event) => {
@@ -101,59 +112,53 @@ function Stats(){
         setExamType(event.target.value);
     }
 
-    return(
-    <>
-    <select
-        onChange={handleExamTypeChange} 
-        defaultValue={"all"}
-    >
-        <option value="all">All</option>
-        {examTypeList?.map( item => 
-            <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
-        )}
-    </select>
+    return (
+        <>
+            <select onChange={handleExamTypeChange} defaultValue={"all"}>
+                <option value="all">All</option>
+                {examTypeList?.map(item =>
+                    <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+                )}
+            </select>
 
-    <button onClick={() => setCat("score")}>score</button>
-    <button onClick={() => setCat("grade")}>grade</button>
-    <button onClick={() => setCat("std")}>std</button>
-    <div className="chart-container">
-        <button onClick={handlePrevClick}>Prev</button>
-        <button onClick={handleNextClick}>Next</button>
-        {isOption? 
-            <ChartType cat={cat} option={
-                cat === "score"? scoreOption : 
-                cat === "grade"? gradeOption :
-                cat === "std" ? stdOption : null
-            }/> 
-        : null}
-    </div>
-    </>
+            <button onClick={() => setCat("score")}>score</button>
+            <button onClick={() => setCat("grade")}>grade</button>
+            <button onClick={() => setCat("std")}>std</button>
+            <div className="chart-container">
+                <button onClick={handlePrevClick}>Prev</button>
+                <button onClick={handleNextClick}>Next</button>
+                {isOption ?
+                    <ChartType cat={cat} option={
+                        cat === "score" ? scoreOption :
+                            cat === "grade" ? gradeOption :
+                                cat === "std" ? stdOption : null
+                    } />
+                    : null}
+            </div>
+        </>
     )
 }
 
-function ChartType({cat, option}){
+function ChartType({ cat, option }) {
     const chartRef = React.useRef(null);
 
-        
-    React.useEffect(()=>{
-        const chart = new ApexCharts(document.querySelector(".chart"), option);
+    React.useEffect(() => {
+        const chart = new ApexCharts(chartRef.current, option);
         chart.render();
-        return () => chart.destroy();
-    },[cat, option]);
+        return () => {
+            chart.destroy();
+        };
+    }, [cat, option]);
 
-    return(
-        <div className="chart" ref={chartRef}>
-
-        </div>
+    return (
+        <div className="chart" ref={chartRef}></div>
     )
 }
 
-function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reversed){
-    console.log("series",series)
-    console.log("xasisCat",xaxisCat)
-    const option = {
+function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, reversed) {
+    return {
         series: series,
-        chart: {    
+        chart: {
             height: 700,
             width: "100%",
             type: 'line',
@@ -172,7 +177,7 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reverse
                 show: false
             }
         },
-        colors: ['#77B6EA', '#545454','#ECEE81','#8DDFCB','#EDB7ED','#FF0060'],
+        colors: ['#77B6EA', '#545454', '#ECEE81', '#8DDFCB', '#EDB7ED', '#FF0060'],
         dataLabels: {
             enabled: true,
         },
@@ -185,9 +190,9 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reverse
         },
         grid: {
             borderColor: '#e7e7e7', row: {
-                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                    opacity: 0.5
-                },
+                colors: ['#f3f3f3', 'transparent'],
+                opacity: 0.5
+            },
         },
         markers: {
             size: 1
@@ -204,7 +209,7 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reverse
             },
             min: min,
             max: max,
-            reversed:reversed
+            reversed: reversed
         },
         legend: {
             position: 'top',
@@ -213,6 +218,5 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reverse
             offsetY: -25,
             offsetX: -5
         }
-    }
-    return option;
+    };
 }
