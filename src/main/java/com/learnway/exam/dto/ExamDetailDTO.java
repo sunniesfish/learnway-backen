@@ -1,6 +1,7 @@
 package com.learnway.exam.dto;
 
 import com.learnway.exam.domain.Score;
+import com.learnway.global.domain.ExamType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.sql.Date;
 public class ExamDetailDTO {
     Long examId;
     String examName;
-    String examType;
+    ExamType examType;
     String examRange;
     Date examDate;
     String examMemo;

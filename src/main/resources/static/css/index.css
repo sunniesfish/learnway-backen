@@ -10,7 +10,7 @@ body, html {
 
 .left-panel {
     flex: 1;
-    background-color: #a3d8f4;
+    background-color: /*#a3d8f4*/ #343A40 ;
     display: flex;
     justify-content: center;
     align-items: center;

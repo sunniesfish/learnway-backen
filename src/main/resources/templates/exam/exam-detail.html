@@ -22,7 +22,7 @@
         <div class="main__content__title">
             <span th:text="${exam.getExamName()}"></span>
             -
-            <span th:text="${exam.getExamType()}"></span>
+            <span th:text="${exam.getExamType().examTypeName}"></span>
             -
             <span th:text="${exam.getExamDate()}"></span>
             <button class="exam-detail__detail-btn">상세</button>
@@ -43,7 +43,9 @@
             <div>
                 <label>
                     <span>시험종류</span>
-                    <input type="text" th:value="${exam.getExamType()}" name="examType"/>
+                    <select name="examTypeName">
+                        <option th:each="item:${examTypes}" th:value="${item.getExamTypeName()}" th:text="${item.getExamTypeName()}"></option>
+                    </select>
                 </label>
             </div>
             <div>
