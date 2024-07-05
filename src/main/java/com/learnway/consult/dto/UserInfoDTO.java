@@ -12,15 +12,18 @@ public class UserInfoDTO {
     private String targetUniversity = "서울대학교";//임시 정보
     private String targetSubject = "법학과";//임시 정보
     private String stats = "필수 과목 평균 81점 상위 41%";//임시 정보
-    private String sex = "남자";//임시 정보
-    
+    private String userImg;
+    private String requestContents;
     public UserInfoDTO() {
     }
 
-	public UserInfoDTO(Long id, String userName) {
+	public UserInfoDTO(Long id, String userName , String userAge, String requestContents, String userImg) {
 		super();
 		this.id = id;
 		this.userName = userName;
+		this.userAge = userAge;
+		this.requestContents = requestContents;
+		this.userImg = userImg;
 
 	}
 
