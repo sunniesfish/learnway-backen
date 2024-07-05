@@ -3,6 +3,8 @@ async function fetchTypeStats(examType,pageNo){
     return fetch(`/api/stats/${examType}/${pageNo}`).then(res => res.json());
 }
 
+
+
 //page
 console.log("loading")
 const statsRoot = document.getElementById("stats-root");
@@ -15,77 +17,130 @@ function render(){
 
 function Stats(){
     const [ cat, setCat ] = React.useState("score");
+    const [ examType, setExamType ] = React.useState("all");
+    const [ examTypeList, setExamTypeList ] = React.useState([]); 
+
+    const [ pageNo, setPageNo ] = React.useState(1);
+    const [ pages, setPages ] = React.useState(0);
+
+    const [ scoreOption, setScoreOption ] = React.useState();
+    const [ gradeOption, setGradeOption ] = React.useState();
+    const [ stdOption, setStdOption ] = React.useState();
+    const [ isOption, setIsOption ] = React.useState(false);
+
+    React.useEffect(()=>{
+        setIsOption( scoreOption || gradeOption || stdOption ? true : false);
+    },[scoreOption, gradeOption, stdOption]);
+
+    React.useEffect(async () => {
+        const statdata = await fetchTypeStats(examType,pageNo);
+        console.log("data",statdata);
+        setPages(statdata.totalPages);
+        const subjects = await fetch("/api/subject/").then(res => res.json());
+
+        let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+        let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+        let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+        
+        let xasisCat = statdata.content.map(exam => exam.examDate);
+
+
+        statdata.content.forEach(exam => {
+            scoreSeries.forEach(seriesData => {
+                exam.scoreList.map(score => {})
+            })
+        })
+
+        scoreSeries.forEach(seriesData => {
+            statdata.content.forEach(score => {})
+        })
+
+        statdata.content.forEach(exam => {
+            gradeSeries.map(item => {
+                exam.scoreList.forEach(score => {
+                    if(item.name === score.subject.subject){
+                        item.data.push(score.scoreGrade)
+                    }
+                })
+            })
+        })
+        statdata.content.forEach(exam => {
+            stdSeries.map(item => {
+                exam.scoreList.forEach(score => {
+                    if(item.name === score.subject.subject){
+                        item.data.push(score.scoreStdScore)
+                    }
+                })
+            })
+        })
+
+        setScoreOption(createOption(scoreSeries,xasisCat, 0, 100, "시험 일자", "점수", false))
+        setGradeOption(createOption(gradeSeries,xasisCat, 1, 9, "시험 일자", "등급", true))
+        setStdOption(createOption(stdSeries,xasisCat, 0, 150, "시험 일자", "점수", false))
+
+    },[pageNo, examType]);
+    React.useEffect(async ()=>{
+        const examTypeData = await fetch("/api/examtype/all").then(res => res.json());
+        setExamTypeList(examTypeData);
+    },[]);
+
+    const handlePrevClick = () => {
+        if(pages){
+            console.log("prev pages",pages)
+            pageNo < pages && setPageNo(prev => prev + 1)
+        }
+    }
+    const handleNextClick = () => {
+        if(pages){
+            console.log("next pages",pages)
+            pageNo > 1 && setPageNo(prev => prev - 1)            
+        }
+    }
+    const handleExamTypeChange = (event) => {
+        setPageNo(1);
+        setExamType(event.target.value);
+    }
+
     return(
-        <>
-        <button onClick={() => setCat("score")}>score</button>
-        <button onClick={() => setCat("grade")}>grade</button>
-        <button onClick={() => setCat("std")}>std</button>
-        <h1>test</h1>
-        <ChartType cat={cat}/> 
-        </>
+    <>
+    <select
+        onChange={handleExamTypeChange} 
+        defaultValue={"all"}
+    >
+        <option value="all">All</option>
+        {examTypeList?.map( item => 
+            <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+        )}
+    </select>
+
+    <button onClick={() => setCat("score")}>score</button>
+    <button onClick={() => setCat("grade")}>grade</button>
+    <button onClick={() => setCat("std")}>std</button>
+    <div className="chart-container">
+        <button onClick={handlePrevClick}>Prev</button>
+        <button onClick={handleNextClick}>Next</button>
+        {isOption? 
+            <ChartType cat={cat} option={
+                cat === "score"? scoreOption : 
+                cat === "grade"? gradeOption :
+                cat === "std" ? stdOption : null
+            }/> 
+        : null}
+    </div>
+    </>
     )
 }
 
-function ChartType({cat}){
-    console.log("rendering chart")
+function ChartType({cat, option}){
     const chartRef = React.useRef(null);
-    React.useEffect(async () => {
 
-        console.log("in useEffect")
-
-        const data = await fetchTypeStats("A",1);
-        const subjects = await fetch("/api/subject/").then(res => res.json());
-        const option = {};
-
-        console.log("data",data.content)
-        console.log("subjects",subjects);
-
-        let series = subjects.map(item => ({ name: item.subject, data: [] }));
-        console.log("series",series)
-        let scoreSeries = series.map(item => ({ ...item }));
-        let gradeSeries = series.map(item => ({ ...item }));
-        let stdSeries = series.map(item => ({ ...item }));
         
-        let xasisCat = data.content.map(item => item.exam.examDate);
-        console.log("xasisCat",xasisCat)
-
-        data.content.forEach(content => {
-            scoreSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreScore)
-                }
-            })
-        })
-        console.log("scoreSeries",scoreSeries)
-        data.content.forEach(content => {
-            gradeSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreGrade)
-                }
-            })
-        })
-        console.log("gradeSeries",gradeSeries)
-        data.content.forEach(content => {
-            stdSeries.map(item => {
-                if(item.name === content.subject.subject){
-                    item.data.push(content.scoreStdScore)
-                }
-            })
-        })
-        console.log("stdSeries",stdSeries)
-        if(cat === "score"){
-            option = setOption(scoreSeries,xasisCat, "시험 일자", "점수")
-        }else if(cat === "grade"){
-            option = setOption(gradeSeries,xasisCat, "시험 일자", "등급")
-        }else if(cat === "std"){
-            option = setOption(stdSeries,xasisCat, "시험 일자", "점수")
-        }
-
+    React.useEffect(()=>{
         const chart = new ApexCharts(document.querySelector(".chart"), option);
         chart.render();
-
         return () => chart.destroy();
-    },[])
+    },[cat, option]);
+
     return(
         <div className="chart" ref={chartRef}>
 
@@ -93,11 +148,14 @@ function ChartType({cat}){
     )
 }
 
-function setOption({series, xaxisCat, xaxisTitle, yaxisTitle }){
+function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle,reversed){
+    console.log("series",series)
+    console.log("xasisCat",xaxisCat)
     const option = {
         series: series,
-        chart: {
-            height: 350,
+        chart: {    
+            height: 700,
+            width: "100%",
             type: 'line',
             dropShadow: {
                 enabled: true,
@@ -114,7 +172,7 @@ function setOption({series, xaxisCat, xaxisTitle, yaxisTitle }){
                 show: false
             }
         },
-        colors: ['#77B6EA', '#545454'],
+        colors: ['#77B6EA', '#545454','#ECEE81','#8DDFCB','#EDB7ED','#FF0060'],
         dataLabels: {
             enabled: true,
         },
@@ -144,8 +202,9 @@ function setOption({series, xaxisCat, xaxisTitle, yaxisTitle }){
             title: {
                 text: yaxisTitle
             },
-            min: 5,
-            max: 40
+            min: min,
+            max: max,
+            reversed:reversed
         },
         legend: {
             position: 'top',

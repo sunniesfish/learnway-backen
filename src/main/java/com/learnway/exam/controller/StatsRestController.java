@@ -1,8 +1,8 @@
 package com.learnway.exam.controller;
 
+import com.learnway.exam.domain.Exam;
 import com.learnway.exam.domain.Score;
 import com.learnway.exam.service.ExamService;
-import com.learnway.exam.service.ScoreService;
 import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -37,16 +34,16 @@ public class StatsRestController {
         if (memId == null) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         } else {
-            Page page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
+            Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
             return new ResponseEntity(page, HttpStatus.OK);
         }
     }
 
 
     //시험 유형별 성적 추이
-    @GetMapping("/{examType}/{pageNo}")
-    public ResponseEntity<Page<Score>> getScoreByExamType(
-            @PathVariable String examType,
+    @GetMapping("/{examTypeName}/{pageNo}")
+    public ResponseEntity<Page> getScoreByExamType(
+            @PathVariable String examTypeName,
             @PathVariable int pageNo,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
@@ -54,11 +51,13 @@ public class StatsRestController {
         if (memId == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } else {
-            Page<Score> page;
-            if(!examType.equals("all")){
-                page = examService.getScoreListByExamType(memId, examType,PageRequest.of(pageNo - 1, 8));
+            Page<Exam> page;
+            if(!examTypeName.equals("all")){
+//                page = examService.getScoreListByExamType(memId, examType,PageRequest.of(pageNo - 1, 30));
+                page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
             } else {
-                page = examService.getScoresByMemId(memId, PageRequest.of(pageNo - 1, 8));
+//                page = examService.getScoresByMemId(memId, PageRequest.of(pageNo - 1, 8));
+                page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
             }
             return new ResponseEntity<>(page, HttpStatus.OK);
         }

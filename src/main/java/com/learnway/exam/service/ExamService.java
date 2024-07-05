@@ -19,6 +19,10 @@ public interface ExamService {
     public ExamDetailDTO getExamDetail(Long examId, Long memId);
     public List<Exam> getExamsByExamType(Long memId, String examType);
 
+    public Page<Exam> getExamsByExamType(Long memId, String examType, Pageable pageable);
+    public Page<Exam> findScoreListByExamType(Long memId, String examType, Pageable pageable);
+    public Page<Exam> findScoreList(Long memId, Pageable pageable);
+
     public Page<Score> getScoreListByExam(Long examId, Long memId, Pageable pageable);
     public Page<Score> getScoresByMemId(Long memId, Pageable pageable);
     public List<Score> getScoreListByMemId(Long memId);

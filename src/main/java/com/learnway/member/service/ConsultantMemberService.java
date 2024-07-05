@@ -5,6 +5,7 @@ import com.learnway.member.dto.ConsultantJoinDTO;
 import com.learnway.consult.domain.ConsultantRepository;
 import com.learnway.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,9 @@ public class ConsultantMemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
+    private String uploadPath;
+
     public void joinConsultant(ConsultantJoinDTO consultantJoinDTO) {
         // member / consultant 테이블에서 동일한 ID 조회
         if (consultantRepository.findByConsultantId(consultantJoinDTO.getUsername()).isPresent() ||
@@ -34,7 +38,7 @@ public class ConsultantMemberService {
         }
 
         // 이미지 저장
-        String imagePath = null;
+        String imagePath;
         try {
             imagePath = saveImage(consultantJoinDTO.getImage());
         } catch (IOException e) {
@@ -60,10 +64,22 @@ public class ConsultantMemberService {
         }
         // 이름 위에 현재 시간 작성하여 파일 구분
         String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path imagePath = Paths.get("uploads", filename);
+        Path imagePath = Paths.get(uploadPath, filename);
         Files.createDirectories(imagePath.getParent());
         Files.copy(image.getInputStream(), imagePath);
 
-        return "/uploads/" + filename;
+        return filename;
+    }
+
+    // 이미지 삭제 메서드
+    private void deleteImage(String imagePath) {
+        if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
+            try {
+                Path filePath = Paths.get(uploadPath).resolve(imagePath);
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
