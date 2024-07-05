@@ -3,6 +3,8 @@ package com.learnway.exam.controller;
 import com.learnway.exam.domain.Exam;
 import com.learnway.exam.dto.ExamDetailDTO;
 import com.learnway.exam.service.ExamService;
+import com.learnway.global.domain.ExamType;
+import com.learnway.global.service.ExamTypeService;
 import com.learnway.member.service.CustomUserDetails;
 import com.learnway.member.domain.Member;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import java.sql.Date;
 public class ExamController {
 
     private final ExamService examService;
+    private final ExamTypeService examTypeService;
 
     /*
     * 시험등록 모달에서 시험 종류 및 이름 등록 하고 시험 리스트 페이지로 리다이렉트
@@ -26,7 +29,7 @@ public class ExamController {
     @PostMapping("/register")
     public String registerExam(
             @RequestParam(name = "examName") String examName,
-            @RequestParam(name = "examType") String examType,
+            @RequestParam(name = "examTypeName") String examTypeName,
             @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
@@ -45,7 +48,7 @@ public class ExamController {
                     new Exam().builder()
                             .memId(memId)
                             .examName(examName)
-                            .examType(examType)
+                            .examType(ExamType.builder().examTypeName(examTypeName).build())
                             .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
@@ -73,6 +76,7 @@ public class ExamController {
             System.out.println("getting exam list : "+memId);
             pageNo = pageNo == null ? pageNo = 1 : pageNo;
             model.addAttribute("examList", examService.readExam(memId,pageNo,8));
+            model.addAttribute("examTypes", examTypeService.findAll());
         }
         return "exam/exam";
     }
@@ -84,7 +88,7 @@ public class ExamController {
     public String updateExam(
             @RequestParam(name = "examId") Long examId,
             @RequestParam(name = "examName") String examName,
-            @RequestParam(name = "examType") String examType,
+            @RequestParam(name = "examTypeName") String examTypeName,
             @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
@@ -105,7 +109,7 @@ public class ExamController {
                             .memId(memId)
                             .examId(examId)
                             .examName(examName)
-                            .examType(examType)
+                            .examType(ExamType.builder().examTypeName(examTypeName).build())
                             .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
@@ -153,6 +157,7 @@ public class ExamController {
             dto = examService.getExamDetail(examId, memId);
         }
         if(dto != null) {
+            model.addAttribute("examTypes", examTypeService.findAll());
             model.addAttribute("exam", dto);
             return "exam/exam-detail";
         } else {
