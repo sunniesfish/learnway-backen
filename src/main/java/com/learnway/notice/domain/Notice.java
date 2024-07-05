@@ -57,4 +57,5 @@ public class Notice {
 	@Column(nullable=true)
 	private boolean priority = false;
 	
+	
 }
