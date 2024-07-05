@@ -2,11 +2,16 @@ package com.learnway.notice.domain;
 
 import java.time.LocalDateTime;
 
+import com.learnway.member.domain.Member;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +37,10 @@ public class Notice {
 	
 	@Column
 	private LocalDateTime createDate;
+	
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "memberId", unique = false)
+	private Member memberId; 
 	
 	@Transient
 	private Notice preNotice;

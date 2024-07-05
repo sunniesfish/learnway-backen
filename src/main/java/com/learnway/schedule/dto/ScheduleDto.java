@@ -30,6 +30,7 @@ public class ScheduleDto {
 	private String subjectId;
 	private double scheduleAchieveRate;
 	private List<ProgressDto> progresses;
+	private String memberId; 
 	@Override
 	public String toString() {
 		return "ScheduleDto [scheduleId=" + scheduleId + ", startTime=" + startTime + ", endTime=" + endTime

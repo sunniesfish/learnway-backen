@@ -4,10 +4,7 @@
 
 .notice-detail {
     background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .notice-detail h2 {
@@ -56,4 +53,13 @@
 
 .notice-detail .text-right {
     margin-top: 20px;
+}
+
+.notice-navigation {
+    margin: 10px 0;   /* 위아래로 10px의 마진 */
+}
+
+.notice-navigation a.text-secondary,
+.notice-navigation span.text-secondary {
+    display: block;  /* 링크나 텍스트를 블록 레벨 요소로 만들어 한 줄을 차지하게 함 */
 }
