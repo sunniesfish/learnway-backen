@@ -23,9 +23,9 @@
                
                <input type="hidden" th:value="${study.member.memberName}" name="memberName" id="memberName">
             </div>
-            <div class="mb-3" th:each="tag : ${studyTag}">
-                <span class="badge bg-secondary me-1" th:text="${tag.tag}">Tag</span>
-            </div>
+            <div class="mb-3">
+    <span class="badge bg-secondary me-1" th:each="tag : ${studyTag}" th:text="${tag.tag}"></span>
+</div>
             <div th:each="image : ${imgList}">
     <p><strong>문제 정답:</strong> <span th:text="${image.correct}">문제 정답</span></p>
     <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}">

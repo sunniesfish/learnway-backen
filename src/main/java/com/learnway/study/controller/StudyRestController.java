@@ -73,7 +73,7 @@ public class StudyRestController {
 	
 	//태그값 검색 메서드
 	@PostMapping("/study/searchHashtags")
-	public List<StudyTag> searchHashtags(@RequestBody StudyTagDto dto) {
+	public List<Integer> searchHashtags(@RequestBody StudyTagDto dto) {
 		
 		System.out.println(dto.getTags() + "태그값");
 		

@@ -61,7 +61,12 @@ public class StudyService {
 		int postid = study.getPostid();
 		
 		//채팅방 생성
+		if(chatRoomDto.getRoomname() !=null && !chatRoomDto.getRoomname().isEmpty()) {
+			System.out.println(chatRoomDto.getName());
+			System.out.println(chatRoomDto.getRoomname());
+			System.out.println("--채팅방생성--");
 		studyChatService.chatRoomCreate(chatRoomDto, study,principal);
+		}
 		//태그값 저장
 		studyTagService.createTag(studyTagDto, study);
 		//문제 저장
@@ -93,7 +98,8 @@ public class StudyService {
 		//채팅방 제목 수정 (수정중)
 		studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
 		//태그값 수정
-		studyTagService.updateTag(studyTagDto, study,postid);
+		studyTagService.deleteTag(postid);
+		studyTagService.createTag(studyTagDto, study,postid);
 		
 		//문제 수정
 		int problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);

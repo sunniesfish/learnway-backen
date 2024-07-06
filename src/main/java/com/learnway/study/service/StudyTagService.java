@@ -1,7 +1,6 @@
 package com.learnway.study.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,57 +12,57 @@ import com.learnway.study.dto.StudyTagDto;
 @Service
 public class StudyTagService {
 
-	@Autowired
-	private StudyTagRepository studyTagRepository;
-	
-	//모든태그 조회
-	public List<StudyTag> findAllTag() {
-		
-		return studyTagRepository.findAll();
-	}
-	
-	
-	
-	//게시글작성시 태그저장
-	public void createTag(StudyTagDto studyTagDto,Study study) {
-		
-		 List<String> tags = studyTagDto.getTag();
-		    
-		    if (tags != null && !tags.isEmpty()) {
-		        for (String tag : tags) {
-		            StudyTag studyTag = StudyTag.builder().tag(tag).study(study).build();
-		            studyTagRepository.save(studyTag);
-		        }
-		    }
-	}
-	
-	//게시글 태그 수정
-	public void updateTag(StudyTagDto studyTagDto,Study study,int postid) {
-		List<StudyTag> list = studyTagRepository.findByStudyPostid(postid);
-		int tagId = 0;
-		for(StudyTag a : list) {
-			tagId = a.getTagId();
-		}
-		StudyTag tag = StudyTag.builder().tagId(tagId).
-				tag(studyTagDto.getTag()).study(study).build();
-		studyTagRepository.save(tag);
-	}
-	
-	
-	
-	//게시글조회시 저장된태그값 read
-	public List<StudyTag> findTag(int postid) {
-		return studyTagRepository.findByStudyPostid(postid);
-	}
-	
-	public List<StudyTag> searchHashtags(StudyTagDto dto) {
-		
-		List<StudyTag> list = studyTagRepository.findByTag(dto.getTags());
-		
-		for(StudyTag a : list) {
-			 System.out.println(a.getStudy().getPostid()+" : 게시글 아이디");
-		}
-		
-		return list;
-	}
+    @Autowired
+    private StudyTagRepository studyTagRepository;
+    
+    // 모든 태그 조회
+    public List<StudyTag> findAllTag() {
+        return studyTagRepository.findAll();
+    }
+    
+    // 게시글 작성 시 태그 저장
+    public void createTag(StudyTagDto studyTagDto, Study study) {
+        List<String> tags = studyTagDto.getTag();
+        if (tags != null && !tags.isEmpty()) {
+            for (String tag : tags) {
+                StudyTag studyTag = StudyTag.builder().tag(tag).study(study).build();
+                studyTagRepository.save(studyTag);
+            }
+        }
+    }
+    
+    public void createTag(StudyTagDto studyTagDto, Study study, int postId) {
+        List<String> tags = studyTagDto.getTag();
+        if (tags != null && !tags.isEmpty()) {
+            for (String tag : tags) {
+                StudyTag studyTag = StudyTag.builder().tag(tag).study(study).build();
+                studyTagRepository.save(studyTag);
+            }
+        }
+    }
+    
+    // 게시글 태그 삭제
+    public void deleteTag(int postId) {
+        List<StudyTag> study = studyTagRepository.findByStudyPostid(postId);
+        studyTagRepository.deleteAll(study);
+    }
+    
+    // 게시글 조회 시 저장된 태그 값 read
+    public List<StudyTag> findTag(int postid) {
+        return studyTagRepository.findByStudyPostid(postid);
+    }
+    
+    // 태그 검색
+    public List<Integer> searchHashtags(StudyTagDto dto) {
+        List<String> tags = dto.getTags();
+        if (tags != null && !tags.isEmpty()) {
+            List<Integer> postIds = studyTagRepository.findPostIdsByTags(tags, tags.size());
+            // postId 값을 출력
+            for (Integer postId : postIds) {
+                System.out.println("Found postId: " + postId);
+            }
+            return postIds;
+        }
+        return List.of(); // 빈 리스트 반환
+    }
 }
