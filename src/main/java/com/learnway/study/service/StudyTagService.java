@@ -27,8 +27,14 @@ public class StudyTagService {
 	//게시글작성시 태그저장
 	public void createTag(StudyTagDto studyTagDto,Study study) {
 		
-		StudyTag tag = StudyTag.builder().tag(studyTagDto.getTag()).study(study).build();
-		studyTagRepository.save(tag);
+		 List<String> tags = studyTagDto.getTag();
+		    
+		    if (tags != null && !tags.isEmpty()) {
+		        for (String tag : tags) {
+		            StudyTag studyTag = StudyTag.builder().tag(tag).study(study).build();
+		            studyTagRepository.save(studyTag);
+		        }
+		    }
 	}
 	
 	//게시글 태그 수정

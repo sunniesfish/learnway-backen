@@ -1,6 +1,7 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,17 +105,26 @@ public class StudyService {
 	
 //	게시글 작성자 확인 메서드
 //  postId에 대한 member_id와 principal의 member_id 값일치 확인
-	public boolean boardCheck(int postId,Principal principal) {
-		
-		Member member = memberRepository.findByMemberId(principal.getName())
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		int memberId =member.getId().intValue();
-		
-		int postMemberId = studyRepository.findById(postId).get().getMember().getId().intValue();
-		if(memberId==postMemberId) {
-		
-		return true;
-		}
-		return false;
+	public boolean boardCheck(int postId, Principal principal) {
+	    // Get member information based on principal
+	    Member member = memberRepository.findByMemberId(principal.getName())
+	        .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+	    
+	    int memberId = member.getId().intValue();
+	    
+	    // Find the study by postId
+	    Optional<Study> optionalStudy = studyRepository.findById(postId);
+	    
+	    if (optionalStudy.isPresent()) {
+	        Study study = optionalStudy.get();
+	        int postMemberId = study.getMember().getId().intValue();
+	        
+	        return memberId == postMemberId;
+	    } else {
+	        throw new NoSuchElementException("Study not found for postId: " + postId);
+	    }
 	}
+
+	
 }
+
