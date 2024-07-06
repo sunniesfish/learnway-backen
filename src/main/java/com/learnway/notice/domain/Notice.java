@@ -1,6 +1,7 @@
 package com.learnway.notice.domain;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.learnway.member.domain.Member;
 
@@ -38,9 +39,15 @@ public class Notice {
 	@Column
 	private LocalDateTime createDate;
 	
+	@Column
+	private String category;
+	
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "memberId", unique = false)
-	private Member memberId; 
+	@JoinColumn(name = "memberPk", unique = false)
+	private Member member; 
+	
+	@Column
+	private String memberId;
 	
 	@Transient
 	private Notice preNotice;

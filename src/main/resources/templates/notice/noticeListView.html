@@ -14,6 +14,20 @@
     <div th:replace="sidebar :: sidebar"></div>
     <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
     <div class="container mt-5">
+         <!-- 필터링 기능과 검색 기능  -->
+    	 <div class="d-flex justify-content-between mb-3">
+            <div>
+                <button type="button" class="btn btn-outline-secondary mr-2" onclick="filterNotices('전체')">전체</button>
+                <button type="button" class="btn btn-outline-secondary mr-2" onclick="filterNotices('점검')">점검</button>
+                <button type="button" class="btn btn-outline-secondary" onclick="filterNotices('서비스')">서비스</button>
+            </div>
+            <div>
+                <form action="/notice/noticeList" class="form-inline" method="get">
+                    <input class="form-control mr-sm-2" type="search" id="keyword" name="keyword" placeholder="공지사항 검색" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
+                </form>
+            </div>
+        </div>
          <!-- Priority 공지사항 -->
             <table class="table table-hover">
                 <thead>
@@ -34,7 +48,7 @@
             </table>
             <!-- Priority 공지사항 끝 -->
             <!-- 일반 공지사항 -->
-            <table class="table table-hover mt-4">
+            <table class="table table-hover mt-4" id="noticeTable">
                 <tbody>
                     <tr th:each="notice : ${notice}">
                         <td>
@@ -44,7 +58,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="text-right">
+            <div class="text-right" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <a href="/notice/writeView" class="btn btn-primary">글쓰기</a>
             </div>    
             <!-- 페이징 처리 코드 추가 -->
@@ -79,7 +93,46 @@
             </nav>
             <!-- 페이징 처리 끝 -->
         </div>
-    </div>
+<script>
+
+//카테고리 버튼 클릭 이벤트 핸들러
+function filterNotices(category) {
+	console.log(category);
+
+	 // 현재 URL 가져오기
+    var currentUrl = new URL(window.location.toString());
+
+    // 새로운 URLSearchParams 객체 생성
+    var searchParams = new URLSearchParams(currentUrl.search);
+
+    // category 파라미터 수정
+    if (category === '전체') {
+        searchParams.delete('category');
+    } else {
+        searchParams.set('category', category);
+    }
+
+    // AJAX 요청
+    $.ajax({
+        url: '/notice/noticeList',
+        method: 'GET',
+        data: searchParams.toString(),
+        success: function(response) {
+            // 받은 HTML로 테이블 내용 업데이트
+            $('#noticeTable tbody').html($(response).find('#noticeTable tbody').html());
+            
+            // 페이징 업데이트 (필요한 경우)
+            $('.pagination').html($(response).find('.pagination').html());
+
+            // URL 변경 (새로고침 없이)
+            history.replaceState(null, null, currentUrl.toString() + '?' + searchParams.toString());
+        },
+        error: function(xhr, status, error) {
+            console.error("Error occurred: " + error);
+        }
+    });
+}
+</script>
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->

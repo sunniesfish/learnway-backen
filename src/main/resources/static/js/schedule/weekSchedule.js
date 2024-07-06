@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     	allDaySlot: false,
         initialView: 'dayGridMonth',
         initialDate: new Date(),
+        themeSystem: 'bootstrap',
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',

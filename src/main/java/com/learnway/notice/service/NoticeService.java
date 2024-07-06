@@ -13,8 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.learnway.global.exceptions.DataNotExeption;
+import com.learnway.member.domain.Member;
 import com.learnway.notice.domain.Notice;
 import com.learnway.notice.domain.NoticeRepository;
 import com.learnway.notice.dto.NoticeDto;
@@ -32,24 +34,36 @@ public class NoticeService {
 	public Page<Notice> noticeList(Pageable pageable) {		
 		return noticeRepository.findAllByOrderByCreateDateDesc(pageable);
 	}
+	//검색 페이지 처리
+	public Page<Notice> noticeSearchList(Pageable pageable,String keyword) {		
+		return noticeRepository.findByNoticeTitleContainingOrderByCreateDateDesc(pageable,keyword);
+	}
 	//우선 공지사항 페이지 처리
 	public Page<Notice> priNoticeList(Pageable pageable) {		
 		return noticeRepository.findByPriorityTrueOrderByCreateDateDesc(pageable);
 	}
+
+
 	
 	//글쓰기
-	public void write(NoticeDto dto) {
+	public void write(NoticeDto dto,Optional<Member> member) {
 		
-		Notice notice = new Notice();
-		notice.setNoticeId(dto.getNoticeId());
-		notice.setNoticeTitle(dto.getNoticeTitle());
-		notice.setNoticeContent(dto.getNoticeContent());
-		notice.setNoticeImgPath(dto.getNoticeImgPath());
-		notice.setNoticeImgUname(dto.getNoticeImgUname());
-		notice.setCreateDate(LocalDateTime.now());
-		notice.setPriority(dto.isPriority());
-		
-		noticeRepository.save(notice);
+		if(member.isPresent()) {
+			
+			Member savemember=member.get();
+			Notice notice = new Notice();
+			notice.setNoticeId(dto.getNoticeId());
+			notice.setNoticeTitle(dto.getNoticeTitle());
+			notice.setNoticeContent(dto.getNoticeContent());
+			notice.setNoticeImgPath(dto.getNoticeImgPath());
+			notice.setNoticeImgUname(dto.getNoticeImgUname());
+			notice.setCreateDate(LocalDateTime.now());
+			notice.setPriority(dto.isPriority());
+			notice.setCategory(dto.getCategory());
+			notice.setMemberId(member.get().getMemberId());
+			
+			noticeRepository.save(notice);
+		}
 		
 	}
 	
@@ -87,9 +101,7 @@ public class NoticeService {
 	public void delete(NoticeDto dto) {
 		noticeRepository.deleteById(dto.getNoticeId());
 	}
-	
-	
-	
+
 	//날짜 폴더 생성
 	public String makeFolder() {
 		
@@ -118,6 +130,11 @@ public class NoticeService {
 		dto.setNoticeImgUname(notice.getNoticeImgUname());
 		
 		return dto;
+	}
+	
+	//카테고리
+	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
+		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
 	}
 
 
