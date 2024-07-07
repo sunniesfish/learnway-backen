@@ -35,6 +35,50 @@
 
         </div>
     </div>
+
+    <div class="exam-detail__modal__info hidden">
+        <div class="exam-detail__modal__detail-overlay clickable"></div>
+        <div class="exam-detail__modal__info-content">
+            <form class="exam-detail__modal__info-box" action="/exam/update" method="post">
+                <div class="exam-detail__modal__form-group">
+                    <label>
+                        <span>시험명</span>
+                        <input type="text" th:value="${exam.getExamName()}" name="examName" required/>
+                    </label>
+                </div>
+                <div class="exam-detail__modal__form-group">
+                    <label>
+                        <span>시험종류</span>
+                        <select name="examTypeName">
+                            <option th:each="item:${examTypes}" th:value="${item.getExamTypeName()}" th:text="${item.getExamTypeName()}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div class="exam-detail__modal__form-group">
+                    <label>
+                        <span>시험날짜</span>
+                        <input type="date" th:value="${exam.getExamDate()}" name="examDate" required/>
+                    </label>
+                </div>
+                <div class="exam-detail__modal__form-group">
+                    <label>
+                        <span>시험범위</span>
+                        <input type="text" th:value="${exam.getExamRange()}" name="examRange" required/>
+                    </label>
+                </div>
+                <div class="exam-detail__modal__form-group">
+                    <label>
+                        <span>메모</span>
+                        <input type="text" th:value="${exam.getExamMemo()}" name="examMemo" required/>
+                    </label>
+                </div>
+                <button class="exam-detail__modal__form-btn clickable">수정하기</button>
+                <input type="hidden" th:value="${exam.getExamId()}" name="examId"/>
+            </form>
+        </div>
+    </div>
+    
+<!-- 
     <div class="exam-detail__modal__info hidden">
         <div class="exam-detail__modal__detail-overlay"></div>
         <form class="exam-detail__modal__info-box" action="/exam/update" method="post">
@@ -73,7 +117,7 @@
             <button>수정하기</button>
             <input type="hidden" th:value="${exam.getExamId()}" name="examId"/>
         </form>
-    </div>
+    </div> -->
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
