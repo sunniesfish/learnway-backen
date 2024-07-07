@@ -62,6 +62,14 @@ function Subjects({examId}){
     };
     return(
         <>
+        <div className="exam-detail__label">
+            <div className="exam-detail__label__info">
+                <div className="exam-detail__item__title">과목</div>
+                <div className="exam-detail__item__score">점수</div>
+                <div className="exam-detail__item__grade">등급</div>
+            </div>
+            <div className="exam-detail__label__space"></div>
+        </div>
         <div className="exam-detail__container">
             {list.map((item, index) => 
                 <div key={index} className="exam-detail__item">
@@ -79,7 +87,9 @@ function Subjects({examId}){
                         </div>
                         <div className="exam-detail__item__grade">{item.scoreGrade} 등급</div>
                     </div>
-                    <button onClick={() => handleDelete(item.scoreId)}>삭제</button>
+                    <div className="exam-detail__item__delete-btn-controller">
+                        <button onClick={() => handleDelete(item.scoreId)}>삭제</button>
+                    </div>
                 </div> 
             )}
             <button onClick={handleAddSubject}>+</button>
