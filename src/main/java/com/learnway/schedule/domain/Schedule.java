@@ -41,13 +41,16 @@ public class Schedule {
 	
 	@Column
 	private LocalDateTime  endTime;
+	
+	@Column
+	private String memberId;
 		
 	@Column(nullable=true)
 	private double scheduleAchieveRate;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "memberId", unique = false)
-	private Member memberId; 
+	@JoinColumn(name = "member", unique = false)
+	private Member member; 
 
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "subjectId", unique = false)

@@ -1,6 +1,5 @@
 package com.learnway.schedule.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -57,6 +56,7 @@ public class ScheduleService {
 			        .orElseThrow(() -> new RuntimeException("Studyway not found")));
 			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
 			        .orElseThrow(() -> new RuntimeException("Subject not found")));
+			schedule.setMemberId(dto.getMemberId());
 			
 			//Progress 엔티티 생성 및 설정
 			List<Progress> progresses = new ArrayList<>();
@@ -66,6 +66,7 @@ public class ScheduleService {
 	                    .orElseThrow(() -> new RuntimeException("Material not found")));	            
 	            progress.setProgress(progressDto.getProgress());
 	            progress.setScheduleId(schedule);
+	            progress.setMemberId(schedule.getMemberId());
 	            progresses.add(progress);
 	        }
 			schedule.setProgresses(progresses);
@@ -73,16 +74,22 @@ public class ScheduleService {
 		}
 		
 		//일정 전부 불러오기
-		public List<Schedule> findAll(){
-			return scheduleRepository.findAll();
+		public List<Schedule> findAllByMemberId(String memberId){
+			return scheduleRepository.findAllByMemberId(memberId);
 		}
 		
+		@Transactional
 		//일정 시간만 변경하기 (주간)
-		public void updateScheduleTime(ScheduleDto dto) {
+		public void updateScheduleTime(ScheduleDto dto,String memberId) {
 			
 			Schedule schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() 
 					-> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + dto.getScheduleId()));
 			
+			// 멤버 ID 확인
+	        if (!schedule.getMemberId().equals(dto.getMemberId())) {
+	            throw new RuntimeException("해당 일정은 다른 멤버의 일정입니다.");
+	        }
+	        
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
 			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
@@ -93,16 +100,25 @@ public class ScheduleService {
 		}
 		
 		//일일 스케쥴 가져오기
-		public Optional<Schedule> getDetail(Long id){
-			return scheduleRepository.findById(id);
+		public Optional<Schedule> getDetail(Long id,String memberId){
+			return scheduleRepository.findByScheduleIdAndMemberId(id,memberId);
 		}
 		
 		@Transactional
 		//일정 전부 변경하기 (주간)
-		public void updateSchedule(ScheduleDto dto) {
-		    Optional<Schedule> existingSchedule = scheduleRepository.findById(dto.getScheduleId());
+		public void updateSchedule(ScheduleDto dto,String memberId) {
+			
+			
+			
+		    Optional<Schedule> existingSchedule = scheduleRepository.findByScheduleIdAndMemberId(dto.getScheduleId(),memberId);
 		    if (existingSchedule.isPresent()) {
 		        Schedule schedule = existingSchedule.get();
+		        
+		        // 멤버 ID 확인
+		        if (!schedule.getMemberId().equals(dto.getMemberId())) {
+		            throw new RuntimeException("해당 일정은 다른 멤버의 일정입니다.");
+		        }
+		        
 		        // DTO의 값으로 schedule 객체 업데이트
 		        schedule.setStartTime(dto.getStartTime());
 		        schedule.setEndTime(dto.getEndTime());
@@ -140,9 +156,9 @@ public class ScheduleService {
 		}
 		
 		//스케쥴 삭제하기
-		public void deleteSchedule(Long id) {
+		public void deleteSchedule(Long id,String memberId) {
 			// 연관된 Progress 엔티티 먼저 삭제
-			Schedule schedule = scheduleRepository.findById(id)
+			Schedule schedule = scheduleRepository.findByScheduleIdAndMemberId(id,memberId)
 		            .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + id));
 		    
 		    // 연관된 Progress 엔티티 먼저 삭제
@@ -151,20 +167,20 @@ public class ScheduleService {
 		}
 		
 		//일달성율 평균 리스트 조회 
-		public List<DailyAchieveDto> AchieveList(LocalDateTime start, LocalDateTime  end) {
+		public List<DailyAchieveDto> AchieveList(LocalDateTime start, LocalDateTime  end, String memberId) {
 			
-			List<DailyAchieve> dailyAchieves = dailyAchieveRepository.findByDateBetween(start, end);
+			List<DailyAchieve> dailyAchieves = dailyAchieveRepository.findByMemberIdAndDateBetween(memberId, start, end);
 			List<DailyAchieveDto> result = new ArrayList<>();
 			
 			LocalDateTime current = start;
 	        while (current.isBefore(end)) {
-	        	String id = generateDailyAchieveId(current);
-	            DailyAchieve dailyAchieve = findOrCreateDailyAchieve(id, current);
+	            DailyAchieve dailyAchieve = findOrCreateDailyAchieve(current,memberId);
 	            
 	            DailyAchieveDto dto = new DailyAchieveDto();
 	            dto.setDailyAchieveId(dailyAchieve.getDailyAchieveId());
 	            dto.setDate(dailyAchieve.getDate());
 	            dto.setAvgAchieveRate(dailyAchieve.getAvgAchieveRate());
+	            dto.setMemberId(memberId);
 	            
 	            result.add(dto);
 	            current = current.plusDays(1);
@@ -173,40 +189,33 @@ public class ScheduleService {
 	        return result;
 		
 		}
+
 		
-		public String generateDailyAchieveId(LocalDateTime dateTime) {
-	        // ID 형식: YYYYMMDD (날짜는 오전 6시 기준)
-	        return dateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-	    }
-		
-		private DailyAchieve findOrCreateDailyAchieve(String id, LocalDateTime dateTime) {
+		private DailyAchieve findOrCreateDailyAchieve(LocalDateTime dateTime,String memberId) {
 			
 	       
-	        Optional<DailyAchieve> achieve = dailyAchieveRepository.findById(id);
-	        if(achieve.isPresent()) {
-	        	DailyAchieve oldAchieve = achieve.get();
-	        	oldAchieve.setDailyAchieveId(id);
-	        	oldAchieve.setDate(dateTime);
-	        	oldAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime));
-		        dailyAchieveRepository.save(oldAchieve);
-		        return oldAchieve;
+			// 해당 날짜와 멤버 ID로 DailyAchieve 조회
+		    Optional<DailyAchieve> achieve = dailyAchieveRepository.findByDateAndMemberId(dateTime, memberId);
+	        
+		    if(achieve.isPresent()) {
+	        	return achieve.get();
 	        	
 	        }else {
 	        
 		        // 존재하지 않으면 새로 생성
 		        DailyAchieve newAchieve = new DailyAchieve();
-		        newAchieve.setDailyAchieveId(id);
 		        newAchieve.setDate(dateTime);
-		        newAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime));
+		        newAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime,memberId));
+		        newAchieve.setMemberId(memberId);
 		        dailyAchieveRepository.save(newAchieve);
 		        return newAchieve;
 		        }
 	    }
 		
 		//하루 평균 달성율 구하기
-		public double DailyAvgAchieve(LocalDateTime dateTime) {
+		public double DailyAvgAchieve(LocalDateTime dateTime,String memberId) {
 		    LocalDateTime endTime = dateTime.plusDays(1).minusSeconds(1); //;
-		    List<Schedule> schedules = scheduleRepository.findByStartTimeBetween(dateTime, endTime);
+		    List<Schedule> schedules = scheduleRepository.findByMemberIdAndStartTimeBetween(memberId,dateTime, endTime);
 		    
 		    if (schedules.isEmpty()) {
 		        return 0.0;

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,13 +20,17 @@ import lombok.Setter;
 public class DailyAchieve {
 	
 	@Id
-	private String DailyAchieveId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)//자동증가
+	private Long DailyAchieveId;
 	
 	@Column
 	private LocalDateTime date;
 	
 	@Column(nullable=true)
 	private double avgAchieveRate;
+	
+	@Column
+	private String memberId;
 	
 	@Override
 	public String toString() {

@@ -16,8 +16,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DailyAchieveDto {
 	
-	private String DailyAchieveId;
+	private Long DailyAchieveId;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDateTime date;
 	private double avgAchieveRate;
+	private String memberId;
 }

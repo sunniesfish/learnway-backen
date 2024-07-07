@@ -106,11 +106,37 @@ document.addEventListener('DOMContentLoaded', function() {
         initialDate: new Date(),
         themeSystem: 'bootstrap',
         headerToolbar: {
-          left: 'prev,next today',
+          left: 'prev,next today weeklySummary',
           center: 'title',
-          right: 'addEventButton,dayGridMonth,timeGridWeek'
+          right: 'addEventButton dayGridMonth,timeGridWeek'
         },
         customButtons: {
+		 weeklySummary: {
+	        text: '주간 요약',
+	        click: function() {
+				
+        	  var currentDate = calendar.getDate();
+  			  var formattedDate = currentDate.toISOString().slice(0, 10);
+        	  
+        	  var dto = {
+				currentDate: formattedDate
+			  }
+        	  
+	          $.ajax({
+				url:"/api/weeklySummary",
+				type:"get",
+				data: JSON.stringify(dto),
+                contentType: 'application/json',
+			    success: function(response) {
+			      displayWeeklySummary(response);
+			    },
+			    error: function(xhr, status, error) {
+			      console.error("주간 요약을 가져오는데 실패했습니다:", error);
+			      alert("주간 요약을 가져오는데 실패했습니다. 나중에 다시 시도해주세요.");
+			    }
+			  });
+	        }
+	      },
           addEventButton: {
             text: "일정 +",
             click: function() {
