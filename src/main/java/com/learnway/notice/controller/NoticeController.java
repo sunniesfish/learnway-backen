@@ -157,6 +157,11 @@ public class NoticeController {
 	@GetMapping("/rewriteView/{noticeId}")
 	public String rewriteView(@PathVariable("noticeId") Long noticeId,Model model,Principal principal) throws DataNotExeption{
 		NoticeDto dto = noticeService.findDetail(noticeId);
+		
+		// <br> 태그를 줄바꿈 문자로 변환
+	    String formattedContent = dto.getNoticeContent().replace("<br>", "\n");
+	    dto.setNoticeContent(formattedContent);
+	    
 		model.addAttribute("notice",dto);
 		
 		return "/notice/noticeReView";
