@@ -1,19 +1,16 @@
 package com.learnway.schedule.controller;
 
-import com.learnway.schedule.domain.Progress;
-import com.learnway.schedule.domain.Schedule;
-import com.learnway.schedule.domain.ScheduleRepository;
-import com.learnway.schedule.service.ApiService;
-import com.theokanning.openai.completion.chat.ChatCompletionRequest;
-import com.theokanning.openai.completion.chat.ChatMessage;
-import com.theokanning.openai.service.OpenAiService;
 
-import java.security.Principal;
-import java.time.Duration;
+import com.learnway.schedule.service.ApiService;
+
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.temporal.TemporalAdjusters;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -34,12 +31,31 @@ public class ApiContoriller {
 	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/weeklySummary")
-    public ResponseEntity<String> weeklySummary(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate
+    public ResponseEntity<Map<String, String>> weeklySummary(@RequestParam("currentDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate
     		 					,@AuthenticationPrincipal UserDetails user ) {
 		
 		String memberId = user.getUsername();
-		String summary = apiService.weeklySummary(memberId,currentDate);
-    	
-		return ResponseEntity.ok(summary);
+		// 주간 날짜 정보 수정
+		LocalDate prevWeekSameDay = currentDate.minusWeeks(1);
+		LocalDate startOfWeek = prevWeekSameDay.with(TemporalAdjusters.previousOrSame(DayOfWeek.from(prevWeekSameDay)));
+		LocalDate endOfWeek = startOfWeek.plusDays(6);
+		
+		if (currentDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+			startOfWeek = currentDate;
+			endOfWeek = startOfWeek.plusDays(6);
+		}
+		
+		LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
+	    LocalDateTime endOfWeekDateTime = endOfWeek.atTime(23, 59, 59);
+
+	    String weekRange = startOfWeek.format(DateTimeFormatter.ofPattern("MM.dd")) + " - " + endOfWeek.format(DateTimeFormatter.ofPattern("MM.dd"));
+
+	    String summary = apiService.weeklySummary(memberId, startOfWeekDateTime, endOfWeekDateTime);
+
+	    Map<String, String> response = new HashMap<>();
+	    response.put("summary", summary);
+	    response.put("weekRange", weekRange);
+
+	    return ResponseEntity.ok(response);
     }
 }

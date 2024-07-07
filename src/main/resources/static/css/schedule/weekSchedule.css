@@ -220,3 +220,6 @@
 .weekly-summary-modal .modal-body::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+#weeklySummaryContent {
+    white-space: pre-wrap;
+  }

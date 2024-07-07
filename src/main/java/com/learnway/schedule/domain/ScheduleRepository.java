@@ -13,9 +13,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long>{
 	
 	Optional<Schedule> findByScheduleIdAndMemberId(Long id,String memberId);
 	
-	//스케쥴 기준 하루치 일정 불러오기 
-	List<Schedule> findByStartTimeBetween(LocalDateTime start,LocalDateTime end);
-	
+	//스케쥴 기준 입력날짜 사이 일정 불러오기 
 	List<Schedule> findByMemberIdAndStartTimeBetween(
 			String memberId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

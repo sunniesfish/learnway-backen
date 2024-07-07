@@ -118,14 +118,10 @@ document.addEventListener('DOMContentLoaded', function() {
         	  var currentDate = calendar.getDate();
   			  var formattedDate = currentDate.toISOString().slice(0, 10);
         	  
-        	  var dto = {
-				currentDate: formattedDate
-			  }
-        	  
 	          $.ajax({
 				url:"/api/weeklySummary",
 				type:"get",
-				data: JSON.stringify(dto),
+				data: {currentDate: formattedDate},
                 contentType: 'application/json',
 			    success: function(response) {
 			      displayWeeklySummary(response);
@@ -1088,8 +1084,18 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
     }
   }
 });
+
+//주간 요약 보여주는 모달 띄우기 
+function displayWeeklySummary(response) {
+
+  var weekRange = response.weekRange;
+
+  $("#weeklySummaryContent").html(summary);
+  $("#weeklySummaryModalLabel").text("주간 학습 요약 (" + weekRange + ")");
+  $("#weeklySummaryModal").modal("show");
+}
   
-  function fillNewMaterialDropdown(newDropdownId) {
+function fillNewMaterialDropdown(newDropdownId) {
 		    fillDropdown(`#${newDropdownId}`, scheduleOptions.materials, "학습종류");
 		}
 		

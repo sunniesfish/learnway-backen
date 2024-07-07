@@ -3,6 +3,7 @@ package com.learnway.schedule.service;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.learnway.schedule.domain.Progress;
 import com.learnway.schedule.domain.Schedule;
@@ -32,19 +32,21 @@ public class ApiService {
 	
 	
 	@GetMapping("/weeklySummary")
-    public String weeklySummary(String memberId, LocalDate currentDate) {
+    public String weeklySummary(String memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
-		LocalDate startOfWeek = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfWeek = startOfWeek.plusDays(6);
-    	
+
     	String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
         OpenAiService service = new OpenAiService(openaiAccessKey, Duration.ofSeconds(30));
         
+        System.out.println(startOfWeekDateTime);
+        System.out.println(endOfWeekDateTime);
         List<Schedule> weeklySchedules = scheduleRepository.findByMemberIdAndStartTimeBetween(
                 memberId, 
-                startOfWeek.atStartOfDay(), 
-                endOfWeek.atTime(23, 59, 59)
-            );        		
+                startOfWeekDateTime, 
+                endOfWeekDateTime
+            );
+        
+        System.out.println(weeklySchedules);
         
         String structuredScheduleData = convertSchedulesToString(weeklySchedules);
         
@@ -52,13 +54,14 @@ public class ApiService {
         
         ChatMessage systemMessage = new ChatMessage();
         systemMessage.setRole("system");
-        systemMessage.setContent("당신은 학습 조언 전문가입니다. 주어진 주간 일정을 분석하고, 학생에게 도움이 되는 짧은 조언을 제공해야 합니다. 응답은 100자 이내로 제한합니다.");
+        systemMessage.setContent("당신은 학습 조언 전문가입니다. 주어진 달성율은 학생이 직접 입력한 달성율입니다. 이를 바탕으로 주간 어떤 과목이 더 학습이 필요하고 앞으로의 학습 방향을 300자 이내로 조언해주세요.");
         messages.add(systemMessage);
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
-        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 해주세요:\n\n" + structuredScheduleData);
+        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 해주세요. 주간일정이 없다면 없다고 말하시오. 지어내지 마시오.:\n\n" + structuredScheduleData);
         messages.add(userMessage);
+        System.out.println("ㅇㅇㅇㅇㅇㅇ"+structuredScheduleData);
 
         // 요청
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
@@ -68,7 +71,6 @@ public class ApiService {
 
         // 응답 결과
         String result = service.createChatCompletion(chatCompletionRequest).getChoices().get(0).getMessage().getContent();
-        System.out.println("결과: " + result);
         
         return result;
     }

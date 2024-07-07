@@ -60,7 +60,7 @@ public class Schedule {
 	@JoinColumn(name = "studywayId",unique = false)
 	private Studyway studywayId;
 	
-	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private List<Progress> progresses;
 
 
