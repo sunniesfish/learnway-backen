@@ -58,20 +58,20 @@ public class StudyController {
 	
 
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
-	@GetMapping(value="/studylist")
-	public String study(@PageableDefault(size=2) Pageable pageable,Model model) {
-		Page<Study> studies = studyPostService.getBoardList(pageable);
-		
-		 int startPage = Math.max(1, studies.getPageable().getPageNumber() - 4);
-	     int endPage = Math.min(studies.getPageable().getPageNumber()+4, studies.getTotalPages());
-        
-        
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("list", studies);
-		
-		return "/study/studylist";
+	@GetMapping("/studylist")
+	public String studyList(@PageableDefault(size = 7) Pageable pageable, Model model) {
+	    Page<Study> studies = studyPostService.getBoardList(pageable);
+
+	    int startPage = Math.max(1, studies.getNumber() + 1 - 4);
+	    int endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
+
+	    model.addAttribute("startPage", startPage);
+	    model.addAttribute("endPage", endPage);
+	    model.addAttribute("list", studies);
+
+	    return "study/studylist";
 	}
+
 	
 	@GetMapping(value="/studyadd")
 	public String studyAddView() {

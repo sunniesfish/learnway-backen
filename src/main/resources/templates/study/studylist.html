@@ -2,94 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study List</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+    <link rel="stylesheet" href="/css/study/studyList.css" type="text/css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
-     <style>
-        .hashtag-container {
-            display: flex;
-            flex-wrap: wrap;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 300px;
-            min-height: 50px;
-        }
-
-        .hashtag {
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            padding: 5px;
-            margin: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .remove-button {
-            background: none;
-            border: none;
-            color: red;
-            margin-left: 5px;
-            cursor: pointer;
-        }
-
-        /* 추가된 스타일 */
-        #main-content {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .pagination li {
-            display: inline-block;
-            margin-right: 5px;
-        }
-
-        .pagination li a {
-            padding: 5px 10px;
-            text-decoration: none;
-            color: #007bff;
-            border: 1px solid #007bff;
-            border-radius: 3px;
-        }
-
-        .pagination li.active a {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .pagination li.disabled a {
-            color: #6c757d;
-            background-color: #f2f2f2;
-            border-color: #f2f2f2;
-        }
-    </style>
     
-    <script>
+     <script>
     $(document).ready(function() {
         
         // 채팅방 체크 박스 처리 함수
@@ -281,89 +205,105 @@
     <!-- SideBar 불러오는부분 -->
     <div th:replace="sidebar :: sidebar"></div>
     
-    <div id="main-content">
-        <div style="text-align: center; margin-top: 20px;">
-            <input type="text" id="search" name="search" placeholder="   Search">
-            <button type="button" id="searchButton" name="searchButton">검색</button>
+    <div class="container content-wrapper">
+        <div class="row mb-3">
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="searchButton" name="searchButton">검색</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="button" id="advancedSearchButton" name="advancedSearchButton" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    상세검색
+                </button>
+            </div>
         </div>
 
-        <!-- 상세검색 버튼 -->
-       <button type="button" id="advancedSearchButton" name="advancedSearchButton" data-toggle="modal" data-target="#exampleModal" style="margin-top: 20px; margin-left: 10px;">
-    상세검색
-	</button>
-	
- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="exampleModalLabel">상세 검색</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label for="searchtag" class="form-label">태그 검색</label>
-                    <input type="text" id="searchtag" name="searchtag" class="form-control" placeholder="태그를 입력하세요">
-                    <div class="hashtag-container"></div>
+        <!-- 모달 부분은 그대로 유지 -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">상세 검색</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 모달 내용 -->
+                        <div class="form-group">
+                            <label for="searchtag">해시태그</label>
+                            <input type="text" class="form-control" id="searchtag" placeholder="Enter to add hashtag">
+                            <div class="hashtag-container mt-2"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="startdate">시작일</label>
+                            <input type="date" class="form-control" id="startdate">
+                        </div>
+                        <div class="form-group">
+                            <label for="roomCheck">채팅방 여부</label>
+                            <input type="checkbox" id="roomCheck" onchange="updateCheckboxValue(this)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="applyButton">Apply</button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="startdate" class="form-label">스터디 시작일</label>
-                    <input type="date" id="startdate" name="startdate" class="form-control">
-                </div>
-                <div class="mb-3 form-check">
-                    <input type="checkbox" id="roomCheck" name="roomCheck" class="form-check-input" onclick="updateCheckboxValue(this)">
-                    <label for="roomCheck" class="form-check-label">채팅방 포함</label>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" id="applyButton" class="btn btn-primary">적용</button>
-            </div>
+        </div>
+
+        <div class="list-group">
+    <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1 study-title" th:text="${study.title}">Title</h5>
+            <small th:text="${study.startdate}" class="text-muted">Start Date</small>
+        </div>
+        <p class="mb-1">
+            <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
+            <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
+        </p>
+        <div class="study-info">
+            <small>
+                <span>댓글: <span th:text="${study.repliesCount}">0</span></span>
+                <span class="ml-2">채팅방: <span th:text="${study.chatroomCount}">0</span></span>
+            </small>
         </div>
     </div>
 </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>태그</th>
-                    <th>스터디 시작일</th>
-                    <th>작성자</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="study : ${list}" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
-                    <td th:text="${study.title}">Title</td>
-                    <td>
-                        <span th:each="tag : ${study.tags}" th:text="${tag.tag}">Tag</span>
-                    </td>
-                    <td th:text="${study.startdate}">Start Date</td>
-                    <td>
-                        <span th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
 
-        <button onclick="location.href='/studyadd'" style="margin-top: 20px; margin-left: 10px;">글작성</button>
+        <div class="text-right mt-3">
+            <button onclick="location.href='/studyadd'" class="btn btn-success">글작성</button>
+        </div>
 
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${startPage == list.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/studylist(page=${list.pageable.pageNumber - 1})}" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item" th:classappend="${num == list.pageable.pageNumber + 1} ? 'active'" th:each="num : ${#numbers.sequence(startPage, endPage)}">
-                    <a class="page-link" th:href="@{/studylist(page=${num-1})}" th:text="${num}">1</a></li>
-                <li class="page-item" th:classappend="${endPage == list.pageable.pageNumber + 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/studylist(page=${list.pageable.pageNumber + 1})}">Next</a>
-                </li>
-            </ul>
-        </nav>
+        <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${list.first} ? 'disabled'">
+            <a class="page-link" th:href="@{/studylist(page=${list.number - 1})}" tabindex="-1">&laquo;</a>
+        </li>
+
+        <th:block th:with="start=${T(java.lang.Math).max(1, list.number-2)}, 
+                            end=${T(java.lang.Math).min(list.totalPages, list.number+3)}">
+            <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" 
+                th:classappend="${num == list.number + 1} ? 'active'">
+                <a class="page-link" th:href="@{/studylist(page=${num - 1})}" th:text="${num}"></a>
+            </li>
+        </th:block>
+
+        <li class="page-item" th:classappend="${list.last} ? 'disabled'">
+            <a class="page-link" th:href="@{/studylist(page=${list.number + 1})}">&raquo;</a>
+        </li>
+    </ul>
+</nav>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script><!-- 툴팁(tooltips)과 팝오버(popovers) 같은 UI 요소를 쉽게 관리 -->
-    <script src="/js/consult/consultationReservation.js"></script><!-- 상담예약 javascript -->
-    <script src="/js/consult/reservationList.js"></script><!-- 예약리스트 javascript -->
 </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="/js/consult/consultationReservation.js"></script>
+    <script src="/js/consult/reservationList.js"></script>
 </html>

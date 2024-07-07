@@ -17,7 +17,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -70,4 +72,26 @@ public class Study {
 	@OneToMany(mappedBy = "study")
     @JsonManagedReference
     private List<StudyReply> replies;
+	
+	@OneToMany(mappedBy = "study")
+    @JsonManagedReference
+    private List<ChatRoom> chatroom;
+	
+	@Transient
+	private int repliesCount;
+	
+	@Transient
+	private int chatroomCount;
+	
+	@PostLoad
+	private void calculateRepliesCount() {
+	this.repliesCount = this.replies != null ? this.replies.size() : 0;
+	this.chatroomCount = this.chatroom != null ? this.chatroom.size() : 0;
+	    }
+	
+	
+	
+	
+	
+	
 }
