@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					            alert("모든 학습 종류를 선택하세요");
 					        } else if (progresses.some(item => item.progress == null || item.progress.trim() == "")) {
 					            alert("모든 진도 내역을 입력하세요");
-					        } else if (progresses.some(item => item.achieveRate == null || item.achieveRate == "" || item.achieveRate < 0 || item.achieveRate > 100)) {
+					        } else if (progresses.some(item => item.achieveRate < 0 || item.achieveRate > 100)) {
 					            alert("달성율은 0부터 100 사이의 값을 입력하세요");
 					        } else if (new Date(endTime) - new Date(startTime) < 0) {
 					            alert("종료 시간이 시작 시간보다 먼저입니다");
