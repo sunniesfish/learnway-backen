@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>study add</title>
 <style>
-        body {
+       /*  body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
@@ -13,7 +13,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-        }
+        } */
 
         #form-container {
             width: 80%;
@@ -117,6 +117,13 @@
             background-color: #45a049;
         }
     </style>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
+
 <script>
     let lastCheckedRadio = null;
 
@@ -267,6 +274,8 @@
 </script>
 </head>
 <body>
+    <div th:replace="sidebar :: sidebar"></div> <!-- 사이드바 포함 -->
+
     <div id="form-container">
         <form action="/studyadd" method="post" enctype="multipart/form-data">
             <label for="title">제목:</label>
@@ -339,6 +348,10 @@
         </form>
     </div>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script><!-- 툴팁(tooltips)과 팝오버(popovers) 같은 UI 요소를 쉽게 관리 -->
+<script src="/js/consult/consultationReservation.js"></script><!-- 상담예약 javascript -->
+<script src="/js/consult/reservationList.js"></script><!-- 예약리스트 javascript -->
 </body>
 </html>

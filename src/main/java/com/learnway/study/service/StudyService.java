@@ -1,8 +1,11 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.sql.Date;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -129,6 +132,22 @@ public class StudyService {
 	    } else {
 	        throw new NoSuchElementException("Study not found for postId: " + postId);
 	    }
+	}
+
+
+	//시작일 게시글 조회
+	public List<Integer> searchStartdate(StudyDto dto) {
+	        Date startDate = dto.getStartdate(); // Date 객체 그대로 사용
+	        List<Study> studies = studyRepository.findByStartdateGreaterThanEqual(startDate);
+	        
+	        for(Study a : studies) {
+	        	System.out.println(a.getPostid() + "게시글아이디");
+	        }
+	        
+	        List<Integer> postIds = studies.stream()
+                    .map(Study::getPostid)
+                    .collect(Collectors.toList());
+	        return postIds;
 	}
 
 	

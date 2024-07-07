@@ -102,7 +102,6 @@ public class StudyController {
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
 			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
-		
 		System.out.println(studyTagDto.getTag());
 		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		return "redirect:/studylist";
