@@ -118,12 +118,16 @@ document.addEventListener('DOMContentLoaded', function() {
         	  var currentDate = calendar.getDate();
   			  var formattedDate = currentDate.toISOString().slice(0, 10);
         	  
+        	  showLoadingSpinner(); // 로딩 스피너 표시
+        	  
 	          $.ajax({
 				url:"/api/weeklySummary",
 				type:"get",
 				data: {currentDate: formattedDate},
                 contentType: 'application/json',
 			    success: function(response) {
+				  console.log(response); // 응답 객체 출력
+				  hideLoadingSpinner(); // 로딩 스피너 숨김
 			      displayWeeklySummary(response);
 			    },
 			    error: function(xhr, status, error) {
@@ -463,7 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
                               	 
                             	 console.log(data);
                                  console.log(response.message);
-                                 alert("일정이 수정되었습니다");
                                  refreshEvents();// 일정 업데이트 후 캘린더 다시 렌더링
                                  $("#updateModal").modal("hide"); // 모달 닫기
                                },
@@ -1087,12 +1090,22 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
 
 //주간 요약 보여주는 모달 띄우기 
 function displayWeeklySummary(response) {
-
+  
   var weekRange = response.weekRange;
+  var summary = response.summary; // 'summary' 속성 사용
+ 
 
   $("#weeklySummaryContent").html(summary);
   $("#weeklySummaryModalLabel").text("주간 학습 요약 (" + weekRange + ")");
   $("#weeklySummaryModal").modal("show");
+}
+
+function showLoadingSpinner() {
+  $(".loading-overlay").fadeIn();
+}
+
+function hideLoadingSpinner() {
+  $(".loading-overlay").fadeOut();
 }
   
 function fillNewMaterialDropdown(newDropdownId) {

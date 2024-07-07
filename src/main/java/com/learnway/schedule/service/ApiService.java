@@ -38,15 +38,11 @@ public class ApiService {
     	String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
         OpenAiService service = new OpenAiService(openaiAccessKey, Duration.ofSeconds(30));
         
-        System.out.println(startOfWeekDateTime);
-        System.out.println(endOfWeekDateTime);
         List<Schedule> weeklySchedules = scheduleRepository.findByMemberIdAndStartTimeBetween(
                 memberId, 
                 startOfWeekDateTime, 
                 endOfWeekDateTime
             );
-        
-        System.out.println(weeklySchedules);
         
         String structuredScheduleData = convertSchedulesToString(weeklySchedules);
         
@@ -54,14 +50,13 @@ public class ApiService {
         
         ChatMessage systemMessage = new ChatMessage();
         systemMessage.setRole("system");
-        systemMessage.setContent("당신은 학습 조언 전문가입니다. 주어진 달성율은 학생이 직접 입력한 달성율입니다. 이를 바탕으로 주간 어떤 과목이 더 학습이 필요하고 앞으로의 학습 방향을 300자 이내로 조언해주세요.");
+        systemMessage.setContent("당신은 학습 조언 전문가입니다. 주어진 달성율은 학생이 직접 입력한 달성율입니다. 이를 바탕으로 주간 어떤 과목이 더 학습이 필요하고 앞으로의 학습 방향을 500자 이내로 조언해주세요.");
         messages.add(systemMessage);
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
-        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 해주세요. 주간일정이 없다면 없다고 말하시오. 지어내지 마시오.:\n\n" + structuredScheduleData);
+        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 500자 이내로 이모티콘을 2~3개만 써서 친근하게 해주세요. 주간일정이 없다면 없다고 말하시오. 지어내지 마시오.:\n\n" + structuredScheduleData);
         messages.add(userMessage);
-        System.out.println("ㅇㅇㅇㅇㅇㅇ"+structuredScheduleData);
 
         // 요청
         ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
