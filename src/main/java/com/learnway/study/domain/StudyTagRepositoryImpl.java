@@ -8,10 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.TypedQuery;
 
 
 public class StudyTagRepositoryImpl implements StudyTagRepositoryCustom {
@@ -22,33 +19,26 @@ public class StudyTagRepositoryImpl implements StudyTagRepositoryCustom {
     @Override
     @Transactional(readOnly = true)
     public List<StudyTag> findByTag(List<String> tags) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<StudyTag> query = cb.createQuery(StudyTag.class);
-        Root<StudyTag> root = query.from(StudyTag.class);
+        // JPQL 쿼리 작성
+        String jpql = "SELECT s FROM StudyTag s WHERE 1=1";
 
-        List<Predicate> predicates = new ArrayList<>();
+        // 각 태그를 모두 포함하는 엔티티를 찾기 위해 LIKE 구문 사용
         for (String tag : tags) {
-            predicates.add(cb.like(root.get("tag"), "%" + tag + "%"));
+            jpql += " AND s.tag LIKE CONCAT('%', :tag, '%')";
         }
 
-        // 모든 조건이 충족되는 경우를 위해 AND로 결합
-        query.select(root).where(cb.and(predicates.toArray(new Predicate[0])));
+        // 쿼리 실행
+        TypedQuery<StudyTag> query = entityManager.createQuery(jpql, StudyTag.class);
 
-        return entityManager.createQuery(query).getResultList();
+        // 파라미터 설정
+        for (String tag : tags) {
+            query.setParameter("tag", tag);
+        }
+
+        // 결과 반환
+        return query.getResultList();
     }
-    
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List<StudyTag> findByTag(List<String> tags) {
-//        // 태그들을 콤마로 연결하여 하나의 문자열로 만듭니다.
-//        String tagPattern = String.join(",%", tags) + ",%";
-//
-//        // 네이티브 SQL 쿼리 작성
-//        String sql = "SELECT * FROM study_tag WHERE tag LIKE :tagPattern";
-//        
-//        // 쿼리 실행	
-//        return entityManager.createNativeQuery(sql, StudyTag.class)
-//                            .setParameter("tagPattern", "%" + tagPattern)
-//                            .getResultList();
-//    }
+
+
+
 }

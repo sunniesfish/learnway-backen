@@ -11,6 +11,7 @@ public class ChatRoomDto {
 	private String name;
 	private Integer roomId;
 	private Integer postId;
+	private Integer roomCheck;
 	
 	private String message;
 	private String type;

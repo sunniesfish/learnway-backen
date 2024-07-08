@@ -9,5 +9,6 @@ public class StudyTagDto {
 
 	private Integer postid; 
 	private List<String> tags;
-	private String tag;
+//	private String tag;
+	private List<String> tag;
 }
