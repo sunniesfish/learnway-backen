@@ -95,3 +95,46 @@
     background-color: #fff;
     border-color: #dee2e6;
 }
+
+ .card {
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        .card-text {
+            margin-bottom: 0.25rem;
+        }
+        .badge {
+            font-size: 0.8em;
+        }
+        .card-footer {
+		    background-color: rgba(0,0,0,.03);
+		    border-top: 1px solid rgba(0,0,0,.125);
+		    padding: 0.5rem;
+		}
+		
+		.card-footer .study-info {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.card-footer .study-info .ml-2 {
+    margin-left: 10px;
+}
+
+.card-footer .study-info .ml-2 i {
+    vertical-align: middle;
+    margin-right: 5px;
+}

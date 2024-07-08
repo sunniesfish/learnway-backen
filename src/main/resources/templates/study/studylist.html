@@ -220,9 +220,14 @@
                 <button type="button" id="advancedSearchButton" name="advancedSearchButton" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                     상세검색
                 </button>
+                
             </div>
         </div>
 </form>
+<div class="mb-3">
+            <button id="toggleView" class="btn btn-secondary">카드형으로 보기</button>
+        </div>
+        
         <!-- 모달 부분은 그대로 유지 -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -257,8 +262,8 @@
             </div>
         </div>
 
-        <div class="list-group">
-    <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+        <div id="listView" class="list-group">
+            <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
         <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1 study-title" th:text="${study.title}">Title</h5>
             <small th:text="${study.startdate}" class="text-muted">Start Date</small>
@@ -268,14 +273,45 @@
             <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
         </p>
         <div class="study-info">
-            <small>
-                <span>댓글: <span th:text="${study.repliesCount}">0</span></span>
-                <span class="ml-2">채팅방: <span th:text="${study.chatroomCount}">0</span></span>
-            </small>
-        </div>
+    <small>
+        <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
+        <span class="ml-2" th:if="${study.chatroomCount > 0}">
+            <i class="fas fa-comments"></i>
+        </span>
+    </small>
+</div>
     </div>
 </div>
 
+
+<div id="cardView" class="row" style="display: none;">
+            <div th:each="study : ${list}" class="col-md-4 mb-4">
+                <div class="card h-100" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${study.title}">Title</h5>
+                        <p class="card-text">
+                            <small class="text-muted" th:text="${study.startdate}">Start Date</small>
+                        </p>
+                        <p class="card-text">
+                            <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
+                        </p>
+                        <p class="card-text">
+                            <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="study-info">
+		  			  <small>
+		        <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
+		        <span class="ml-2" th:if="${study.chatroomCount > 0}">
+		            <i class="fas fa-comments"></i> <span th:text="${study.chatroomCount}">1</span>
+		        </span>
+		    </small>
+				</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="text-right mt-3">
             <button onclick="location.href='/studyadd'" class="btn btn-success">글작성</button>
         </div>
@@ -301,6 +337,28 @@
 </nav>
     </div>
 
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggleView');
+            const listView = document.getElementById('listView');
+            const cardView = document.getElementById('cardView');
+
+            toggleButton.addEventListener('click', function() {
+                if (listView.style.display !== 'none') {
+                    listView.style.display = 'none';
+                    cardView.style.display = 'flex';
+                    toggleButton.textContent = '리스트형으로 보기';
+                } else {
+                    listView.style.display = 'block';
+                    cardView.style.display = 'none';
+                    toggleButton.textContent = '카드형으로 보기';
+                }
+            });
+        });
+    </script>
+
+   
 </body>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
