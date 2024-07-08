@@ -31,7 +31,7 @@ jobs:
       - name: Replace AWS credentials in application.properties
         run: |
           sed -i "s/^cloud.aws.credentials.accessKey=.*/cloud.aws.credentials.accessKey=${{ secrets.AWS_ACCESS_KEY_ID }}/" ./src/main/resources/application.properties
-          sed -i "s/^cloud.aws.credentials.secretKey=.*/cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }}/" ./src/main/resources/application.properties
+          sed -i "s/^cloud.aws.credentials.secretKey=.*/cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET__ACCESS_KEY }}/" ./src/main/resources/application.properties
       
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -43,7 +43,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET__ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Make zip file
