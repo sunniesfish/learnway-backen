@@ -269,13 +269,15 @@
                 </div>
             </div>
         </div>
-
+		<!-- 알림기능 -->
         <div aria-live="polite" aria-atomic="true" style="position: relative; min-height: 200px;">
             <div style="position: absolute; top: 0; right: 0;">
                 <div id="toastContainer" class="toast-container"></div>
             </div>
         </div>
     </div>
+    <!-- 알림 소리 -->
+  	<audio id="notification-sound" src="/audio/notification.mp3" preload="auto"></audio>
     
     <!-- 메모등록 모달 -->
     <div class="modal fade" id="memoAddModal" tabindex="-1" role="dialog" aria-labelledby="memoAddModalLabel" aria-hidden="true">
@@ -518,6 +520,10 @@
             eventSource.addEventListener('notification', function(event) {
                 console.log("알림 들어옴: ", event.data);
                 showToast('새 알림', event.data);
+                
+            // 알림 소리 재생
+        	document.getElementById('notification-sound').play();
+        	
             });
 
             eventSource.onerror = function(event) {
@@ -598,8 +604,8 @@
 			
 							 // 현재 시간이 예약 시간 내에 있는지 확인
                             var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
-                            var linkClass = isWithinBookingTime ? '' : 'disabled-link';
-                            //var linkClass = isWithinBookingTime ? 'disabled-link' : '';
+                            //var linkClass = isWithinBookingTime ? '' : 'disabled-link';
+                            var linkClass = isWithinBookingTime ? 'disabled-link' : '';
                             var linkText = isWithinBookingTime ? '💻 입장하기' : '🚫 입장불가';
 
                             var row = `
