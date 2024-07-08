@@ -7,7 +7,7 @@ async function fetchTypeStats(examType, pageNo) {
 console.log("stas page")
 const statsRoot = document.getElementById("stats-root");
 
-window.addEventListener("load", render);
+window.addEventListener("DOMContentLoaded", render);
 
 function render() {
     console.log("render")

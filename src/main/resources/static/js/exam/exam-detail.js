@@ -17,7 +17,7 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.addEventListener("load",()=>render(examId));
+window.addEventListener("DOMContentLoaded",()=>render(examId));
 
 function render(examId){
     ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
