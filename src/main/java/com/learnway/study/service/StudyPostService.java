@@ -30,12 +30,12 @@ public class StudyPostService {
 
 	
 	public Page<Study> getBoardList(Pageable pageable) {
-		
-//		return studyRepository.findAll(pageable);
-		 Sort sort = Sort.by(Sort.Direction.DESC, "postid");
-		 Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-		 return studyRepository.findAll(sortedPageable);
-	}
+        Sort sort = Sort.by(Sort.Direction.DESC, "postid");
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        Page<Study> studies = studyRepository.findAll(sortedPageable);
+
+        return studies;
+    }
 	
 	
 	//게시글 작성(게시글,지도,스터디채팅방,태그,문제 트랜젝션처리)

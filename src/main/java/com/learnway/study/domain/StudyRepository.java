@@ -1,4 +1,5 @@
 package com.learnway.study.domain;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	    Optional<Study> findByIdWithTags(@Param("postid") Long postid);
 	  
 	  List<Study> findByTitle(String title);
+	  
+	  List<Study> findByStartdateGreaterThanEqual(Date startDate);
 }
 
 

@@ -58,20 +58,20 @@ public class StudyController {
 	
 
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
-	@GetMapping(value="/studylist")
-	public String study(@PageableDefault(size=2) Pageable pageable,Model model) {
-		Page<Study> studies = studyPostService.getBoardList(pageable);
-		
-		 int startPage = Math.max(1, studies.getPageable().getPageNumber() - 4);
-	     int endPage = Math.min(studies.getPageable().getPageNumber()+4, studies.getTotalPages());
-        
-        
-        model.addAttribute("startPage", startPage);
-        model.addAttribute("endPage", endPage);
-        model.addAttribute("list", studies);
-		
-		return "/study/studylist";
+	@GetMapping("/studylist")
+	public String studyList(@PageableDefault(size = 7) Pageable pageable, Model model) {
+	    Page<Study> studies = studyPostService.getBoardList(pageable);
+
+	    int startPage = Math.max(1, studies.getNumber() + 1 - 4);
+	    int endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
+
+	    model.addAttribute("startPage", startPage);
+	    model.addAttribute("endPage", endPage);
+	    model.addAttribute("list", studies);
+
+	    return "study/studylist";
 	}
+
 	
 	@GetMapping(value="/studyadd")
 	public String studyAddView() {
@@ -102,8 +102,7 @@ public class StudyController {
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
 			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
-		
-
+		System.out.println(studyTagDto.getTag());
 		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		return "redirect:/studylist";
 	}
@@ -125,16 +124,17 @@ public class StudyController {
 	public String studydetail(@PathVariable("postid") Integer postId,Model model,Principal principal) {
 		Optional<Study> optionalStudy = studyRepository.findById(postId);
 		List<StudyTag> tagList = studyTagService.findTag(postId);
-		
+		for(StudyTag a: tagList	) {
+			System.out.println(a.getTag() + "태그값 ");
+		}
+		System.out.println(postId + " 게시글 번호");
 		//포스트id로 문제id 조회
 		int problemId = studyProblemService.problemId(postId);
 		//postid로 ChatRoomId 조회
 		List<ChatRoom> chatRoom = studyChatService.chatRoomId(postId);
 		//problemId로 problemImgPathId조회
 		List<StudyProblemImg> imgList = studyProblemImgService.problemImgPath(problemId);
-		
-		boolean result = studyService.boardCheck(problemId, principal);
-		
+		boolean result = studyService.boardCheck(postId, principal);
 		
 		if(optionalStudy.isPresent()) {
 			Study study = optionalStudy.get();
@@ -143,6 +143,7 @@ public class StudyController {
 			model.addAttribute("imgList",imgList);
 			model.addAttribute("chatRoom",chatRoom);
 			model.addAttribute("hostList",result);
+			System.out.println(" 값 전달 성공");
 			return "study/studydetail";
 		}else {
 			model.addAttribute("errmsg","게시글을 찾을 수 없습니다.");
