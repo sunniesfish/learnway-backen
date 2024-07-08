@@ -77,7 +77,7 @@ function Subjects({examId}){
                             <span>{item.scoreScore}</span>
                             <span>/{item.scoreExScore}</span>
                         </div>
-                        <div className="exam-detail__item__grade">{item.scoreGrade} 등급</div>
+                        <div className="exam-detail__item__grade">{item.scoreGrade}등급</div>
                     </div>
                     <div className="exam-detail__item__delete-btn-controller">
                         <button onClick={() => handleDelete(item.scoreId)}>
