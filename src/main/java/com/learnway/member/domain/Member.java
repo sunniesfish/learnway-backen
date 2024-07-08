@@ -39,7 +39,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberTelecom memberTelecom;// 통신사 (KT, SKT, LG, 동 알뜰폰)
 
+    @Column(nullable = false)
     private String memberEmail;         // E-mail
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MemberGender memberGender;  // 성별 (Male / Female)
 
     @CreationTimestamp
     private LocalDate memberCreate = LocalDate.now(); // 가입일 (가입 당시 시간 자동 입력)
@@ -54,6 +59,8 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole;      // 회원 관리자 구분 (Enum : ROLE_ADMIN, ROLE_USER)
+
+    private String memberNote;          // 회원 비고 (관리자(선생님)이 학생에게 메모해둘 사항 (학생은 조회 X)
 
     // JOIN : 목표 대학
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
