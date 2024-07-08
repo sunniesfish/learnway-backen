@@ -3,6 +3,7 @@ name: Deploy to AWS
 on:
   push:
     branches: ["main"]
+
 env:
   PROJECT_NAME: aselcni
   BUCKET_NAME: learnway-bucket
@@ -25,33 +26,29 @@ jobs:
           distribution: 'temurin'
     
       - name: Checkout code
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Replace AWS credentials in application.properties
         run: |
           sed -i "s/^cloud.aws.credentials.accessKey=.*/cloud.aws.credentials.accessKey=${{ secrets.AWS_ACCESS_KEY_ID }}/" ./src/main/resources/application.properties
           sed -i "s/^cloud.aws.credentials.secretKey=.*/cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET_ACCESS_KEY }}/" ./src/main/resources/application.properties
-
       
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-        shell: bash
-      
+
       - name: Build with Gradle
         run: ./gradlew build -x test
-        shell: bash
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET__ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Make zip file
         run: zip -r ${{ github.sha }}.zip .
         shell: bash
-
 
       - name: Upload to S3
         run: aws s3 cp ${{ github.sha }}.zip s3://${{ env.BUCKET_NAME }}/${{ env.PROJECT_NAME }}/${{ github.sha }}.zip --region ${{ env.AWS_REGION }}
