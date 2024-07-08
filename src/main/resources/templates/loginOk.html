@@ -10,30 +10,84 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
-    <link rel="stylesheet" type="text/css" href="/css/globalstyle.css">
+    
+    <style>
+		
+		#main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 50px;
+        }
+
+        .grid-container {
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 50px;
+        }
+
+        .grid-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            /*border-radius: 10px;*/
+            background-color: #f9f9f9;
+        }
+
+        .grid-item h2 {
+            margin-top: 0;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+	</style>
 </head>
 <body>
-	<!-- SideBar 불러오는부분 -->
-<div th:replace="sidebar :: sidebar"></div>
+    <!-- SideBar 불러오는부분 -->
+    <div id="sidebar" th:replace="sidebar :: sidebar"></div>
 
-<!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
-<div id="main-content">
-Login OK
-<div>
-<h2>로그인 정보</h2>
-<p>Username(ID): <span sec:authentication="name"></span></p>
-<p>User ID(PK): <span th:text="${#authentication.principal.memberId}"></span></p>
-<p><img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';"></p>
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">로그아웃</button>
-    </form>
-</div>
-<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-    <h2>관리자만 조회할 수 있는 버튼</h2>
-    <button>ADMIN</button>
-</div>
-<a href="admin/addMasterData">기준정보 추가</a>
-</div>
+    <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
+    <div id="main-content">
+        <div class="grid-container">
+            <div class="grid-item">
+                <!-- 로고 -->
+                <img src="/path/to/logo.png" alt="LearnWay Logo" class="img-fluid">
+            </div>
+            <div class="grid-item">
+                <!-- 달력 -->
+                <div id="calendar"></div>
+            </div>
+            <div class="grid-item full-width">
+                <!-- 공지사항 게시판 -->
+                <h2>공지사항</h2>
+                <ul>
+                    <li>공지사항 1</li>
+                    <li>공지사항 2</li>
+                    <li>공지사항 3</li>
+                </ul>
+            </div>
+        </div>
+        <!--
+        <div>
+            <h2>로그인 정보</h2>
+            <p>Username(ID): <span sec:authentication="name"></span></p>
+            <p>User ID(PK): <span th:text="${#authentication.principal.memberId}"></span></p>
+            <p>
+                <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
+            </p>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">로그아웃</button>
+            </form>
+        </div>
+        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <h2>관리자만 조회할 수 있는 버튼</h2>
+            <button>ADMIN</button>
+        </div>
+        <a href="admin/addMasterData">기준정보 추가</a>
+        -->
+    </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script><!-- 툴팁(tooltips)과 팝오버(popovers) 같은 UI 요소를 쉽게 관리 -->
