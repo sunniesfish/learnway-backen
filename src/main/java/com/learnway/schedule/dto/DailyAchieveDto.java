@@ -1,5 +1,6 @@
 package com.learnway.schedule.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,7 +19,7 @@ public class DailyAchieveDto {
 	
 	private Long DailyAchieveId;
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDateTime date;
+	private LocalDate date;
 	private double avgAchieveRate;
 	private String memberId;
 }

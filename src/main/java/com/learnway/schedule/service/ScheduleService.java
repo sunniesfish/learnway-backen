@@ -1,5 +1,6 @@
 package com.learnway.schedule.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -167,14 +168,14 @@ public class ScheduleService {
 		}
 		
 		//일달성율 평균 리스트 조회 
-		public List<DailyAchieveDto> AchieveList(LocalDateTime start, LocalDateTime  end, String memberId) {
-			
-			List<DailyAchieve> dailyAchieves = dailyAchieveRepository.findByMemberIdAndDateBetween(memberId, start, end);
+		public List<DailyAchieveDto> AchieveList(LocalDate start, LocalDate  end, String memberId) {
+		
 			List<DailyAchieveDto> result = new ArrayList<>();
 			
-			LocalDateTime current = start;
+			LocalDate current = start;
 	        while (current.isBefore(end)) {
-	            DailyAchieve dailyAchieve = findOrCreateDailyAchieve(current,memberId);
+	        	LocalDateTime currentDateTime = current.atTime(6, 0); // 각 날짜의 6시로 설정
+	            DailyAchieve dailyAchieve = createDailyAchieve(currentDateTime,memberId);
 	            
 	            DailyAchieveDto dto = new DailyAchieveDto();
 	            dto.setDailyAchieveId(dailyAchieve.getDailyAchieveId());
@@ -191,25 +192,27 @@ public class ScheduleService {
 		}
 
 		
-		private DailyAchieve findOrCreateDailyAchieve(LocalDateTime dateTime,String memberId) {
+		private DailyAchieve createDailyAchieve(LocalDateTime dateTime,String memberId) {
 			
-	       
-			// 해당 날짜와 멤버 ID로 DailyAchieve 조회
-		    Optional<DailyAchieve> achieve = dailyAchieveRepository.findByDateAndMemberId(dateTime, memberId);
-	        
-		    if(achieve.isPresent()) {
-	        	return achieve.get();
-	        	
-	        }else {
-	        
-		        // 존재하지 않으면 새로 생성
+			// LocalDateTime을 LocalDate로 변환
+		    LocalDate date = dateTime.toLocalDate();
+		    
+		    // 해당 날짜에 대한 DailyAchieve 객체가 이미 존재하는지 확인
+		    Optional<DailyAchieve> existingAchieve = dailyAchieveRepository.findByMemberIdAndDate(memberId, date);
+
+		    if (existingAchieve.isPresent()) {
+		        // 이미 존재하는 경우, 기존 객체 업데이트
+		        DailyAchieve dailyAchieve = existingAchieve.get();
+		        dailyAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime, memberId));
+		        return dailyAchieveRepository.save(dailyAchieve);
+		    } else {
+		        // 존재하지 않는 경우, 새로운 객체 생성
 		        DailyAchieve newAchieve = new DailyAchieve();
-		        newAchieve.setDate(dateTime);
-		        newAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime,memberId));
+		        newAchieve.setDate(date);
+		        newAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime, memberId));
 		        newAchieve.setMemberId(memberId);
-		        dailyAchieveRepository.save(newAchieve);
-		        return newAchieve;
-		        }
+		        return dailyAchieveRepository.save(newAchieve);
+		    }
 	    }
 		
 		//하루 평균 달성율 구하기
@@ -233,7 +236,8 @@ public class ScheduleService {
 		        return 0.0;
 		    }
 		    
-		    return totalAchieveRate / schedules.size();
+		    double avgAchieveRate = totalAchieveRate / schedules.size();
+		    return Math.round(avgAchieveRate * 10.0) / 10.0;
 		}
 		
 		//한 일정 달성율 구하기

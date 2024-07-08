@@ -58,8 +58,8 @@ public class ScheduleRestController {
 																		,@AuthenticationPrincipal UserDetails user){
 		
 		String memberId = user.getUsername();
-		LocalDateTime start = LocalDateTime.of(year, month, 1, 6, 0);
-	    LocalDateTime end = start.plusMonths(1);
+	    LocalDate start = LocalDate.of(year, month, 1);
+	    LocalDate end = start.plusMonths(1);
 	    
 	    List<DailyAchieveDto> dailyAchieves = scheduleService.AchieveList(start, end, memberId);
 	    
@@ -78,7 +78,6 @@ public class ScheduleRestController {
 			LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
 	        LocalDateTime startDateTime = date.atTime(6, 0);
 	        LocalDateTime endDateTime = startDateTime.plusDays(1).minusSeconds(1);
-	        
 	        List<Schedule> schedules = scheduleRepository.findByMemberIdAndStartTimeBetween(memberId,startDateTime, endDateTime);
 	        
 	        List<Map<String, Object>> responseData = new ArrayList<>();
@@ -98,8 +97,7 @@ public class ScheduleRestController {
 	        }
 	       
 	     // 해당 날짜와 멤버 ID로 DailyAchieve 조회
-	        Optional<DailyAchieve> achieve = dailyAchieveRepository.findByDateAndMemberId(startDateTime, memberId);
-	       
+	        Optional<DailyAchieve> achieve = dailyAchieveRepository.findByMemberIdAndDate(memberId, date);
 	       if(achieve.isPresent()) {
 	    	    Map<String, Object> achieveData = new HashMap<>();
 	    	    achieveData.put("avgAchieveRate", achieve.get().getAvgAchieveRate());

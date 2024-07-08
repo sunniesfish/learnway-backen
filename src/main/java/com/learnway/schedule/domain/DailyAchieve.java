@@ -1,5 +1,6 @@
 package com.learnway.schedule.domain;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -24,7 +25,7 @@ public class DailyAchieve {
 	private Long DailyAchieveId;
 	
 	@Column
-	private LocalDateTime date;
+	private LocalDate date;
 	
 	@Column(nullable=true)
 	private double avgAchieveRate;

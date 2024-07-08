@@ -945,6 +945,7 @@ document.addEventListener('DOMContentLoaded', function() {
        	      },
        	      success: function(data) {
        	        // DTO 데이터 처리
+       	        console.log(data);
        	        monthlyEvents = data.map(function(dto) {
        	          return {
        	        	title: dto.avgAchieveRate > 0 ? dto.avgAchieveRate.toFixed(1) + "%" : "",
