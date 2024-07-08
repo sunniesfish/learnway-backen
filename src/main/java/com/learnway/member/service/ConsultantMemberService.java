@@ -24,8 +24,8 @@ public class ConsultantMemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
-    private String uploadPath;
+//    @Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
+    private String uploadPath = "images/member/";
 
     public void joinConsultant(ConsultantJoinDTO consultantJoinDTO) {
         // member / consultant 테이블에서 동일한 ID 조회
