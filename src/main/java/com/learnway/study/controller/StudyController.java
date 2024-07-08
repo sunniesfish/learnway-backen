@@ -77,23 +77,40 @@ public class StudyController {
 	
 	@PostMapping("/studylist/search")
 	public String studyListSearch(@PageableDefault(size = 7) Pageable pageable, Model model,
-									@ModelAttribute StudyDto dto)  {
-		
-		
-		 int[] detailSearchArray = Arrays.stream(dto.getDetailSearch().split(",")).mapToInt(Integer::parseInt).toArray();
+	                              @ModelAttribute StudyDto dto) {
+
+	    if (dto.getDetailSearch() != null && !dto.getDetailSearch().isEmpty()) {
+	        // String으로 받은 값을 ',' 기준으로 분할하여 int 배열로 변환
+	        int[] detailSearchArray = Arrays.stream(dto.getDetailSearch().split(",")).mapToInt(Integer::parseInt).toArray();
 	        // 변환된 배열을 dto에 설정
-	      dto.setDetailSearchArray(detailSearchArray);
-		
-	      Page<Study> studies = studyPostService.boardSearchList(dto,pageable);
-	      
-		int startPage = Math.max(1, studies.getNumber() + 1 - 4);
-		int endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
-		 
-		model.addAttribute("startPage", startPage);
-		model.addAttribute("endPage", endPage);
-		model.addAttribute("list", studies);
-		
-		return "study/studySearchList";
+	        dto.setDetailSearchArray(detailSearchArray);
+	    }
+
+	    Page<Study> studies = studyPostService.boardSearchList(dto, pageable);
+
+	    if ((dto.getDetailSearch() == null || dto.getDetailSearch().isEmpty()) &&
+	        (dto.getTitle() == null || dto.getTitle().isEmpty())) {
+	        return "redirect:/studylist";
+	    }
+
+	    int startPage;
+	    int endPage;
+
+	    if (studies.getTotalPages() == 0) {
+	        // 검색 결과가 없을 때 startPage와 endPage를 1로 설정
+	        startPage = 1;
+	        endPage = 1;
+	        model.addAttribute("list", Page.empty(pageable));
+	    } else {
+	        startPage = Math.max(1, studies.getNumber() + 1 - 4);
+	        endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
+	        model.addAttribute("list", studies);
+	    }
+
+	    model.addAttribute("startPage", startPage);
+	    model.addAttribute("endPage", endPage);
+
+	    return "study/studySearchList";
 	}
 	
 	

@@ -19,7 +19,11 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	  
 	  List<Study> findByStartdateGreaterThanEqual(Date startDate);
 	  
+	  Page<Study> findByTitleContaining(String title, Pageable pageable);
+	  
 	  Page<Study> findByPostidIn(List<Integer> postIds, Pageable pageable);
+	  
+	  Page<Study> findByPostidIn(int[] detail, Pageable pageable);
 }
 
 
