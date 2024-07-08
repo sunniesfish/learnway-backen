@@ -49,7 +49,7 @@ public class NoticeService {
 	public void write(NoticeDto dto,Optional<Member> member) {
 		
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
-		
+
 		if(member.isPresent()) {
 			
 			Member savemember=member.get();
@@ -57,6 +57,7 @@ public class NoticeService {
 			notice.setNoticeId(dto.getNoticeId());
 			notice.setNoticeTitle(dto.getNoticeTitle());
 			notice.setNoticeContent(formattedContent);
+
 			notice.setNoticeImgPath(dto.getNoticeImgPath());
 			notice.setNoticeImgUname(dto.getNoticeImgUname());
 			notice.setCreateDate(LocalDateTime.now());
