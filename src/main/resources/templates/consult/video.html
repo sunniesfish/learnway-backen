@@ -100,8 +100,8 @@
 
     const connectSocket = async () => {
 		//const socket = new SockJS('/signaling/video');
-        const socket = new SockJS('https://172.30.1.83:8443/signaling/video');
-        //const socket = new SockJS('https://43.202.58.56:8095/signaling/video');//aws 테스트
+        //const socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+        const socket = new SockJS('https://43.202.58.56:443/signaling/video');//aws 테스트
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
