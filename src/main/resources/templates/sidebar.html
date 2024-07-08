@@ -1,15 +1,29 @@
 <div th:fragment="sidebar">
     <div id="sidebar">
-        <div class="sidebar-header">
-            <img src="/img/mainLogo.png" alt="이미지 설명" style="width: 150px; height: auto;">
-        </div>
+        <a href="/" class="sidebar-header d-flex justify-content-center">
+            <img src="/img/mainLogo.png" alt="이미지 설명" style="max-width: 150px; height: auto;">
+        </a>
         <hr>
         <div class="sidebar-item">
-            <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
-            <span class="ml-4" th:text="${#authentication.principal.name}"></span>
+            <div class="d-flex align-items-center d-flex justify-content-center">
+                <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
+                <span class="ml-4" th:text="${#authentication.principal.name}"></span>
+            </div>
             <div class="text-center mt-2">
                 <a href="/member/update" class="text-white mr-2"><i class="fas fa-cog"></i>정보수정</a>
-                <a href="/logout" class="text-danger">로그아웃</a>
+                <a href="/logout" class="text-white">로그아웃</a>
+            </div>
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <div class="text-center mt-2">
+                    <a href="/admin/" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
+                </div>
+            </div>
+            <div th:if="${#authorization.expression('hasRole(''USER'')')}">
+                <div class="text-center mt-2">
+                    <p class="text-info">
+                    <i class="fas fa-user"></i>일반 유저
+                    </p>
+                </div>
             </div>
         </div>
         <hr>

@@ -12,22 +12,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
+    <link rel="stylesheet" type="text/css" href="/css/globalstyle.css">
 </head>
 <body>
 <!-- SideBar 불러오는 부분 -->
-<div th:replace="sidebar :: sidebar"></div>
+<div id="sidebar" th:replace="sidebar :: sidebar"></div>
 
 <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
 <div class="main__content">
-    <div class="container mt-5">
-        <h1 class="mb-4">회원 정보 수정</h1>
+    <div class="container mt-5" style="overflow-y: auto">
         <form th:action="@{/member/update}" method="post" th:object="${memberUpdateDTO}" onsubmit="return validateForm(event)" enctype="multipart/form-data">
             <!-- 중복체크 없을 경우 submit X -->
             <input type="hidden" id="isUsernameChecked" value="true"> <!-- 수정 시 ID 중복 체크는 필요 없으므로 true -->
 
             <div class="text-center mb-4">
                 <!-- 현재 프로필 이미지를 조회  -->
-                <img id="imagePreview" th:src="${#authentication.principal.image}" alt="Image Preview" class="img-preview mb-3" />
+                <!--<img id="imagePreview" th:src="${#authentication.principal.image}" alt="Image Preview" class="img-preview mb-3" />-->
+                <img id="imagePreview" th:src="${memberUpdateDTO.memberImage != null ? memberUpdateDTO.memberImage : '/img/member/member-default.png'}" alt="Image Preview" class="img-preview mb-3" />
                 <!-- 파일 업로드 input 사진 업로드 시 위 이미지 비활성화 및 새 이미지 아래 인풋 활성화 -->
                 <input type="file" class="form-control-file" id="imageUpload" name="newMemberImage" accept="image/*" onchange="previewImage(this)" style="display: none;">
                 <button type="button" class="btn btn-outline-info" onclick="$('#imageUpload').click();">이미지 선택</button>
@@ -82,11 +83,24 @@
                     <input type="date" class="form-control" id="memberBirth" name="memberBirth" th:field="*{memberBirth}">
                 </div>
             </div>
+            <!-- 성별 -->
+            <div class="form-group row">
+                <label for="gender" class="col-sm-4 col-form-label required-label">성별</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="gender" name="gender" th:field="*{memberGender}">
+                        <option value="" selected>성별을 선택하세요.</option>
+                        <option value="Male" th:selected="${memberGender == 'Male'}">남성</option>
+                        <option value="Female" th:selected="${memberGender == 'Female'}">여성</option>
+                    </select>
+                    <small th:if="${#fields.hasErrors('memberGender')}" th:errors="*{memberGender}" class="text-danger"></small>
+                </div>
+            </div>
             <!-- 연락처 -->
             <div class="form-group row">
                 <label for="memberPhone" class="col-sm-4 col-form-label required-label">연락처</label>
                 <div class="col-sm-8">
                     <input type="text" class="form-control" id="memberPhone" name="memberPhone" th:field="*{memberPhone}" oninput="formatPhoneNumber(this)">
+                    <small th:if="${#fields.hasErrors('memberPhone')}" th:errors="*{memberPhone}" class="text-danger"></small>
                 </div>
             </div>
             <!-- 통신사 -->
@@ -103,6 +117,7 @@
                         <option value="LG_ALT">LG 알뜰폰</option>
                         <option value="WIRED_AND_OTHER">유선 혹은 기타</option>
                     </select>
+                    <small th:if="${#fields.hasErrors('memberTelecom')}" th:errors="*{memberTelecom}" class="text-danger"></small>
                 </div>
             </div>
             <!-- 선택 입력 사항 구분선 -->
