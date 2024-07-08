@@ -4,6 +4,7 @@ import com.learnway.consult.domain.Consultant;
 import com.learnway.member.dto.ConsultantJoinDTO;
 import com.learnway.consult.domain.ConsultantRepository;
 import com.learnway.member.domain.MemberRepository;
+import com.learnway.member.dto.ConsultantUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -55,6 +56,39 @@ public class ConsultantMemberService {
                 .role("COUNSELOR")
                 .build();
 
+        consultantRepository.save(consultant);
+    }
+
+    public ConsultantUpdateDTO getConsultantById(Long id) {
+        Consultant consultant = consultantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컨설턴트입니다."));
+        ConsultantUpdateDTO consultantUpdateDTO = new ConsultantUpdateDTO();
+        consultantUpdateDTO.setUsername(consultant.getConsultantId());
+        consultantUpdateDTO.setName(consultant.getName());
+        consultantUpdateDTO.setSubject(consultant.getSubject());
+        consultantUpdateDTO.setDescription(consultant.getDescription());
+        consultantUpdateDTO.setImageUrl(consultant.getImageUrl());
+        return consultantUpdateDTO;
+    }
+
+    public void updateConsultant(ConsultantUpdateDTO consultantUpdateDTO) {
+        Consultant consultant = consultantRepository.findByConsultantId(consultantUpdateDTO.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컨설턴트입니다."));
+        if (consultantUpdateDTO.getPassword() != null && !consultantUpdateDTO.getPassword().isEmpty()) {
+            consultant.setPassword(bCryptPasswordEncoder.encode(consultantUpdateDTO.getPassword()));
+        }
+        consultant.setName(consultantUpdateDTO.getName());
+        consultant.setSubject(consultantUpdateDTO.getSubject());
+        consultant.setDescription(consultantUpdateDTO.getDescription());
+        if (consultantUpdateDTO.getImage() != null && !consultantUpdateDTO.getImage().isEmpty()) {
+            try {
+                String imagePath = saveImage(consultantUpdateDTO.getImage());
+                deleteImage(consultant.getImageUrl());
+                consultant.setImageUrl(imagePath);
+            } catch (IOException e) {
+                throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
+            }
+        }
         consultantRepository.save(consultant);
     }
 

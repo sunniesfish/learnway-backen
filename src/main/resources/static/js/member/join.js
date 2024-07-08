@@ -1,4 +1,4 @@
-// 이미지 : 프로필 이미지 미리보기 및 유효성 검사
+/*// 이미지 : 프로필 이미지 미리보기 및 유효성 검사
 function previewImage(input) {
     // 허용되는 파일 타입
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -14,6 +14,25 @@ function previewImage(input) {
         alert('이미지 파일만 업로드 가능합니다 (JPEG, PNG, GIF).');
         input.value = ''; // 유효하지 않은 파일 제거
         $('#imagePreview').attr('src', '/img/member/member-default.png'); // 기본 이미지 경로
+    }
+}*/
+
+// S3
+function previewImage(input) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const file = input.files[0];
+    const imagePreview = $('#imagePreview');
+
+    if (file && allowedTypes.includes(file.type)) { // 파일 유형 검사
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            imagePreview.attr('src', e.target.result);
+        }
+        reader.readAsDataURL(file);
+    } else {
+        alert('이미지 파일만 업로드 가능합니다 (JPEG, PNG, GIF).');
+        input.value = ''; // 유효하지 않은 파일 제거
+        imagePreview.attr('src', '/img/member/member-default.png'); // 기본 이미지 경로 설정
     }
 }
 

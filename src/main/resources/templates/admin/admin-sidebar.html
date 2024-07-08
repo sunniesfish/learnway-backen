@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Sidebar</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/admin/admin.css">
+</head>
+<body>
+<div id="sidebar" th:fragment="sidebar">
+    <a href="/" class="sidebar-header d-flex justify-content-center">
+        <img src="/img/mainLogo.png" alt="이미지 설명" style="max-width: 150px; height: auto;">
+    </a>
+    <hr>
+    <div class="sidebar-item">
+        <div class="d-flex align-items-center d-flex justify-content-center">
+            <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
+            <span class="ml-4" th:text="${#authentication.principal.name}"></span>
+        </div>
+        <div class="text-center mt-2">
+            <a href="/member/update" class="mr-2"><i class="fas fa-cog"></i>정보수정</a>
+            <a href="/logout">로그아웃</a>
+        </div>
+        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <div class="text-center mt-2">
+                <p class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</p>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="list-group">
+        <a href="/admin/masterdata" class="list-group-item list-group-item-action">기준 정보 관리</a>
+        <a href="/member/members" class="list-group-item list-group-item-action">회원 정보 조회</a>
+        <a href="#" class="list-group-item list-group-item-action">공지 사항 등록</a>
+        <a href="/admin/consult/join" class="list-group-item list-group-item-action">컨설턴트 등록</a>
+        <a href="/" class="list-group-item list-group-item-action">메인화면</a>
+    </div>
+</div>
+</body>
+</html>

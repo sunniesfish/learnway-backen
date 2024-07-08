@@ -1,5 +1,6 @@
 package com.learnway.member.controller;
 
+import com.learnway.member.domain.Member;
 import com.learnway.member.dto.JoinDTO;
 import com.learnway.member.dto.MemberUpdateDTO;
 import com.learnway.member.dto.TargetUniDTO;
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Controller
@@ -95,4 +98,13 @@ public class MemberController {
         }
         return "redirect:/loginOk"; // 수정 성공 시 loginOk 페이지로 리다이렉트
     }
+
+    // 전체 멤버 조회(어드민)
+    @GetMapping("/members")
+    public String showMembers(Model model) {
+        List<Member> members = memberService.findAllMembers();
+        model.addAttribute("members", members);
+        return "admin/members";
+    }
+
 }
