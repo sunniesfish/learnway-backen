@@ -51,7 +51,7 @@ public class ApiService {
         ChatMessage systemMessage = new ChatMessage();
         systemMessage.setRole("system");
         systemMessage.setContent("당신은 학습 조언 전문가입니다. 주어진 달성율은 학생이 직접 입력한 달성율입니다. 이를 바탕으로 주간 어떤 과목이 더 학습이 필요하고 앞으로의 학습 방향을 500자 이내로 조언해주세요.");
-        messages.add(systemMessage);
+        messages.add(systemMessage); 
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
