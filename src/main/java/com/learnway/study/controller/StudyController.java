@@ -88,7 +88,7 @@ public class StudyController {
 	      
 		int startPage = Math.max(1, studies.getNumber() + 1 - 4);
 		int endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
-		
+		 
 		model.addAttribute("startPage", startPage);
 		model.addAttribute("endPage", endPage);
 		model.addAttribute("list", studies);
