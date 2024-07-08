@@ -2,66 +2,6 @@
 @import "/css/consult/sidebarConsultantList.css";
 @import "/css/consult/sidebarReservationList.css";
 
-.exam__modal__form-group {
-    margin-bottom: 15px;
-}
-
-.exam__modal__form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.exam__modal__form-group input,
-.exam__modal__form-group select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.exam__modal__form-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.exam__modal__form-btn:hover {
-    background-color: #0056b3;
-}
-
-
-/* 모달 오버레이 */
-/* .exam__modal__overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-} */
-
-/* 모달 컨텐츠 */
-/* .exam__modal__content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    z-index: 1001;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 8px;
-} */
-
 
 
 .exam__container{
@@ -195,8 +135,8 @@
 }
 .exam__modal__form{
     position: fixed;
-    width: 40vw;
-    height: 60vh;
+    width: 35vw;
+    height: 40vh;
     top: 10vh;
     left: 0;
     right: 0;
@@ -210,5 +150,38 @@
     flex-direction: column;
 }
 .exam__modal__form>div{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     margin-bottom: 10px;
+    width: 80%;
+}
+.exam__modal__form>div>label{
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.exam__modal__form-title{
+    width: 100%;
+    font-size: 25px;
+    margin-bottom: 15px;
+}
+.exam__modal__type-date{
+    justify-content: space-evenly;
+}
+.exam__modal__type-date>div>label{
+    margin-right: 10px;
+    font-size: 20px;
+}
+.exam__modal__type-date>{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__modal__form-btn{
+    height: 35px;
+    width: 70px;
+    color: white;
+    margin: 10px;
+    text-align: center;
 }

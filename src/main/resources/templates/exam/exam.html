@@ -75,68 +75,45 @@
         </div>
     </div>
     
+    
+    
     <div class="exam__modal-register hidden">
         <div class="exam__modal__overlay clickable"></div>
-        <div class="exam__modal__content">
-            <form action="/exam/register" class="exam__modal__form" method="post">
-                <div class="exam__modal__form-group">
-                    <label for="exam__modal__form-name">시험 이름</label>
-                    <input type="text" id="exam__modal__form-name" name="examName" required/>
-                </div>
-                <div class="exam__modal__form-group">
-                    <label for="exam__modal__form-type">시험 종류</label>
-                    <select name="examTypeName" id="exam__modal__form-type">
-                        <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
-                    </select>
-                </div>
-                <div class="exam__modal__form-group">
-                    <label for="exam__modal__form-date">날짜</label>
-                    <input type="date" id="exam__modal__form-date" name="examDate" required/>
-                </div>
-                <div class="exam__modal__form-group">
-                    <label for="exam__modal__form-range">범위</label>
-                    <input type="text" id="exam__modal__form-range" name="examRange" required/>
-                </div>
-                <div class="exam__modal__form-group">
-                    <label for="exam__modal__form-memo">메모</label>
-                    <input type="text" id="exam__modal__form-memo" name="examMemo" />
-                </div>
-                <button class="exam__modal__form-btn clickable">등록</button>
-            </form>
-        </div>
-    </div>
-    
-    
-    <!-- <div class="exam__modal-register hidden">
-        <div class="exam__modal__overlay clickable"></div>
         <form action="/exam/register" class="exam__modal__form" method="post">
-            <div>
+            <div class="exam__modal__form-title modal-content   ">
+                <span class="modal-title modal-header">새 시험 등록</span>
+            </div>
+            <div class="exam__modal__name">
                 <label for="exam__modal__form-name">시험 이름</label>
                 <input type="text" id="exam__modal__form-name" name="examName" required/>
             </div>
-            <div>
-                <label for="exam__modal__form-type">시험 종류</label>
-                <label>
-                    <select name="examTypeName" id="exam__modal__form-type">
-                        <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
-                    </select>
-                </label>
+            <div class="exam__modal__type-date">
+                <div class="exam__modal__type">
+                    <label for="exam__modal__form-type">시험 종류</label>
+                    <label>
+                        <select name="examTypeName" id="exam__modal__form-type">
+                            <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div class="exam__modal__date">
+                    <label for="exam__modal__form-date">날짜</label>
+                    <input type="date" id="exam__modal__form-date" name="examDate" required/>
+                </div>
             </div>
-            <div>
-                <label for="exam__modal__form-date">날짜</label>
-                <input type="date" id="exam__modal__form-date" name="examDate" required/>
-            </div>
-            <div>
+            <div class="exam__modal__range">
                 <label for="exam__modal__form-range">범위</label>
                 <input type="text" id="exam__modal__form-range" name="examRange" required/>
             </div>
-            <div>
+            <div class="exam__modal__memo">
                 <label for="exam__modal__form-memo">메모</label>
                 <input type="text" id="exam__modal__form-memo" name="examMemo"  />
             </div>
-            <button class="exam__modal__form-btn clickable">등록</button>
+            <div class="exam__modal__btn-box modal-footer">
+                <button class="exam__modal__form-btn learnway-btn clickable btn btn-outline-secondary">등록</button>
+            </div>
         </form>
-    </div> -->
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
