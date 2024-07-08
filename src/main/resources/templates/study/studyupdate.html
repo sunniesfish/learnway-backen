@@ -1,20 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>게시글 수정</title>
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+    <style>
         #form-container {
             width: 80%;
             max-width: 800px;
@@ -24,6 +13,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto; /* 세로 스크롤 추가 */
             max-height: 80vh; /* 최대 높이 제한 */
+            margin: 20px auto;
         }
 
         #form-container form {
@@ -117,6 +107,88 @@
             background-color: #45a049;
         }
     </style>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
+</head>
+<body>
+<div th:replace="sidebar :: sidebar"></div>
+<div class="container content-wrapper">
+    <div id="form-container">
+        <form action="/studyupdate" method="post" enctype="multipart/form-data">
+            <input type="hidden" id="postid" name="postid" th:value="${postid}">
+            
+            <label for="title">제목:</label>
+            <input type="text" id="title" name="title" th:value="${study.title}">
+            
+            <label for="content">내용:</label>
+            <input type="text" id="content" name="content" th:value="${study.content}">
+            
+            <label for="startdate">시작일:</label>
+            <input type="date" id="startdate" name="startdate" th:value="${study.startdate}">
+            
+            <label for="enddate">종료일:</label>
+            <input type="date" id="enddate" name="enddate" th:value="${study.enddate}">
+            
+            <label for="roomname">채팅방 제목 수정:</label>
+            <button type="button" onclick="showPopup(event);">수정하기</button><br>
+            
+            <input type="hidden" name="roomname" id="roomname">
+            <input type="hidden" name="name" id="name">
+            <input type="hidden" name="roomId" id="roomId">
+            
+            <div class="mb-3">
+                <label for="hashtags">해시태그</label>
+                <input type="text" id="hashtags" placeholder="Enter로 추가해보세요.">
+                <div id="hashtags-container"></div>
+                <input type="hidden" id="tag" name="tag">
+            </div>
+            
+            <label>문제출제:</label>
+            <input type="radio" name="problem" value="0" onclick="toggleProblemDetails()"> 직접출제
+            <div id="problem-details">
+                <input type="radio" name="problemtype" value="1"> 직접출제
+                <input type="radio" name="problemtype" value="2"> 랜덤
+                <br>
+                <!-- 추가 필드 -->
+                <div class="mb-3">
+                    <label for="imgpath">이미지 파일 업로드:</label>
+                    <input type="file" id="imgpath" name="imgpath" multiple accept="image/*" onchange="previewImages(event)">
+                    <div id="image-preview"></div>
+                </div>
+                
+                <div id="additional-fields">
+                    <label for="correct">정답:</label>
+                    <input type="text" id="correct" name="correct">
+                    <br/>
+                    <label for="subject">과목:</label>
+                    <select id="subject" name="subject">
+                        <option value="과목">과목</option>
+                        <option value="국어">국어</option>
+                        <option value="영어">영어</option>
+                        <option value="수학">수학</option>
+                        <option value="사탐">사탐</option>
+                        <option value="과탐">과탐</option>
+                        <option value="기타">기타</option>
+                    </select>
+                    
+                    <label for="level">난이도:</label>
+                    <select id="level" name="level">
+                        <option value="난이도">난이도</option>
+                        <option value="상">상</option>
+                        <option value="중">중</option>
+                        <option value="하">하</option>
+                    </select>
+                </div>
+            </div>
+            
+            <input type="submit" value="작성">
+        </form>
+    </div>
+</div>
+
 <script>
     let lastCheckedRadio = null;
 
@@ -265,81 +337,13 @@
         });
     }
 </script>
-</head>
-<body>
-    <div id="form-container">
-        <form action="/studyupdate" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="postid" name="postid" th:value="${postid}">
-            <label for="title">제목:</label>
-            <input type="text" id="title" name="title" th:value="${study.title}">
-            
-            <label for="content">내용:</label>
-            <input type="text" id="content" name="content" th:value="${study.content}">
-            
-            <label for="startdate">시작일:</label>
-            <input type="date" id="startdate" name="startdate" th:value="${study.startdate}">
-            
-            <label for="enddate">종료일:</label>
-            <input type="date" id="enddate" name="enddate" th:value="${study.enddate}">
-            
-            <label for="roomname">채팅방 제목 수정:</label>
-            <button type="button" onclick="showPopup(event);">수정하기</button><br>
-            
-            <input type="hidden" name="roomname" id="roomname">
-            <input type="hidden" name="name" id="name">
-            <input type="hidden" name="roomId" id="roomId">
-            
-            <div class="mb-3">
-                <label for="hashtags">해시태그</label>
-                <input type="text" id="hashtags" placeholder="Enter로 추가해보세요.">
-                <div id="hashtags-container"></div>
-                <input type="hidden" id="tag" name="tag">
-            </div>
-            
-            <label>문제출제:</label>
-            <input type="radio" name="problem" value="0" onclick="toggleProblemDetails()"> 직접출제
-            <div id="problem-details">
-                <input type="radio" name="problemtype" value="1"> 직접출제
-                <input type="radio" name="problemtype" value="2"> 랜덤
-                <br>
-            <!--     <input type="radio" name="isjoin" value="1"> 참여가능
-                <input type="radio" name="isjoin" value="0"> 참여불가 -->
-                <br>
-                <div class="mb-3">
-                    <label for="imgpath">이미지 파일 업로드:</label>
-                    <input type="file" id="imgpath" name="imgpath" multiple accept="image/*" onchange="previewImages(event)">
-                    <div id="image-preview"></div>
-                </div>
-                
-                <div id="additional-fields">
-                    <label for="correct">정답:</label>
-                    <input type="text" id="correct" name="correct">
-                    <br/>
-                    <label for="subject">과목:</label>
-                    <select id="subject" name="subject">
-                        <option value="과목">과목</option>
-                        <option value="국어">국어</option>
-                        <option value="영어">영어</option>
-                        <option value="수학">수학</option>
-                        <option value="사탐">사탐</option>
-                        <option value="과탐">과탐</option>
-                        <option value="기타">기타</option>
-                    </select>
-                    
-                    <label for="level">난이도:</label>
-                    <select id="level" name="level">
-                        <option value="난이도">난이도</option>
-                        <option value="상">상</option>
-                        <option value="중">중</option>
-                        <option value="하">하</option>
-                    </select>
-                </div>
-            </div>
-            
-            <input type="submit" value="작성">
-        </form>
-    </div>
 
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/consult/consultationReservation.js"></script>
+<script src="/js/consult/reservationList.js"></script>
 </body>
 </html>

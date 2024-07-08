@@ -99,7 +99,12 @@ public class StudyService {
 		int postid = study.getPostid();
 		
 		//채팅방 제목 수정 (수정중)
-		studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
+		if(chatRoomDto.getRoomname() !=null && !chatRoomDto.getRoomname().isEmpty()) {
+			System.out.println(chatRoomDto.getName());
+			System.out.println(chatRoomDto.getRoomname());
+			System.out.println("--채팅방생성--");
+			studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
+		}
 		//태그값 수정
 		studyTagService.deleteTag(postid);
 		studyTagService.createTag(studyTagDto, study,postid);
