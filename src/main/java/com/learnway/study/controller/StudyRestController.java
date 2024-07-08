@@ -42,14 +42,14 @@ public class StudyRestController {
 	
 	
 	@PostMapping("/member/correct")
-	public void correct(@RequestBody CorrectCheckDto dto,Principal principal) {
+	public boolean correct(@RequestBody CorrectCheckDto dto,Principal principal) {
 		System.out.println("진입");
 		System.out.println(dto.getStatus() + "상태값");
 		System.out.println(dto.getRoomId() + "채팅방번호");
 		System.out.println(dto.getPostId() + "게시글번호");
 		
 		studyCorrectService.updateStatus(dto,principal);
-		
+		return true;
 	}
 	
 	
