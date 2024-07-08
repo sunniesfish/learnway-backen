@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .content {
+            width: 80%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+        }
+        
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .date-inputs > div {
+            flex: 1;
+        }
+        
+        .hashtag-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hashtags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .hashtag {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+        }
+        
+        .problem-checkbox {
+            margin-right: 5px;
+        }
+        
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+    </style>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
+</head>
+<body>
+    <div th:replace="sidebar :: sidebar"></div>
+    
+    <div class="content">
+        <div class="form-container">
+            <h1>게시글 수정</h1>
+            <form action="/studyupdate" method="post" enctype="multipart/form-data">
+                <input type="hidden" id="postid" name="postid" th:value="${postid}">
+                
+                <div class="form-group">
+                    <label for="title">제목:</label>
+                    <input type="text" id="title" name="title" th:value="${study.title}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" rows="4" th:text="${study.content}"></textarea>
+                </div>
+                
+                <div class="form-group date-inputs">
+                    <div>
+                        <label for="startdate">시작일:</label>
+                        <input type="date" id="startdate" name="startdate" th:value="${study.startdate}">
+                    </div>
+                    <div>
+                        <label for="enddate">종료일:</label>
+                        <input type="date" id="enddate" name="enddate" th:value="${study.enddate}">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hashtags">해시태그:</label>
+                    <div class="hashtag-input">
+                        <input type="text" id="hashtags" placeholder="Enter로 추가해보세요.">
+                    </div>
+                    <div id="hashtags-container" class="hashtags-container"></div>
+                    <input type="hidden" id="tag" name="tag">
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" class="problem-checkbox" onclick="toggleProblemDetails()"> 문제출제
+                    </label>
+                </div>
+                
+                <div id="problem-details">
+                <input type="radio" name="problemtype" value="1"> 직접출제
+                <input type="radio" name="problemtype" value="2"> 랜덤
+                <br>
+                <!-- 추가 필드 -->
+                <div class="mb-3">
+                    <label for="imgpath">이미지 파일 업로드:</label>
+                    <input type="file" id="imgpath" name="imgpath" multiple accept="image/*" onchange="previewImages(event)">
+                    <div id="image-preview"></div>
+                </div>
+                
+                <div id="additional-fields">
+                    <label for="correct">정답:</label>
+                    <input type="text" id="correct" name="correct">
+                    <br/>
+                    <label for="subject">과목:</label>
+                    <select id="subject" name="subject">
+                        <option value="과목">과목</option>
+                        <option value="국어">국어</option>
+                        <option value="영어">영어</option>
+                        <option value="수학">수학</option>
+                        <option value="사탐">사탐</option>
+                        <option value="과탐">과탐</option>
+                        <option value="기타">기타</option>
+                    </select>
+                    
+                    <label for="level">난이도:</label>
+                    <select id="level" name="level">
+                        <option value="난이도">난이도</option>
+                        <option value="상">상</option>
+                        <option value="중">중</option>
+                        <option value="하">하</option>
+                    </select>
+                </div>
+            </div>
+                <button type="submit" class="save-btn">수정</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleProblemDetails() {
+            var details = document.getElementById('problem-details');
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+
+        let lastCheckedRadio = null;
+
+        function showPopup(event) {
+            event.preventDefault();
+            var popup = window.open('/createRoom', 'popup', 'width=600,height=400');
+            popup.onunload = function() {
+                if (popup.closed) {
+                    alert("채팅방 수정 완료");
+                    var roomname = popup.document.getElementById('roomname').value;
+                    document.getElementById('roomname').value = roomname;
+                }
+            }
+        }
+
+        function previewImages(event) {
+            var preview = document.getElementById('image-preview');
+            preview.innerHTML = ''; // 이미지 미리보기를 업데이트하기 전에 기존 내용을 지웁니다.
+
+            var files = event.target.files; // 사용자가 선택한 파일들을 가져옵니다.
+
+            // 모든 파일에 대해 루프를 실행하여 이미지 미리보기를 추가합니다.
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader(); // 파일을 읽기 위한 FileReader 객체를 생성합니다.
+
+                // 파일 읽기가 완료되면 onload 이벤트 핸들러가 실행됩니다.
+                reader.onload = function(e) {
+                    var img = document.createElement('img'); // 이미지 엘리먼트를 생성합니다.
+                    img.src = e.target.result; // 읽은 이미지 데이터를 이미지 엘리먼트의 소스로 설정합니다.
+                    img.style.width = '200px'; // 이미지 너비 설정
+                    img.style.height = '200px'; // 이미지 높이 설정
+                    preview.appendChild(img); // 이미지 미리보기 컨테이너에 이미지를 추가합니다.
+                }
+
+                // 파일을 읽어들입니다.
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function slideDown(element, duration = 500) {
+            element.style.display = 'block';
+            const height = element.scrollHeight;
+            element.style.overflow = 'hidden';
+            element.style.maxHeight = '0';
+            element.style.transition = `max-height ${duration}ms ease-out`;
+
+            requestAnimationFrame(() => {
+                element.style.maxHeight = `${height}px`;
+            });
+        }
+
+        function slideUp(element, duration = 500) {
+            const height = element.scrollHeight;
+            element.style.maxHeight = `${height}px`;
+            element.style.overflow = 'hidden';
+            element.style.transition = `max-height ${duration}ms ease-out`;
+
+            requestAnimationFrame(() => {
+                element.style.maxHeight = '0';
+            });
+
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, duration);
+        }
+
+        function toggleProblemDetails() {
+            const details = document.getElementById('problem-details');
+            const problemRadio = document.querySelector('input[name="problem"]');
+
+            if (lastCheckedRadio === problemRadio) {
+                problemRadio.checked = false;
+                slideUp(details);
+                lastCheckedRadio = null;
+            } else {
+                problemRadio.checked = true;
+                slideDown(details);
+                lastCheckedRadio = problemRadio;
+            }
+        }
+
+        window.onload = function() {
+            var today = new Date().toISOString().split('T')[0];
+            var startdate = document.getElementById("startdate");
+            var enddate = document.getElementById("enddate");
+
+            startdate.setAttribute('min', today);
+            enddate.setAttribute('min', today);
+
+            startdate.addEventListener('change', function() {
+                var selectedDate = startdate.value;
+                enddate.setAttribute('min', selectedDate);
+                if (enddate.value < selectedDate) {
+                    enddate.value = selectedDate;
+                }
+            });
+
+            /* 해시태그 복붙 */
+            const hashtagsInput = document.getElementById("hashtags");
+            const hashtagsContainer = document.getElementById("hashtags-container");
+            const hiddenHashtagsInput = document.getElementById("tag");
+
+            let hashtags = [];
+
+            function addHashtag(tag) {
+                tag = tag.replace(/[\[\]]/g, '').trim();
+                if (tag && !hashtags.includes(tag)) {
+                    const span = document.createElement("span");
+                    span.innerText = "#" + tag;
+                    span.classList.add("hashtag");
+
+                    const removeButton = document.createElement("button");
+                    removeButton.innerText = "x";
+                    removeButton.classList.add("remove-button");
+                    removeButton.addEventListener("click", () => {
+                        hashtagsContainer.removeChild(span);
+                        hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
+                        hiddenHashtagsInput.value = hashtags.join(",");
+                    });
+
+                    span.appendChild(removeButton);
+                    hashtagsContainer.appendChild(span);
+                    hashtags.push("#" + tag);
+                    hiddenHashtagsInput.value = hashtags.join(",");
+                }
+            }
+
+            hashtagsInput.addEventListener("keydown", (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const tag = hashtagsInput.value.trim();
+                    if (tag) {
+                        addHashtag(tag);
+                        hashtagsInput.value = "";
+                    }
+                }
+            });
+
+            document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                input.addEventListener("keydown", (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                    }
+                });
+            });
+        }
+    </script>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="/js/consult/consultationReservation.js"></script>
+<script src="/js/consult/reservationList.js"></script>
+</body>
+</html>

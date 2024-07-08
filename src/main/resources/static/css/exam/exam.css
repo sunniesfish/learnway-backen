@@ -1,0 +1,187 @@
+@import "/css/globalstyle.css";
+@import "/css/consult/sidebarConsultantList.css";
+@import "/css/consult/sidebarReservationList.css";
+
+
+
+.exam__container{
+    width: 100%;
+    max-width: 800px;
+    min-height: 600px;
+    height: auto;
+    margin: 0 5px 0 5px;
+}
+.exam__container__btn-container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.exam__container__btn-container>button{
+    height: 35px;
+    width: 60px;
+    color: white;
+} 
+
+.exam__item__label{
+    margin-bottom: 10px;
+
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+
+    background-color: var(--learnwayBlack);
+    color: white;
+}
+.exam__item__label-box, .exam__item__info-box{
+    width: 90%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__item__label-box, .exam__item__info-box>div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__item__label-space, .exam__item__delete-btn-container{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.exam__item{
+    width: 100%;
+    height: 30px;
+    margin-bottom: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 15px;
+    
+    transition: background-color .1s ease-in-out;
+}
+.exam__item:hover{
+    background-color: var(--hoverColor);
+}
+
+.exam__item__type{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 15%;
+    height: 100%;
+    min-width: 100px;
+    text-overflow: ellipsis;
+}
+.exam__item__name{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 100%;
+    min-width: 200px;
+    text-overflow: ellipsis;
+}
+.exam__item__date{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    height: 100%;
+    min-width: 200px;
+    text-overflow: ellipsis;
+}
+.exam__item__delete-btn{
+    border: none;
+    background-color: transparent;
+}
+.exam__item__delete-btn:hover{
+    outline: none;
+}
+.exam__item__delete-btn>svg{
+    width: 15px;
+    fill: var(--learnwayBlack);
+    transition: fill .1 ease-in-out;
+}
+.exam__item__delete-btn>svg:hover{
+    fill: var(--learnwayRed);
+}
+
+
+.pagination{
+    margin: 30px;
+}
+
+.exam__modal-register{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.exam__modal__overlay{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+.exam__modal__form{
+    position: fixed;
+    width: 35vw;
+    height: 40vh;
+    top: 10vh;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.exam__modal__form>div{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 80%;
+}
+.exam__modal__form>div>label{
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.exam__modal__form-title{
+    width: 100%;
+    font-size: 25px;
+    margin-bottom: 15px;
+}
+.exam__modal__type-date{
+    justify-content: space-evenly;
+}
+.exam__modal__type-date>div>label{
+    margin-right: 10px;
+    font-size: 20px;
+}
+.exam__modal__type-date>{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam__modal__form-btn{
+    height: 35px;
+    width: 70px;
+    color: white;
+    margin: 10px;
+    text-align: center;
+}

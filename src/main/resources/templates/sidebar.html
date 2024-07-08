@@ -1,0 +1,107 @@
+<div th:fragment="sidebar">
+    <div id="sidebar">
+        <a href="/" class="sidebar-header d-flex justify-content-center">
+            <img src="/img/mainLogo.png" alt="이미지 설명" style="max-width: 150px; height: auto;">
+        </a>
+        <hr>
+        <div class="sidebar-item">
+            <div class="d-flex align-items-center d-flex justify-content-center">
+                <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
+                <span class="ml-4" th:text="${#authentication.principal.name}"></span>
+            </div>
+            <div class="text-center mt-2">
+                <a href="/member/update" class="text-white mr-2"><i class="fas fa-cog"></i>정보수정</a>
+                <a href="/logout" class="text-white">로그아웃</a>
+            </div>
+            <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+                <div class="text-center mt-2">
+                    <a href="/admin/" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
+                </div>
+            </div>
+            <div th:if="${#authorization.expression('hasRole(''USER'')')}">
+                <div class="text-center mt-2">
+                    <p class="text-info">
+                    <i class="fas fa-user"></i>일반 유저
+                    </p>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="sidebar-item">
+            📊 스케줄 관리
+            <div class="submenu">
+                <a href="/schedule/weekSchedule">주간 관리</a>
+                <a href="#">월간 관리</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            📝 성적 관리
+            <div class="submenu">
+                <a href="/exam/list/1">성적 입력</a>
+                <a href="/score/">성적 비교</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            👥 커뮤니티
+            <div class="submenu">
+                <a href="/studylist">커뮤니티</a>
+                <a href="/learnway/chat">스터디 채팅방</a>
+            </div>
+        </div>
+        <div class="sidebar-item">
+            💬 상담하기
+            <div class="submenu">
+                <a href="#" class="consult-link">상담예약</a>
+                <a href="#" class="reservationList-link">예약리스트</a>
+            </div>
+        </div>
+        <div class="notice">
+        <a href="/notice/noticeList">공지사항</a>
+        </div>
+        <button id="empt" name="empt" class="btn">💬 미정</button>
+
+        <!-- 상담예약 모달 구조 -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 class="modalH2">상담사 리스트</h2>
+                <div id="consultantList">
+                    <!-- 상담사 리스트 항목들 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 예약리스트 모달 구조 -->
+        <div class="modal fade" id="reservationModal" tabindex="-1" role="dialog" aria-labelledby="reservationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reservationModalLabel">화상상담 예약리스트</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h2 class="reservationModalH2">ReservationList</h2>
+                        <table class="table table-striped room-list">
+                            <thead>
+                                <tr>
+                                    <th>예약상담</th>
+                                    <th>👤 상담사</th>
+                                    <th>⏰ 예약시간</th>
+                                    <th>화상상담</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservationList">
+                                <!-- 예약 리스트가 여기에 동적으로 추가됩니다. -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

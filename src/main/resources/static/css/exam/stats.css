@@ -1,0 +1,12 @@
+@import "../globalstyle.css";
+@import "../consult/sidebarConsultantList.css";
+@import "../consult/sidebarReservationList.css";
+
+.stats__container{
+    max-width: 1000px;
+    width: 100%;
+}
+
+.chart {
+    width: 100%;
+}

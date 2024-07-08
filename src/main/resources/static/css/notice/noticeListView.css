@@ -1,0 +1,7 @@
+@import "../globalstyle.css";
+@import "../consult/sidebarConsultantList.css";
+@import "../consult/sidebarReservationList.css";
+
+.notice-priority {
+      background-color: #f8f9fa;
+    }
