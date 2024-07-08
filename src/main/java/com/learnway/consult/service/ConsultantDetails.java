@@ -23,6 +23,8 @@ public class ConsultantDetails implements UserDetails {
         return consultant.getId();
     }
 
+    public String getName(){ return consultant.getName(); }
+
     public ConsultantDetails(Consultant consultant) {
         this.consultant = consultant;
     }

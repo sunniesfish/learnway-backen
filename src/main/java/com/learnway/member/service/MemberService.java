@@ -1,6 +1,8 @@
 package com.learnway.member.service;
 
 import com.learnway.consult.domain.ConsultantRepository;
+import com.learnway.global.exceptions.S3Exception;
+import com.learnway.global.service.S3ImageService; // 추가된 부분
 import com.learnway.member.domain.*;
 import com.learnway.member.dto.JoinDTO;
 import com.learnway.member.dto.MemberUpdateDTO;
@@ -14,9 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -31,6 +30,7 @@ public class MemberService {
     private final ConsultantRepository consultantRepository;
     private final TargetUniRepository targetUniRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화 저장
+    private final S3ImageService s3ImageService; // 추가된 부분
 
     @Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
     private String uploadPath;
@@ -54,8 +54,14 @@ public class MemberService {
         // 이미지 저장 후 경로 저장
         String imagePath;
         try {
-            imagePath = saveImage(joinDTO.getImage());
-        } catch (IOException e) {
+            if (joinDTO.getImage() != null && !joinDTO.getImage().isEmpty()) {
+                // 새로운 S3 업로드 로직 추가
+                imagePath = s3ImageService.upload(joinDTO.getImage(), "images/member/");
+            } else {
+                // 이미지가 없을 경우 기본 이미지 경로 설정
+                imagePath = "/img/member/member-default.png";
+            }
+        } catch (S3Exception e) {
             throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
         }
         Member member = Member.builder()
@@ -67,6 +73,7 @@ public class MemberService {
                 .memberTelecom(MemberTelecom.valueOf(joinDTO.getTelecom())) // 통신사 : ENUM
                 .memberRole(MemberRole.ROLE_USER)                           // 멤버 권한 : ENUM
                 .memberEmail(joinDTO.getEmail())             // 이메일
+                .memberGender(MemberGender.valueOf(joinDTO.getGender()))    // 성별 : ENUM
                 .memberSchool(joinDTO.getSchool())           // 학교
                 .memberGrade(joinDTO.getGrade())             // 학년
                 .memberAddress(joinDTO.getAddress())         // 주소
@@ -111,6 +118,7 @@ public class MemberService {
                 .memberPhone(member.getMemberPhone())
                 .memberTelecom(member.getMemberTelecom().name())
                 .memberEmail(member.getMemberEmail())
+                .memberGender(member.getMemberGender().name())
                 .memberSchool(member.getMemberSchool())
                 .memberGrade(member.getMemberGrade())
                 .memberAddress(member.getMemberAddress())
@@ -138,9 +146,11 @@ public class MemberService {
         if (memberUpdateDTO.getNewMemberImage() != null && !memberUpdateDTO.getNewMemberImage().isEmpty()) {
             try {
                 String oldImagePath = imagePath; // 이전 이미지 경로 저장
-                imagePath = saveImage(memberUpdateDTO.getNewMemberImage());
-                deleteImage(oldImagePath); // 새로운 이미지 저장 후 이전 이미지 삭제
-            } catch (IOException e) {
+                // 새로운 S3 업로드 로직 추가
+                imagePath = s3ImageService.upload(memberUpdateDTO.getNewMemberImage(), "images/member/");
+                // 새로운 S3 삭제 로직 추가
+                s3ImageService.deleteImageFromS3(oldImagePath);
+            } catch (S3Exception e) {
                 throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
             }
         }
@@ -150,6 +160,7 @@ public class MemberService {
                 .memberPhone(memberUpdateDTO.getMemberPhone())
                 .memberTelecom(MemberTelecom.valueOf(memberUpdateDTO.getMemberTelecom()))
                 .memberEmail(memberUpdateDTO.getMemberEmail())
+                .memberGender(MemberGender.valueOf(memberUpdateDTO.getMemberGender()))
                 .memberSchool(memberUpdateDTO.getMemberSchool())
                 .memberGrade(memberUpdateDTO.getMemberGrade())
                 .memberAddress(memberUpdateDTO.getMemberAddress())
@@ -183,59 +194,50 @@ public class MemberService {
                 new UsernamePasswordAuthenticationToken(updatedUserDetails, null, updatedUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+// 해당 부분은 S3 이용 안할 경우 사용되는 이미지 관련 메서드
+    // // 이미지 생성 메서드
+    // private String saveImage(MultipartFile image) throws IOException {
+    //     if (image == null || image.isEmpty()) {
+    //         return "/img/member/member-default.png"; // 기본 이미지 경로
+    //     }
+    //     // 중복 문제 해결 : 현재시간을 파일 이름에 추가
+    //     String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+    //     Path imagePath = Paths.get(uploadPath, filename);
+    //     Files.createDirectories(imagePath.getParent());
+    //     Files.copy(image.getInputStream(), imagePath);
 
-    // 이미지 생성 메서드
-    private String saveImage(MultipartFile image) throws IOException {
-        if (image == null || image.isEmpty()) {
-            return "/img/member/member-default.png"; // 기본 이미지 경로
-        }
-        // 중복 문제 해결 : 현재시간을 파일 이름에 추가
-        String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path imagePath = Paths.get(uploadPath, filename);
-        Files.createDirectories(imagePath.getParent());
-        Files.copy(image.getInputStream(), imagePath);
+    //     return filename;
+    // }
 
-        return filename;
+    // // 이미지 삭제 메서드
+    // private void deleteImage(String imagePath) {
+    //     if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
+    //         try {
+    //             Path filePath = Paths.get(uploadPath).resolve(imagePath.replace("/uploads/", ""));
+    //             Files.deleteIfExists(filePath);
+    //         } catch (IOException e) {
+    //             e.printStackTrace();
+    //         }
+    //     }
+    // }
+
+    // 전체 멤버 조회 (어드민)
+    public List<Member> findAllMembers() {
+        return memberRepository.findAll();
     }
 
-    // 이미지 삭제 메서드
-    private void deleteImage(String imagePath) {
-        if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
-            try {
-                Path filePath = Paths.get(uploadPath).resolve(imagePath.replace("/uploads/", ""));
-                Files.deleteIfExists(filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    // 멤버 검색 (어드민)
+    public List<Member> searchMembersByName(String name) {
+        return memberRepository.findByMemberNameContainingIgnoreCase(name);
     }
 
-    /*// 이미지 생성 메서드
-    private String saveImage(MultipartFile image) throws IOException {
-        if (image == null || image.isEmpty()) {
-            return "/img/member/member-default.png"; // 기본 이미지 경로
-        }
-        // 중복 문제 해결 : 현재시간을 파일 이름에 추가
-        String filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        Path imagePath = Paths.get(uploadPath, filename);
-        Files.createDirectories(imagePath.getParent());
-        Files.copy(image.getInputStream(), imagePath);
-
-        return "/img/member/uploads/" + filename;
+    // 멤버 비고(노트) 업데이트 (어드민)
+    public void updateMemberNote(Long id, String note) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        member = member.toBuilder()
+                .memberNote(note)
+                .build();
+        memberRepository.save(member);
     }
-
-    // 이미지 삭제 메서드
-    private void deleteImage(String imagePath) {
-        if (imagePath != null && !imagePath.equals("/img/member/member-default.png")) {
-            try {
-                // imagePath에서 기본 경로를 제거하여 실제 파일 경로 생성
-                Path filePath = Paths.get(uploadPath).resolve(imagePath.replace("/img/member/uploads/", ""));
-                Files.deleteIfExists(filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
-
-
 }

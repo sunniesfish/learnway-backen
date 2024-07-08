@@ -8,17 +8,8 @@
     margin: 0 auto;
     margin-top: 20px;
 }
-
-/* 수정 폼 스타일 */
-.main__content {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.container {
-    flex: 1 1 auto;
-    overflow-y: auto;
+.update-content {
+    flex: 1;
+    overflow-y: auto; /* 스크롤바를 업데이트 컨텐츠 안에만 추가 */
     padding: 20px;
 }

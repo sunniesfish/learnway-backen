@@ -3,14 +3,12 @@ package com.learnway.global.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 // Main 기준 정보 엔티티 클래스 / 학업 구분 : ex. 학교, 인강, 학원, 자습 리포지토리 인터페이스
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
