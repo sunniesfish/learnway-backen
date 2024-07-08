@@ -11,3 +11,14 @@ function handleRegBtnClick(event){
         examRegModal.classList.add("hidden")
     });
 }
+
+const examToggleDelBtn = document.querySelector(".exam__btn-delete");
+const examDelBtns = document.querySelectorAll(".exam__item__delete-btn");
+examToggleDelBtn.addEventListener("click",handleToggleDelClick);
+
+function handleToggleDelClick(event) {
+    event.preventDefault();
+    examDelBtns.forEach(btn => {
+        btn.classList.toggle("hidden");
+    });
+}
