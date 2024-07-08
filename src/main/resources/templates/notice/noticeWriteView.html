@@ -17,23 +17,28 @@
 <div class="main__content">
   <!-- 이곳에 작업합시다 -->
   <div class="container mt-5">
-    <h2>공지사항 작성</h2>
     <form action="/notice/write" method="post" enctype="multipart/form-data">
-      <div class="form-group row">
-        <div class="col-10">
-          <label for="noticeTitle">제목</label>
-          <input type="text" class="form-control" id="noticeTitle" name="noticeTitle" required>
-        </div>
-        <div class="col-2">
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="priority" name="priority">
-            <label class="form-check-label" for="priority">공지</label>
+		<input type="hidden" name="memberId" th:value="${#authentication.getPrincipal().getUsername()}" sec:authorize="isAuthenticated()">      
+		<div class="form-group row align-items-center">
+          <div class="col-2">
+              <select class="form-control" id="category" name="category" required>
+                  <option value="" selected>카테고리 선택</option>
+                  <option value="점검">점검</option>
+                  <option value="서비스">서비스</option>
+              </select>
           </div>
-        </div>
+          <div class="col-4 d-flex align-items-end">
+              <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="priority" name="priority" >
+                  <label class="form-check-label" for="priority">공지</label>
+              </div>
+          </div>
       </div>
       <div class="form-group">
-        <label for="noticeContent">내용</label>
-        <textarea class="form-control" id="noticeContent" name="noticeContent" rows="10" required></textarea>
+          <input type="text" class="form-control" id="noticeTitle" name="noticeTitle" placeholder="제목" required>
+      </div>
+      <div class="form-group">
+        <textarea class="form-control" id="noticeContent" name="noticeContent" rows="10" placeholder="내용" required></textarea>
       </div>
       <div class="form-group">
         <label for="comFile">첨부 파일</label>

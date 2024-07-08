@@ -23,4 +23,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 			+ "WHERE notice_id = (SELECT next_id FROM (SELECT notice_id, LEAD(notice_id, 1, -1) OVER(ORDER BY notice_id) AS next_id FROM notice) B "
 			+ "WHERE notice_id = :id)", nativeQuery = true)
 	Notice findNextNotice(@Param("id") Long id);
+	
+	Page<Notice> findByNoticeTitleContainingOrderByCreateDateDesc(Pageable pageable,String keyword);
+	Page<Notice> findByCategoryContainingOrderByCreateDateDesc(String category, Pageable pageable);
 }

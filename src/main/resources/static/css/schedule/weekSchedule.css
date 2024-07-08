@@ -129,9 +129,6 @@
 
 /* 전체 캘린더 테두리 스타일 */
 .fc-scrollgrid {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    border: 1px solid #666;
-    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -148,7 +145,5 @@
     font-weight: bold;
     text-align: center;
     padding: 10px;
-    border-bottom: 2px solid #ddd;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
