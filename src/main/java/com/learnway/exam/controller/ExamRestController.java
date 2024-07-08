@@ -27,7 +27,7 @@ public class ExamRestController {
     * 시험 상세 정보 가져오기
     * */
     @GetMapping("/{examId}")
-    public ResponseEntity<Exam> getExam(@PathVariable Long examId, @AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<Exam> getExam(@PathVariable("examId") Long examId, @AuthenticationPrincipal CustomUserDetails userDetails){
 
         //getId
         Long memId = userDetails.getMemberId();
