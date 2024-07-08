@@ -3,9 +3,6 @@ name: Deploy to AWS
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
 env:
   PROJECT_NAME: aselcni
   BUCKET_NAME: learnway-bucket
