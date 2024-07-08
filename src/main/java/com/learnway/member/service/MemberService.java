@@ -7,12 +7,13 @@ import com.learnway.member.domain.*;
 import com.learnway.member.dto.JoinDTO;
 import com.learnway.member.dto.MemberUpdateDTO;
 import com.learnway.member.dto.TargetUniDTO;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 // 멤버 관련 서비스 클래스
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -31,8 +32,8 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화 저장
     private final S3ImageService s3ImageService; // 추가된 부분
 
-    //@Value("${upload.path}")/// application.properties 에 경로 명시한 부분 가져옴/
-    private final String uploadPath = "";
+    @Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
+    private String uploadPath;
 
     // ID 중복 체크 (컨설턴트까지 같이 비교)
     public boolean isUsernameTaken(String username) {
