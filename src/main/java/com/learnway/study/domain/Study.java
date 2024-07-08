@@ -89,9 +89,4 @@ public class Study {
 	this.chatroomCount = this.chatroom != null ? this.chatroom.size() : 0;
 	    }
 	
-	
-	
-	
-	
-	
 }

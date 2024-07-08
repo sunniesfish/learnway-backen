@@ -1,6 +1,7 @@
 package com.learnway.study.controller;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +73,30 @@ public class StudyController {
 
 	    return "study/studylist";
 	}
+	
+	
+	@PostMapping("/studylist/search")
+	public String studyListSearch(@PageableDefault(size = 7) Pageable pageable, Model model,
+									@ModelAttribute StudyDto dto)  {
+		
+		
+		 int[] detailSearchArray = Arrays.stream(dto.getDetailSearch().split(",")).mapToInt(Integer::parseInt).toArray();
+	        // 변환된 배열을 dto에 설정
+	      dto.setDetailSearchArray(detailSearchArray);
+		
+	      Page<Study> studies = studyPostService.boardSearchList(dto,pageable);
+	      
+		int startPage = Math.max(1, studies.getNumber() + 1 - 4);
+		int endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
+		
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+		model.addAttribute("list", studies);
+		
+		return "study/studySearchList";
+	}
+	
+	
 
 	
 	@GetMapping(value="/studyadd")

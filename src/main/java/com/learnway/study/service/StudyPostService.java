@@ -2,6 +2,8 @@ package com.learnway.study.service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +30,7 @@ public class StudyPostService {
         return studyRepository.findAll(Sort.by(Sort.Direction.DESC,"postid"));
     }
 
-	
+	//게시글 전체검색 메서드
 	public Page<Study> getBoardList(Pageable pageable) {
         Sort sort = Sort.by(Sort.Direction.DESC, "postid");
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -36,7 +38,35 @@ public class StudyPostService {
 
         return studies;
     }
-	
+	//게시글 상세검색 메서드
+	 public Page<Study> boardSearchList(StudyDto dto, Pageable pageable) {
+	        // title로 Study 리스트 검색
+	        List<Study> list = studyRepository.findByTitle(dto.getTitle());
+	        int[] detail = dto.getDetailSearchArray();
+
+	        // Study 리스트에서 postid 값만 추출
+	        List<Integer> postIds = list.stream()
+	                                    .map(Study::getPostid)
+	                                    .collect(Collectors.toList());
+
+	        // detail 배열과 postIds 리스트의 중복값 찾기
+	        List<Integer> duplicates = IntStream.of(detail)
+	                                            .boxed()
+	                                            .filter(postIds::contains)
+	                                            .collect(Collectors.toList());
+
+	        // 중복값 출력 (디버깅 또는 로깅용)
+	        System.out.println("중복된 값: " + duplicates);
+
+	        // 중복된 postid를 가진 Study 엔티티 페이징 처리하여 반환
+	        if (duplicates.isEmpty()) {
+	            return Page.empty(pageable);
+	        } else {
+	            Sort sort = Sort.by(Sort.Direction.DESC, "postid");
+	            Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+	            return studyRepository.findByPostidIn(duplicates, sortedPageable);
+	        }
+	    }
 	
 	//게시글 작성(게시글,지도,스터디채팅방,태그,문제 트랜젝션처리)
 	//현재메서드는 게시글작성 및  return 값으로는 작성중인 potsId값 반환

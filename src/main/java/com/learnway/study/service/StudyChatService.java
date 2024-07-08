@@ -178,6 +178,10 @@ public class StudyChatService {
 	            System.out.println("Post IDs: " + postIds);
 	            return postIds;
 	            }
+		 else if(dto.getRoomCheck() == 0) {
+			 List<Integer> postIds = chatRoomRepository.findStudyPostIdsWithoutChatRooms();
+			 return postIds;
+		 }
 		 return List.of();
 	}
 }

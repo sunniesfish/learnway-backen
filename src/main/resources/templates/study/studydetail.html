@@ -193,6 +193,8 @@ $(document).ready(function() {
     loadReplyList(); // 페이지 로드 시 기존 댓글 목록 불러오기
 }); 
 
+
+/* 정답체크 js */
 function correct_ck() {
     $('#correct_ck').click(function() {
         var status = null;
@@ -238,6 +240,8 @@ function correct_ck() {
     });
 }
 
+
+
 /* 댓글저장 ajax */
 function addReply() {
     $('#addReplyButton').click(function() { // 댓글 추가 버튼 클릭 시
@@ -268,6 +272,8 @@ function addReply() {
     });
 }
 
+
+/*  댓글 불러오기  */
 function loadReplyList() {
     var postId = $('#postid').val();
     $.ajax({
