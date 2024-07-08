@@ -168,4 +168,16 @@ public class StudyChatService {
 			
 			
 	}
+	
+	
+	//채팅방 값에따른 조회값 return
+	public List<Integer> searchChatStudy(ChatRoomDto dto) {
+		
+		 if(dto.getRoomCheck() == 1) {
+	            List<Integer> postIds = chatRoomRepository.findAllPostIds();
+	            System.out.println("Post IDs: " + postIds);
+	            return postIds;
+	            }
+		 return List.of();
+	}
 }

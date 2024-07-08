@@ -1,7 +1,11 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.sql.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +64,12 @@ public class StudyService {
 		int postid = study.getPostid();
 		
 		//채팅방 생성
+		if(chatRoomDto.getRoomname() !=null && !chatRoomDto.getRoomname().isEmpty()) {
+			System.out.println(chatRoomDto.getName());
+			System.out.println(chatRoomDto.getRoomname());
+			System.out.println("--채팅방생성--");
 		studyChatService.chatRoomCreate(chatRoomDto, study,principal);
+		}
 		//태그값 저장
 		studyTagService.createTag(studyTagDto, study);
 		//문제 저장
@@ -90,9 +99,15 @@ public class StudyService {
 		int postid = study.getPostid();
 		
 		//채팅방 제목 수정 (수정중)
-		studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
+		if(chatRoomDto.getRoomname() !=null && !chatRoomDto.getRoomname().isEmpty()) {
+			System.out.println(chatRoomDto.getName());
+			System.out.println(chatRoomDto.getRoomname());
+			System.out.println("--채팅방생성--");
+			studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
+		}
 		//태그값 수정
-		studyTagService.updateTag(studyTagDto, study,postid);
+		studyTagService.deleteTag(postid);
+		studyTagService.createTag(studyTagDto, study,postid);
 		
 		//문제 수정
 		int problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
@@ -104,17 +119,42 @@ public class StudyService {
 	
 //	게시글 작성자 확인 메서드
 //  postId에 대한 member_id와 principal의 member_id 값일치 확인
-	public boolean boardCheck(int postId,Principal principal) {
-		
-		Member member = memberRepository.findByMemberId(principal.getName())
-	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
-		int memberId =member.getId().intValue();
-		
-		int postMemberId = studyRepository.findById(postId).get().getMember().getId().intValue();
-		if(memberId==postMemberId) {
-		
-		return true;
-		}
-		return false;
+	public boolean boardCheck(int postId, Principal principal) {
+	    // Get member information based on principal
+	    Member member = memberRepository.findByMemberId(principal.getName())
+	        .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+	    
+	    int memberId = member.getId().intValue();
+	    
+	    // Find the study by postId
+	    Optional<Study> optionalStudy = studyRepository.findById(postId);
+	    
+	    if (optionalStudy.isPresent()) {
+	        Study study = optionalStudy.get();
+	        int postMemberId = study.getMember().getId().intValue();
+	        
+	        return memberId == postMemberId;
+	    } else {
+	        throw new NoSuchElementException("Study not found for postId: " + postId);
+	    }
 	}
+
+
+	//시작일 게시글 조회
+	public List<Integer> searchStartdate(StudyDto dto) {
+	        Date startDate = dto.getStartdate(); // Date 객체 그대로 사용
+	        List<Study> studies = studyRepository.findByStartdateGreaterThanEqual(startDate);
+	        
+	        for(Study a : studies) {
+	        	System.out.println(a.getPostid() + "게시글아이디");
+	        }
+	        
+	        List<Integer> postIds = studies.stream()
+                    .map(Study::getPostid)
+                    .collect(Collectors.toList());
+	        return postIds;
+	}
+
+	
 }
+

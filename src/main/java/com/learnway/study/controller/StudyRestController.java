@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learnway.study.domain.Study;
-import com.learnway.study.domain.StudyTag;
+import com.learnway.study.dto.ChatRoomDto;
 import com.learnway.study.dto.CorrectCheckDto;
 import com.learnway.study.dto.StudyDto;
 import com.learnway.study.dto.StudyReplyDto;
 import com.learnway.study.dto.StudyReplyResponseDto;
 import com.learnway.study.dto.StudyTagDto;
+import com.learnway.study.service.StudyChatService;
 import com.learnway.study.service.StudyCorrectService;
 import com.learnway.study.service.StudyPostService;
 import com.learnway.study.service.StudyReplyService;
+import com.learnway.study.service.StudyService;
 import com.learnway.study.service.StudyTagService;
 
 @RestController
@@ -33,6 +35,10 @@ public class StudyRestController {
 	private StudyPostService studyPostService;
 	@Autowired
 	private StudyTagService studyTagService;
+	@Autowired
+	private StudyService studyService;
+	@Autowired
+	private StudyChatService studyChatService;
 	
 	
 	@PostMapping("/member/correct")
@@ -62,6 +68,16 @@ public class StudyRestController {
 	        return list;
 	}
 	
+	// 댓글목록 리스트
+	@PostMapping("/member/replylist")
+	public List<StudyReplyResponseDto> replyList(@RequestBody StudyReplyDto dto,Principal principal) {
+		
+		
+	        List<StudyReplyResponseDto> list = studyReplyService.replyList(dto);
+	        
+	        return list;
+	}
+	
 	//검색 메서드
 	@PostMapping("/study/searchList")
 	public List<Study> searchBoardList(@RequestBody StudyDto dto) {
@@ -73,11 +89,28 @@ public class StudyRestController {
 	
 	//태그값 검색 메서드
 	@PostMapping("/study/searchHashtags")
-	public List<StudyTag> searchHashtags(@RequestBody StudyTagDto dto) {
+	public List<Integer> searchHashtags(@RequestBody StudyTagDto dto) {
 		
 		System.out.println(dto.getTags() + "태그값");
 		
 		return studyTagService.searchHashtags(dto);
+	}
+	
+	
+	//시작일 검색값 
+	@PostMapping("/study/searchStartdate")
+	public List<Integer> searchStartdate(@RequestBody StudyDto dto) {
+		
+		System.out.println(dto.getStartdate() + "시작일");
+		return studyService.searchStartdate(dto);
+	}
+	
+	//채팅방 게시글 값
+	@PostMapping("/study/searchChatStudy")
+	public List<Integer> searchChatStudy(@RequestBody ChatRoomDto dto) {
+		
+		System.out.println(dto.getRoomCheck() + " 채팅방 value값");
+		return studyChatService.searchChatStudy(dto);
 	}
 	
 }
