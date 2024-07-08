@@ -135,7 +135,7 @@ public class NoticeController {
 		} catch (S3Exception e) {
 			e.printStackTrace();
 		}
-		noticeService.write(dto);
+		noticeService.write(dto, member);
 		return "redirect:/notice/noticeList";
 	}
 	
