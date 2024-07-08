@@ -48,13 +48,16 @@ public class NoticeService {
 	//글쓰기
 	public void write(NoticeDto dto,Optional<Member> member) {
 		
+		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
+
 		if(member.isPresent()) {
 			
 			Member savemember=member.get();
 			Notice notice = new Notice();
 			notice.setNoticeId(dto.getNoticeId());
 			notice.setNoticeTitle(dto.getNoticeTitle());
-			notice.setNoticeContent(dto.getNoticeContent());
+			notice.setNoticeContent(formattedContent);
+
 			notice.setNoticeImgPath(dto.getNoticeImgPath());
 			notice.setNoticeImgUname(dto.getNoticeImgUname());
 			notice.setCreateDate(LocalDateTime.now());
@@ -70,10 +73,12 @@ public class NoticeService {
 	//글수정
 	public void rewrite(NoticeDto dto) {
 		
+		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
+		
 		Notice notice = new Notice();
 		notice.setNoticeId(dto.getNoticeId());
 		notice.setNoticeTitle(dto.getNoticeTitle());
-		notice.setNoticeContent(dto.getNoticeContent());
+		notice.setNoticeContent(formattedContent);
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
 		notice.setPriority(dto.isPriority());

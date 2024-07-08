@@ -38,6 +38,9 @@ public class Progress {
 	@Column
 	private String progress;
 	
+	@Column
+	private String memberId;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "scheduleId")
 	private Schedule scheduleId;

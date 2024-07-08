@@ -106,11 +106,37 @@ document.addEventListener('DOMContentLoaded', function() {
         initialDate: new Date(),
         themeSystem: 'bootstrap',
         headerToolbar: {
-          left: 'prev,next today',
+          left: 'prev,next today weeklySummary',
           center: 'title',
-          right: 'addEventButton,dayGridMonth,timeGridWeek'
+          right: 'addEventButton dayGridMonth,timeGridWeek'
         },
         customButtons: {
+		 weeklySummary: {
+	        text: '주간 요약',
+	        click: function() {
+				
+        	  var currentDate = calendar.getDate();
+  			  var formattedDate = currentDate.toISOString().slice(0, 10);
+        	  
+        	  showLoadingSpinner(); // 로딩 스피너 표시
+        	  
+	          $.ajax({
+				url:"/api/weeklySummary",
+				type:"get",
+				data: {currentDate: formattedDate},
+                contentType: 'application/json',
+			    success: function(response) {
+				  console.log(response); // 응답 객체 출력
+				  hideLoadingSpinner(); // 로딩 스피너 숨김
+			      displayWeeklySummary(response);
+			    },
+			    error: function(xhr, status, error) {
+			      console.error("주간 요약을 가져오는데 실패했습니다:", error);
+			      alert("주간 요약을 가져오는데 실패했습니다. 나중에 다시 시도해주세요.");
+			    }
+			  });
+	        }
+	      },
           addEventButton: {
             text: "일정 +",
             click: function() {
@@ -405,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					            alert("모든 학습 종류를 선택하세요");
 					        } else if (progresses.some(item => item.progress == null || item.progress.trim() == "")) {
 					            alert("모든 진도 내역을 입력하세요");
-					        } else if (progresses.some(item => item.achieveRate == null || item.achieveRate == "" || item.achieveRate < 0 || item.achieveRate > 100)) {
+					        } else if (progresses.some(item => item.achieveRate < 0 || item.achieveRate > 100)) {
 					            alert("달성율은 0부터 100 사이의 값을 입력하세요");
 					        } else if (new Date(endTime) - new Date(startTime) < 0) {
 					            alert("종료 시간이 시작 시간보다 먼저입니다");
@@ -441,7 +467,6 @@ document.addEventListener('DOMContentLoaded', function() {
                               	 
                             	 console.log(data);
                                  console.log(response.message);
-                                 alert("일정이 수정되었습니다");
                                  refreshEvents();// 일정 업데이트 후 캘린더 다시 렌더링
                                  $("#updateModal").modal("hide"); // 모달 닫기
                                },
@@ -1062,8 +1087,28 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
     }
   }
 });
+
+//주간 요약 보여주는 모달 띄우기 
+function displayWeeklySummary(response) {
   
-  function fillNewMaterialDropdown(newDropdownId) {
+  var weekRange = response.weekRange;
+  var summary = response.summary; // 'summary' 속성 사용
+ 
+
+  $("#weeklySummaryContent").html(summary);
+  $("#weeklySummaryModalLabel").text("주간 학습 요약 (" + weekRange + ")");
+  $("#weeklySummaryModal").modal("show");
+}
+
+function showLoadingSpinner() {
+  $(".loading-overlay").fadeIn();
+}
+
+function hideLoadingSpinner() {
+  $(".loading-overlay").fadeOut();
+}
+  
+function fillNewMaterialDropdown(newDropdownId) {
 		    fillDropdown(`#${newDropdownId}`, scheduleOptions.materials, "학습종류");
 		}
 		

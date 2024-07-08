@@ -31,7 +31,7 @@
 	                    <div class="mb-3">
 	                        <img th:if="${notice.noticeImgPath}" th:src="${notice.noticeImgPath}" class="img-fluid" alt="글 이미지">
 	                    </div>
-	                    <p th:text="${notice.noticeContent}">글 내용이 여기에 들어갑니다.</p>
+	                    <p th:utext="${notice.noticeContent}">글 내용이 여기에 들어갑니다.</p>
 	                    <hr>
 	                    <div class="row notice-navigation">
 						    <div class="col-12">

@@ -15,6 +15,7 @@ public class ProgressDto {
 	private double achieveRate;
 	private String materialId;
 	private String progress;
+	private String memberId;
 
 	@Override
 	public String toString() {
