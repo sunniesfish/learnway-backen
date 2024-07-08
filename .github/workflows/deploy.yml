@@ -26,13 +26,16 @@ jobs:
           distribution: 'temurin'
     
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Replace AWS credentials in application.properties
-        run: |
-          sed -i "s/^cloud.aws.credentials.accessKey=.*/cloud.aws.credentials.accessKey=${{ secrets.AWS_ACCESS_KEY_ID }}/" ./src/main/resources/application.properties
-          sed -i "s/^cloud.aws.credentials.secretKey=.*/cloud.aws.credentials.secretKey=${{ secrets.AWS_SECRET__ACCESS_KEY }}/" ./src/main/resources/application.properties
-      
+
+      - name: Update db AWS key id
+        run: sed -i 's/<AWS_ACCESS_KEY_ID>/${{ secrets.AWS_ACCESS_KEY_ID }}/' src/main/resources/application.properties
+  
+      - name: Update db AWS key
+        run: sed -i 's/<AWS_SECRET__ACCESS_KEY>/${{ secrets.AWS_SECRET__ACCESS_KEY }}/' src/main/resources/application.properties
+  
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
