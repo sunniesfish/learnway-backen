@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.learnway.global.exceptions.S3Exception;
@@ -21,13 +22,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.learnway.global.exceptions.DataNotExeption;
+import com.learnway.member.domain.Member;
+import com.learnway.member.domain.MemberRepository;
 import com.learnway.notice.domain.Notice;
 import com.learnway.notice.dto.NoticeDto;
 import com.learnway.notice.service.NoticeService;
@@ -47,18 +49,36 @@ public class NoticeController {
 	@Autowired
 	private S3ImageService s3ImageService;
 	
+	@Autowired
+	private MemberRepository memberRepository;
+	
 	
 	//공지사항 리스트 불러오기
 	@GetMapping("/noticeList")
-	public String noticeList(Model model,@RequestParam(value="page", defaultValue="0") int page) {
+	public String noticeList(Model model,@RequestParam(value="page", defaultValue="0") int page
+								,@RequestParam(value="keyword", required=false) String keyword
+								,@RequestParam(value="category", required=false) String category) {
 		
-		//페이징처리 목록 조회
-		Page<Notice> pageNotice;
-		Pageable pageable = PageRequest.of(page, 10);
-		pageNotice = noticeService.noticeList(pageable);
+		Page<Notice> pageNotice = null;
+		
+		if (keyword == null || keyword.isEmpty()) {
+	        if (category == null || category.isEmpty()) {
+	            // 검색하지 않고 카테고리 선택하지 않았을 때
+	            Pageable pageable = PageRequest.of(page, 10);
+	            pageNotice = noticeService.noticeList(pageable);
+	        } else {
+	            // 검색하지 않고 카테고리 선택했을 때
+	            Pageable pageable = PageRequest.of(page, 10);
+	            pageNotice = noticeService.noticeCategoryList(pageable, category);
+	        }
+	    } else {
+	        // 검색했을 때
+	        Pageable pageable = PageRequest.of(page, 10);
+	        pageNotice = noticeService.noticeSearchList(pageable, keyword);
+	    }
 		
 		Page<Notice> priNotice;
-		Pageable pri = PageRequest.of(page, 5);
+		Pageable pri = PageRequest.of(page, 3);
 		priNotice = noticeService.priNoticeList(pri);
 		
 		model.addAttribute("notice",pageNotice);
@@ -85,6 +105,8 @@ public class NoticeController {
 	public String noticeWrtie(NoticeDto dto,@RequestParam("comFile") MultipartFile[] files,
 							  Principal principal) {
 
+		String memberId = dto.getMemberId();
+		Optional<Member> member = memberRepository.findByMemberId(memberId);
 		//이미지 URI
 		String imgURI = null;
 		

@@ -2,6 +2,7 @@ package com.learnway.notice.dto;
 
 import java.time.LocalDateTime;
 
+import com.learnway.member.domain.Member;
 import com.learnway.notice.domain.Notice;
 
 import lombok.AllArgsConstructor;
@@ -25,5 +26,5 @@ public class NoticeDto {
 	private LocalDateTime createDate;
 	private boolean priority;
 	private String memberId; 
-
+	private String category;
 }
