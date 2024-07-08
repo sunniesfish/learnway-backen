@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -103,9 +105,9 @@ public class NoticeController {
 	//글쓰기
 	@PostMapping("/write")
 	public String noticeWrtie(NoticeDto dto,@RequestParam("comFile") MultipartFile[] files,
-							  Principal principal) {
+							  @AuthenticationPrincipal UserDetails user) {
 
-		String memberId = dto.getMemberId();
+		String memberId = user.getUsername();
 		Optional<Member> member = memberRepository.findByMemberId(memberId);
 		//이미지 URI
 		String imgURI = null;

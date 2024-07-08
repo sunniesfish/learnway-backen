@@ -63,7 +63,7 @@ public class NoticeService {
 			notice.setCreateDate(LocalDateTime.now());
 			notice.setPriority(dto.isPriority());
 			notice.setCategory(dto.getCategory());
-			notice.setMemberId(member.get().getMemberId());
+			notice.setMember(savemember);
 			
 			noticeRepository.save(notice);
 		}

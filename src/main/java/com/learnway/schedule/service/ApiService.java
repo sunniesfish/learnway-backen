@@ -25,7 +25,7 @@ public class ApiService {
 	
 	
 	@GetMapping("/weeklySummary")
-    public String weeklySummary(String memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
+    public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
     	String openaiAccessKey = "0000";

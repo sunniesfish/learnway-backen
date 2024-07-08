@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface DailyAchieveRepository extends JpaRepository<DailyAchieve, Long>{
 	
     List<DailyAchieve> findAllByMemberIdAndDateBetween(String memberId, LocalDate start, LocalDate end);
-    Optional<DailyAchieve> findByMemberIdAndDate(String memberId, LocalDate date);	
+    Optional<DailyAchieve> findByMemberIdAndDate(Long memberId, LocalDate date);	
 
     @Query(value = "SELECT * FROM daily_achieve WHERE member_id = :memberId AND date >= :start AND date < :end", nativeQuery = true)
     List<DailyAchieve> findCustomDailyAchieves(@Param("memberId") String memberId, @Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
