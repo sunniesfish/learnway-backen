@@ -1,0 +1,87 @@
+@import url("../globalstyle.css");
+@import url("../consult/sidebarConsultantList.css");
+@import url("../consult/sidebarReservationList.css");
+
+.content-wrapper {
+        padding: 20px;
+    }
+    #detail-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        min-height: 700px;
+        position: relative;
+    }
+    .detail-row {
+        display: flex;
+        margin-right: -15px;
+        margin-left: -15px;
+    }
+    .detail-col-left {
+        flex: 0 0 70%;
+        max-width: 70%;
+        padding: 0 15px;
+    }
+    .detail-col-right {
+        flex: 0 0 30%;
+        max-width: 30%;
+        padding: 0 15px;
+    }
+    .date-section {
+        font-size: 0.9em;
+        margin-bottom: 20px;
+    }
+    .hashtag-section {
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+    .hashtag {
+        display: inline-block;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 3px 8px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        font-size: 0.9em;
+    }
+    #image-preview img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border-radius: 3px;
+    }
+    .comment-section {
+        margin-top: 30px;
+    }
+    .author-section {
+        font-size: 0.9em;
+        text-align: right;
+        margin-bottom: 10px;
+    }
+    .author-name {
+        font-weight: bold;
+    }
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .action-buttons button, .action-buttons form {
+        margin-left: 10px;
+    }
+    
+    .reply-author {
+    font-size: 1.1em;
+    color: #333;
+  }
+  .reply-text {
+    margin-top: 0.5rem;
+    color: #555;
+  }
+  .list-group-item {
+    padding: 1rem;
+  }
