@@ -21,7 +21,7 @@ $(document).ready(function() {
                 $('#subject').text(subject);
                 $('#description').text(description);
                 $('.consultantIMG').attr('src', imageUrl);
-                console.log("이미지 주소 : "+imageUrl);
+                console.log("이미지 주소 : "+ imageUrl);
                 $('#titleName').text(titleName);
             },
             error: function(xhr, status, error) {
