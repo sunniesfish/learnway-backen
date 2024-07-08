@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.learnway.global.exceptions.S3Exception;
-import com.learnway.global.service.S3ImageService;
+//import com.learnway.global.service.S3ImageService;
 import com.learnway.study.domain.StudyProblem;
 import com.learnway.study.domain.StudyProblemImg;
 import com.learnway.study.domain.StudyProblemImgRepository;
@@ -27,16 +27,18 @@ public class StudyProblemImgService {
 	@Autowired
 	private StudyProblemImgRepository studyProblemImgRepository;
 	
-	@Autowired
+	//해당문제 이미지값 조회
+	public List<StudyProblemImg> problemImgPath(int problemid) {
+		
+		return studyProblemImgRepository.findByStudyProblemProblemid(problemid);
+	}
+	
+	
+/*	@Autowired
     private S3ImageService s3ImageService;
 	
 	private static final String dir = "images/studyself/";
 	
-	//해당문제 이미지값 조회
-	public List<StudyProblemImg> problemImgPath(int problemid) {
-	
-		return studyProblemImgRepository.findByStudyProblemProblemid(problemid);
-	}
 	
 	
 	 // 문제 이미지 업로드 메서드
@@ -88,8 +90,8 @@ public class StudyProblemImgService {
             }
         }
     }
-
-	/* S3미적용 메서드
+*/
+	// S3미적용 메서드
 	//문제이미지 업로드 메서드
 	public void problemImgAdd(StudyProblemImgDto dto,MultipartFile[] files,int problemid) {
 		for(MultipartFile file : files) {
@@ -160,6 +162,6 @@ public class StudyProblemImgService {
 		}
 		
 	}
-	*/
+	
 	
 }
