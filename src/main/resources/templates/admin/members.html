@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 조회</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:replace="admin/admin-sidebar :: sidebar"></div>
+        </div>
+        <div class="col-md-8 mt-5">
+            <h2>회원 조회</h2>
+            <div class="form-group">
+                <label for="searchName">이름 검색</label>
+                <div class="input-group">
+                    <input type="text" id="searchName" class="form-control" placeholder="이름을 입력하세요" onkeyup="searchMembers()">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="resetSearch()">전체 보기</button>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>이름</th>
+                    <th>연락처</th>
+                    <th>학교</th>
+                    <th>학년</th>
+                    <th>학생 노트</th>
+                    <th>수정</th>
+                </tr>
+                </thead>
+                <tbody id="memberTableBody">
+                <tr th:each="member : ${members}">
+                    <td th:text="${member.id}"></td>
+                    <td th:text="${member.memberName}"></td>
+                    <td th:text="${member.memberPhone}"></td>
+                    <td th:text="${member.memberSchool}"></td>
+                    <td th:text="${member.memberGrade}"></td>
+                    <td><input type="text" th:value="${member.memberNote}" class="form-control" id="note-[[${member.id}]]"></td>
+                    <td><button class="btn btn-primary" th:onclick="'updateMemberNote(' + ${member.id} + ')'">저장</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // 멤버 검색
+    function searchMembers() {
+        const searchName = document.getElementById("searchName").value;
+        fetch(`/api/member/searchMembers?name=${encodeURIComponent(searchName)}`)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById("memberTableBody");
+                tableBody.innerHTML = "";
+                data.forEach(member => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${member.id}</td>
+                        <td>${member.memberName}</td>
+                        <td>${member.memberPhone}</td>
+                        <td>${member.memberSchool}</td>
+                        <td>${member.memberGrade}</td>
+                        <td><input type="text" value="${member.memberNote}" class="form-control" id="note-${member.id}"></td>
+                        <td><button class="btn btn-primary" onclick="updateMemberNote(${member.id})">저장</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('멤버 검색 실패', error);
+            });
+    }
+
+    // 검색 리셋
+    function resetSearch() {
+        document.getElementById("searchName").value = "";
+        location.reload();
+    }
+
+    // 멤버 노트 업데이트
+    function updateMemberNote(memberId) {
+        const noteElement = document.getElementById(`note-${memberId}`);
+        if (noteElement) {
+            const note = noteElement.value;
+            const requestData = {
+                id: memberId,
+                note: note
+            };
+
+            console.log('Sending request:', requestData);
+
+            fetch(`/api/member/updateMemberNote`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('네트워크 응답이 실패했습니다.');
+                    }
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert('비고가 성공적으로 저장되었습니다.');
+                    } else {
+                        alert('비고 저장에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('저장 실패', error);
+                    alert('비고 저장에 실패했습니다.');
+                });
+        } else {
+            console.error(`해당 멤버의 노트 찾을 수 없음-${memberId}`);
+        }
+    }
+</script>
+
+</body>
+</html>

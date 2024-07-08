@@ -68,7 +68,7 @@ public class S3ImageService {
             throw new S3Exception("잘못된 확장자");
         }
     }
-    
+
     // S3에 업로드
     private String uploadImageToS3(MultipartFile image, String key) throws IOException, S3Exception {
         String originalFilename = image.getOriginalFilename(); //원본 파일 명

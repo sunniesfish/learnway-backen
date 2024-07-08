@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>기준 정보 조회</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/admin/masterdata.js"></script>
+    <link rel="stylesheet" href="/css/admin/admin.css">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:replace="admin/admin-sidebar :: sidebar"></div>
+        </div>
+        <div class="col-md-10 mt-5">
+            <h2>기준 정보 조회</h2>
+            <div class="form-group">
+                <label for="viewCategory">카테고리 선택</label>
+                <select id="viewCategory" class="form-control" onchange="ViewMasterData()">
+                    <option value="">카테고리를 선택하세요</option>
+                    <option value="materials">학습 종류</option>
+                    <option value="studyways">학업 구분</option>
+                    <option value="subjects">과목</option>
+                    <option value="exams">시험 유형</option>
+                </select>
+            </div>
+            <table class="table table-bordered mt-3">
+                <thead>
+                <tr>
+                    <th>코드</th>
+                    <th>이름</th>
+                    <th>비고</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                </tr>
+                </thead>
+                <tbody id="masterDataTableBody">
+                <!-- 기준정보 불러오는 곳  -->
+                </tbody>
+            </table>
+            <a href="/admin/addMasterData" class="btn btn-primary mt-3">기준 정보 추가</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -18,42 +18,10 @@ function previewImage(input) {
 
 $(document).ready(function() {
     const imagePreview = $('#imagePreview');
-    const profileImagePath = imagePreview.attr('src');
-
-    // 기본 이미지 경로 설정 확인
-    if (!profileImagePath || profileImagePath === '') {
-        imagePreview.attr('src', '/img/member/member-default.png'); // 기본 이미지 경로 설정
+    if (!imagePreview.attr('src')) { // 기본 이미지 경로 설정 확인
+        imagePreview.attr('src', '/img/member/member-default.png');
     }
 });
-
-/*function previewImage(input) {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    const file = input.files[0];
-    const imagePreview = $('#imagePreview');
-
-    if (file && allowedTypes.includes(file.type)) { // 파일 유형 검사
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            imagePreview.attr('src', e.target.result);
-        }
-        reader.readAsDataURL(file);
-    } else {
-        alert('이미지 파일만 업로드 가능합니다 (JPEG, PNG, GIF).');
-        input.value = ''; // 유효하지 않은 파일 제거
-        imagePreview.attr('src', '/img/member/member-default.png'); // 기본 이미지 경로 설정
-    }
-}
-
-$(document).ready(function() {
-    const imagePreview = $('#imagePreview');
-    const profileImagePath = imagePreview.attr('src');
-
-    if (!profileImagePath || profileImagePath === '') {
-        imagePreview.attr('src', '/img/member/member-default.png'); // 기본 이미지 경로 설정
-    }
-});*/
-
-
 
 
 // 이메일 인증 결과 업데이트

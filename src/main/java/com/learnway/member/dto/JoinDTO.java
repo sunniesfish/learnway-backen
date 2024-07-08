@@ -45,6 +45,9 @@ public class JoinDTO {
     @NotEmpty(message = "메일 인증을 진행해 주세요.")
     private String email;           // 이메일
 
+    @NotEmpty(message = "성별은 필수로 선택해 주세요.")
+    private String gender; // 성별
+
     // 하기는 선택 사항
     private String school;          // 학교
 
