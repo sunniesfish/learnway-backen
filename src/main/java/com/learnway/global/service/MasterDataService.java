@@ -15,6 +15,7 @@ public class MasterDataService {
     private final MaterialRepository materialRepository;
     private final StudywayRepository studywayRepository;
     private final SubjectRepository subjectRepository;
+    private final ExamTRepository examRepository;
 
     // 기준 정보 추가
     public void addMasterData(MasterDataDTO masterDataDTO) {
@@ -49,13 +50,112 @@ public class MasterDataService {
                 subjectRepository.save(subjectClass);
                 System.out.println("과목 추가 완료");
                 break;
+            // 시험 유형 선택 시
+            case "exam":
+                ExamT examClass = ExamT.builder()
+                        .examCode(masterDataDTO.getCode())
+                        .exam(masterDataDTO.getName())
+                        .examNote(masterDataDTO.getNote())
+                        .build();
+                examRepository.save(examClass);
+                System.out.println("시험 종류 추가 완료");
+                break;
 
             default: // IllegalArgumentException (잘못 된 매개변수가 전달되었을 때 예외)
                 throw new IllegalArgumentException("잘못된 카테고리입니다 : " + masterDataDTO.getCategory());
         }
     }
 
+    // 기준 정보 수정
+    public void updateMasterData(MasterDataDTO masterDataDTO) {
+        switch (masterDataDTO.getCategory()) {
+            case "material":
+                Material material = materialRepository.findById(masterDataDTO.getCode()).orElseThrow(() -> new IllegalArgumentException("Invalid material code"));
+                material = Material.builder()
+                        .materialCode(material.getMaterialCode())
+                        .material(masterDataDTO.getName())
+                        .materialNote(masterDataDTO.getNote())
+                        .build();
+                materialRepository.save(material);
+                break;
+            case "studyway":
+                Studyway studyway = studywayRepository.findById(masterDataDTO.getCode()).orElseThrow(() -> new IllegalArgumentException("Invalid studyway code"));
+                studyway = Studyway.builder()
+                        .studywayCode(studyway.getStudywayCode())
+                        .studyway(masterDataDTO.getName())
+                        .studywayNote(masterDataDTO.getNote())
+                        .build();
+                studywayRepository.save(studyway);
+                break;
+            case "subject":
+                Subject subject = subjectRepository.findById(masterDataDTO.getCode()).orElseThrow(() -> new IllegalArgumentException("Invalid subject code"));
+                subject = Subject.builder()
+                        .subjectCode(subject.getSubjectCode())
+                        .subject(masterDataDTO.getName())
+                        .subjectNote(masterDataDTO.getNote())
+                        .build();
+                subjectRepository.save(subject);
+                break;
+            case "exam":
+                ExamT exam = examRepository.findById(masterDataDTO.getCode()).orElseThrow(() -> new IllegalArgumentException("Invalid exam code"));
+                exam = ExamT.builder()
+                        .examCode(exam.getExamCode())
+                        .exam(masterDataDTO.getName())
+                        .examNote(masterDataDTO.getNote())
+                        .build();
+                examRepository.save(exam);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid category");
+        }
+    }
+    // 기준 정보 삭제
+    public void deleteMasterData(String category, String code) {
+        switch (category) {
+            case "material" -> materialRepository.deleteById(code);
+            case "studyway" -> studywayRepository.deleteById(code);
+            case "subject" -> subjectRepository.deleteById(code);
+            case "exam" -> examRepository.deleteById(code);
+            default -> throw new IllegalArgumentException("Invalid category");
+        }
+    }
+
+    // 해당 기준 정보 조회 (삭제, 조회 시)
+    public MasterDataDTO getMasterDataByCategoryAndCode(String category, String code) {
+        return switch (category) {
+            case "material" -> {
+                Material material = materialRepository.findById(code).orElseThrow(() -> new IllegalArgumentException("Material 없음"));
+                yield new MasterDataDTO("material", material.getMaterialCode(), material.getMaterial(), material.getMaterialNote());
+            }
+            case "studyway" -> {
+                Studyway studyway = studywayRepository.findById(code).orElseThrow(() -> new IllegalArgumentException("studyway 없음"));
+                yield new MasterDataDTO("studyway", studyway.getStudywayCode(), studyway.getStudyway(), studyway.getStudywayNote());
+            }
+            case "subject" -> {
+                Subject subject = subjectRepository.findById(code).orElseThrow(() -> new IllegalArgumentException("subject 없음"));
+                yield new MasterDataDTO("subject", subject.getSubjectCode(), subject.getSubject(), subject.getSubjectNote());
+            }
+            case "exam" -> {
+                ExamT exam = examRepository.findById(code).orElseThrow(() -> new IllegalArgumentException("exam 없음"));
+                yield new MasterDataDTO("exam", exam.getExamCode(), exam.getExam(), exam.getExamNote());
+            }
+            default -> throw new IllegalArgumentException("Invalid category");
+        };
+    }
+
+    public List<Material> getMaterials() {
+        return materialRepository.findAll();
+    }
+
+    public List<Studyway> getStudyways() {
+        return studywayRepository.findAll();
+    }
+
     public List<Subject> getSubjects() {
         return subjectRepository.findAll();
+    }
+
+    public List<ExamT> getExams() {
+        return examRepository.findAll();
     }
 }

@@ -34,18 +34,18 @@ public class S3ImageService {
     private String bucketName;
 
     // 업로드
-    public String upload(MultipartFile image) throws S3Exception {
+    public String upload(MultipartFile image, String key) throws S3Exception {
         //입력 받은 파일이 비어있는지 검증
         if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())){
             throw new S3Exception();
         }
-        return this.uploadImage(image);
+        return this.uploadImage(image, key);
     }
 
-    private String uploadImage(MultipartFile image) throws S3Exception {
+    private String uploadImage(MultipartFile image, String key) throws S3Exception {
         this.validateImageFileExtention(image.getOriginalFilename());
         try {
-            return this.uploadImageToS3(image);
+            return this.uploadImageToS3(image, key);
         } catch (IOException e) {
             throw new S3Exception("업로드 에러");
         }
@@ -68,13 +68,13 @@ public class S3ImageService {
             throw new S3Exception("잘못된 확장자");
         }
     }
-    
+
     // S3에 업로드
-    private String uploadImageToS3(MultipartFile image) throws IOException, S3Exception {
+    private String uploadImageToS3(MultipartFile image, String key) throws IOException, S3Exception {
         String originalFilename = image.getOriginalFilename(); //원본 파일 명
         String extention = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
 
-        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
+        String s3FileName = key + UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
 
         InputStream is = image.getInputStream();
         //image를 byte[]로 변환
