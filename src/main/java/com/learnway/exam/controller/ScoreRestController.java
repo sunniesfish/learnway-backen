@@ -63,7 +63,7 @@ public class ScoreRestController {
     * */
     @PostMapping("/{examId}")
     public ResponseEntity<Score> createScore(
-            @PathVariable Long examId,
+            @PathVariable("examId") Long examId,
             @ModelAttribute Score score,
             @RequestParam("subjectCode") String subjectCode,
             @AuthenticationPrincipal CustomUserDetails userDetails

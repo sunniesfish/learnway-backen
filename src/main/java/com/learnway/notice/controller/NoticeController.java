@@ -7,12 +7,16 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.learnway.global.exceptions.S3Exception;
+import com.learnway.global.service.S3ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,12 +38,16 @@ import com.learnway.notice.service.NoticeService;
 @Controller
 @RequestMapping("/notice")
 public class NoticeController {
-	
-	@Value("C:\\learway\\img\\notice")
-	private String uploadPath;
+
+
+	//S3 저장소 내 저장경로
+	private final String imgPath = "images/notice/";
 	
 	@Autowired
 	private NoticeService noticeService;
+
+	@Autowired
+	private S3ImageService s3ImageService;
 	
 	@Autowired
 	private MemberRepository memberRepository;
@@ -96,48 +104,38 @@ public class NoticeController {
 	@PostMapping("/write")
 	public String noticeWrtie(NoticeDto dto,@RequestParam("comFile") MultipartFile[] files,
 							  Principal principal) {
-		
+
 		String memberId = dto.getMemberId();
 		Optional<Member> member = memberRepository.findByMemberId(memberId);
-		String NoticeImgUname = null;
-		String NoticePath = null;
+		//이미지 URI
+		String imgURI = null;
 		
 		//파일 업로드 처리
-		for(MultipartFile comfile : files) {
-			
-			//이미지 파일만 업로드 가능 , 이미지가 아닐 경우 현재 반복을 건너뜀
-			if(!comfile.getContentType().startsWith("image")) {
-				continue; 
-			}
-				
+		MultipartFile file = files[0];
+		//이미지가 아닌경우 리턴
+		if(!file.getContentType().startsWith("image")) {
+			return "redirect:/notice/noticeList";
+		}
+		
+		try {
 			//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
-			String NoticeImgOname = comfile.getOriginalFilename();
+			String imgOgName = file.getOriginalFilename();
 			//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
-			String fileName = NoticeImgOname.substring(NoticeImgOname.lastIndexOf("\\")+1);
-				
-			//파일 확장자 추출
-			String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+			imgOgName = imgOgName.substring(imgOgName.lastIndexOf("\\")+1);
+
+
+			//S3에 업로드하고 이미지 URI 반환
+			imgURI = s3ImageService.upload(file, imgPath);
 			
-			//날짜 폴더 생성
-			NoticePath = noticeService.makeFolder();
-			
-			String uuid = UUID.randomUUID().toString();
-			NoticeImgUname = uuid+fileExtension;
-			
-			try {
-				comfile.transferTo(Paths.get(uploadPath,NoticePath,NoticeImgUname));
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-		
-			
-		}//파일 업로드 처리 끝
-		
-		//dto.setMemberId(memberId);
-		dto.setNoticeImgPath(NoticePath);
-		dto.setNoticeImgUname(NoticeImgUname);
-		noticeService.write(dto,member);
-		
+			//DB에 이미지 URI 저장
+			if(imgURI != null) {
+				dto.setNoticeImgPath(imgURI);
+				dto.setNoticeImgUname(imgOgName);
+			}
+		} catch (S3Exception e) {
+			e.printStackTrace();
+		}
+		noticeService.write(dto);
 		return "redirect:/notice/noticeList";
 	}
 	
@@ -168,14 +166,15 @@ public class NoticeController {
 	}
 	
 	//글 수정
+	@Transactional
 	@PostMapping("/rewrite/{noticeId}")
 	public String postMethodName( @ModelAttribute NoticeDto dto,@RequestParam("comFile") MultipartFile[] files) {
 		
 //		if(!comDTO.getMemberId().equals(principal.getName())){
 //			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"수정 권한이 없습니다.");
 //		}
-		String noticeImgPath = dto.getNoticeImgPath();
-		String noticeImgUname = dto.getNoticeImgUname();
+		String imgURI = dto.getNoticeImgPath();
+		String imgOgName = dto.getNoticeImgUname();
 
 		if(files != null && files.length > 0 && !files[0].isEmpty()) {
 			MultipartFile File = files[0];
@@ -183,38 +182,32 @@ public class NoticeController {
 			//이미지 파일만 업로드 가능
 			if(File.getContentType().startsWith("image")) {
 				// 이미 기존 저장된 이미지가 있다면 기존 파일 삭제
-	            if (noticeImgUname != null && !noticeImgUname.isEmpty()) {
-	                Path oldFilePath = Paths.get(uploadPath, dto.getNoticeImgPath(), dto.getNoticeImgUname());
+	            if (imgOgName != null && !imgOgName.isEmpty()) {
 	                try {
-	                	Files.deleteIfExists(oldFilePath);
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-			     }
-				
-			//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
-			String NoticeImgOname = File.getOriginalFilename();
-			//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
-			String fileName = NoticeImgOname.substring(NoticeImgOname.lastIndexOf("\\")+1);
-				
-			//파일 확장자 추출
-			String fileExtension = fileName.substring(fileName.lastIndexOf("."));
-			
-			//날짜 폴더 생성
-			noticeImgPath = noticeService.makeFolder();
-			
-			String uuid = UUID.randomUUID().toString();
-			noticeImgUname = uuid+fileExtension;
-			
-			try {
-				File.transferTo(Paths.get(uploadPath,noticeImgPath,noticeImgUname));
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-		  }
+	                	s3ImageService.deleteImageFromS3(imgURI);
+	                } catch (S3Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+				try {
+					//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
+					String newImgOgName = files[0].getOriginalFilename();
+					//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
+					newImgOgName = imgOgName.substring(imgOgName.lastIndexOf("\\")+1);
+
+					String newImgURI = s3ImageService.upload(files[0], imgPath);
+
+					dto.setNoticeImgPath(newImgURI);
+					dto.setNoticeImgUname(newImgOgName);
+
+				} catch (S3Exception e) {
+					throw new RuntimeException(e);
+				}
+            }
 		}else {//이미지 수정하는 if문 끝 & 새로운 파일을 업로드하지 않은 경우, 기존 파일명과 경로를 그대로 유지
-			dto.setNoticeImgPath(noticeImgPath);
-			dto.setNoticeImgUname(noticeImgUname);	
+			dto.setNoticeImgPath(imgURI);
+			dto.setNoticeImgUname(imgOgName);
 		}
 		
 		dto.setNoticeId(dto.getNoticeId());
@@ -226,9 +219,13 @@ public class NoticeController {
 	
 	//글 삭제하기
 	@GetMapping("delete/{noticeId}")
-	public String delete(@PathVariable("noticeId") Long noticeId,Principal principal) throws DataNotExeption {
+	public String delete(@PathVariable("noticeId") Long noticeId,Principal principal) throws DataNotExeption, S3Exception {
 		
 		NoticeDto dto = noticeService.findDetail(noticeId);//멤버아이디들어가야함
+		String imgURI = dto.getNoticeImgPath();
+		if(imgURI != null && !imgURI.isEmpty()) {
+			s3ImageService.deleteImageFromS3(imgURI);
+		}
 		noticeService.delete(dto);
 		
 		return "redirect:/notice/noticeList";

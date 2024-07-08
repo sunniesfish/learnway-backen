@@ -18,18 +18,45 @@
         <!-- 이곳에 작업합시다  -->
         <div class="main__content__title">
             <span>성적 입력</span>
-            <button class="exam__btn-register">등록</button>
         </div>
         <div class="exam__container" id="exam__container-root">
+            <div class="exam__container__btn-container">
+                <button class="exam__btn-delete learnway-btn clickable">삭제</button>
+                <button class="exam__btn-register learnway-btn clickable">등록</button>
+            </div>
+            <div class="exam__item__label">
+                <div class="exam__item__label-box">
+                    <div class="exam__item__type">
+                        <span>시험 유형</span>
+                    </div>
+                    <div class="exam__item__name">
+                        <span>시험 이름</span>
+                    </div>
+                    <div class="exam__item__date">
+                        <span>시험 날짜</span>
+                    </div>
+                </div>
+                <div class="exam__item__label-space"></div>
+            </div>
             <div class="exam__item clickable" th:each="item : ${examList.content}">
-                <a th:href="@{/exam/detail/{id}(id=${item.examId})}">
-                    <div class="exam__item__type" th:text="${item.examType.examTypeName}"></div>
-                    <div class="exam__item__name" th:text="${item.examName}"></div>
-                    <div class="exam__item__date" th:text="${item.examDate}"></div>
+                <a class="exam__item__info-box" th:href="@{/exam/detail/{id}(id=${item.examId})}">
+                    <div class="exam__item__type">
+                        <span th:text="${item.examType.examTypeName}"></span>
+                    </div>
+                    <div class="exam__item__name">
+                        <span th:text="${item.examName}"></span>
+                    </div>
+                    <div class="exam__item__date">
+                        <span th:text="${item.examDate}"></span>
+                    </div>
                 </a>
-                <form th:action="@{/exam/delete}" method="post" style="display:inline;">
-                    <input type="hidden" name="examId" th:value="${item.examId}" />
-                    <button type="submit">삭제</button>
+                <form class="exam__item__delete-btn-container" th:action="@{/exam/delete}" method="post">
+                    <input type="hidden" name="examId" th:value="${item.examId}" required/>
+                    <button class="hidden exam__item__delete-btn clickable" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                            <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                        </svg>
+                    </button>
                 </form>
             </div>
         </div>
@@ -48,34 +75,43 @@
         </div>
     </div>
     
+    
+    
     <div class="exam__modal-register hidden">
         <div class="exam__modal__overlay clickable"></div>
         <form action="/exam/register" class="exam__modal__form" method="post">
-            <div>
+            <div class="exam__modal__form-title modal-content   ">
+                <span class="modal-title modal-header">새 시험 등록</span>
+            </div>
+            <div class="exam__modal__name">
                 <label for="exam__modal__form-name">시험 이름</label>
-                <input type="text" id="exam__modal__form-name" name="examName"/>
+                <input type="text" id="exam__modal__form-name" name="examName" required/>
             </div>
-            <div>
-                <label for="exam__modal__form-type">시험 종류</label>
-                <label>
-                    <select name="examTypeName" id="exam__modal__form-type">
-                        <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
-                    </select>
-                </label>
+            <div class="exam__modal__type-date">
+                <div class="exam__modal__type">
+                    <label for="exam__modal__form-type">시험 종류</label>
+                    <label>
+                        <select name="examTypeName" id="exam__modal__form-type">
+                            <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div class="exam__modal__date">
+                    <label for="exam__modal__form-date">날짜</label>
+                    <input type="date" id="exam__modal__form-date" name="examDate" required/>
+                </div>
             </div>
-            <div>
-                <label for="exam__modal__form-date">날짜</label>
-                <input type="date" id="exam__modal__form-date" name="examDate"/>
-            </div>
-            <div>
+            <div class="exam__modal__range">
                 <label for="exam__modal__form-range">범위</label>
-                <input type="text" id="exam__modal__form-range" name="examRange"/>
+                <input type="text" id="exam__modal__form-range" name="examRange" required/>
             </div>
-            <div>
+            <div class="exam__modal__memo">
                 <label for="exam__modal__form-memo">메모</label>
-                <input type="text" id="exam__modal__form-memo" name="examMemo"/>
+                <input type="text" id="exam__modal__form-memo" name="examMemo"  />
             </div>
-            <button class="exam__modal__form-btn clickable">등록</button>
+            <div class="exam__modal__btn-box modal-footer">
+                <button class="exam__modal__form-btn learnway-btn clickable btn btn-outline-secondary">등록</button>
+            </div>
         </form>
     </div>
 </body>

@@ -17,7 +17,7 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.addEventListener("load",()=>render(examId));
+window.addEventListener("DOMContentLoaded",()=>render(examId));
 
 function render(examId){
     ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
@@ -79,7 +79,13 @@ function Subjects({examId}){
                         </div>
                         <div className="exam-detail__item__grade">{item.scoreGrade} 등급</div>
                     </div>
-                    <button onClick={() => handleDelete(item.scoreId)}>삭제</button>
+                    <div className="exam-detail__item__delete-btn-controller">
+                        <button onClick={() => handleDelete(item.scoreId)}>
+                            <svg className="exam-detail__item__delete-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div> 
             )}
             <button onClick={handleAddSubject}>+</button>
@@ -203,19 +209,19 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
             </div>
             <div>
                 <label for="exam-detail__modal__form-score">점수</label>
-                <input value={score} onChange={(event) => setScore(event.target.value)} id="exam-detail__modal__form-score" type="text" name="scoreScore"/>
+                <input value={score} required onChange={(event) => setScore(event.target.value)} id="exam-detail__modal__form-score" type="text" name="scoreScore"/>
             </div>
             <div>
                 <label for="exam-detail__modal__form-exscore">만점</label>
-                <input value={exScore} onChange={(event) => setExScore(event.target.value)} id="exam-detail__modal__form-exscore" type="text" name="scoreExScore"/>
+                <input value={exScore} required onChange={(event) => setExScore(event.target.value)} id="exam-detail__modal__form-exscore" type="text" name="scoreExScore"/>
             </div>
             <div>
                 <label for="exam-detail__modal__form-std">표준 점수</label>
-                <input value={std} onChange={(event) => setStd(event.target.value)} id="exam-detail__modal__form-std" type="text" name="scoreStdScore"/>
+                <input value={std} required onChange={(event) => setStd(event.target.value)} id="exam-detail__modal__form-std" type="text" name="scoreStdScore"/>
             </div>
             <div>
                 <label for="exam-detail__modal__form-grade">등급</label>
-                <input value={grade} onChange={(event) => setGrade(event.target.value)} id="exam-detail__modal__form-grade" type="text" name="scoreGrade"/>
+                <input value={grade} required onChange={(event) => setGrade(event.target.value)} id="exam-detail__modal__form-grade" type="text" name="scoreGrade"/>
             </div>
             <div>
                 <label for="exam-detail__modal__form-memo">메모</label>

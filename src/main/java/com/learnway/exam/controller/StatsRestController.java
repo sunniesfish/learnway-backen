@@ -43,8 +43,50 @@ public class StatsRestController {
     //시험 유형별 성적 추이
     @GetMapping("/{examTypeName}/{pageNo}")
     public ResponseEntity<Page> getScoreByExamType(
-            @PathVariable String examTypeName,
-            @PathVariable int pageNo,
+            @PathVariable("examTypeName") String examTypeName,
+            @PathVariable("pageNo") int pageNo,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        Long memId = userDetails.getMemberId();
+        if (memId == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } else {
+            Page<Exam> page;
+            if(!examTypeName.equals("all")){
+//                page = examService.getScoreListByExamType(memId, examType,PageRequest.of(pageNo - 1, 30));
+                page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
+            } else {
+//                page = examService.getScoresByMemId(memId, PageRequest.of(pageNo - 1, 8));
+                page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
+            }
+            return new ResponseEntity<>(page, HttpStatus.OK);
+        }
+    }
+
+
+    //과목별 성적
+    @GetMapping("/admin/subject/{subjectCode}/{pageNo}")
+    public ResponseEntity<Page<Score>> getScoreBySubjectAdmin(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("subjectCode") String subjectCode,
+            @PathVariable("pageNo") int pageNo
+    ) {
+        Long memId = userDetails.getMemberId();
+
+        if (memId == null) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        } else {
+            Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
+            return new ResponseEntity(page, HttpStatus.OK);
+        }
+    }
+
+
+    //시험 유형별 성적 추이
+    @GetMapping("/admin/{examTypeName}/{pageNo}")
+    public ResponseEntity<Page> getScoreByExamTypeAdmin(
+            @PathVariable("examTypeName") String examTypeName,
+            @PathVariable("pageNo") int pageNo,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long memId = userDetails.getMemberId();
