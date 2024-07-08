@@ -17,58 +17,49 @@
 <div th:replace="sidebar :: sidebar"></div> <!-- 사이드바 포함 -->
 
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h1 class="card-title" th:text="${study.title}">제목</h1>
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <span class="text-muted">작성자: </span>
-                    <span th:each="member : ${study.member}" class="badge badge-primary me-1" th:text="${member.memberName}">Member</span>
-                </div>
-                <div>
-                    <span class="text-muted">시작일: </span><span th:text="${study.startdate}">시작일</span>
-                    <span class="text-muted ml-3">종료일: </span><span th:text="${study.enddate}">종료일</span>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <p class="card-text" th:text="${study.content}">내용</p>
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4" th:text="${study.title}">제목</h1>
             <hr>
+            <p class="lead" th:text="${study.content}">내용</p>
+            <p><strong>시작일:</strong> <span th:text="${study.startdate}">시작일</span></p>
+            <p><strong>종료일:</strong> <span th:text="${study.enddate}">종료일</span></p>
+            <input type="hidden" th:value="${study.postid}" id="postId" name="postId">
             <div class="mb-3">
-                <span class="badge badge-secondary me-1" th:each="tag : ${studyTag}" th:text="${tag.tag}"></span>
+               <p> 작성자: <span th:each="member : ${study.member}" class="badge bg-primary me-1" th:text="${member.memberName}">Member</span></p>
+               <input type="hidden" th:value="${study.member.memberName}" name="memberName" id="memberName">
             </div>
-            <div th:each="image : ${imgList}" class="mb-3">
+            <div class="mb-3">
+                <span class="badge bg-secondary me-1" th:each="tag : ${studyTag}" th:text="${tag.tag}"></span>
+            </div>
+            <div th:each="chatRoom : ${chatRoom}">
+            <input type="hidden" th:value="${chatRoom.chatroomid}" name="chatroomid" id="chatroomid">
+            </div>
+            <div th:each="image : ${imgList}">
                 <p><strong>문제 정답:</strong> <span th:text="${image.correct}">문제 정답</span></p>
-                <img th:src="@{|/comFile/${image.imgpath}|}" class="img-fluid" alt="문제 이미지">
+                <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}">
             </div>
-        </div>
-        <div class="card-footer">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 채팅방 입장
             </button>
-            <div th:if="${hostList==true}" class="float-right">
-                <form action="/studyupdateview" method="post" class="d-inline">
-                    <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
-                    <button type="submit" class="btn btn-secondary">수정</button>
-                </form>
-                <button onclick="window.location.href='/studyupdate'" class="btn btn-danger">삭제</button>
-            </div>
         </div>
     </div>
-
+    <div th:if="${hostList==true}">
+        <form action="/studyupdateview" method="post">
+            <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
+            <input type="submit" value="수정">
+        </form>
+        <button onclick="window.location.href='/studyupdate'">삭제</button>
+    </div>
     
-   <div class="card mt-4">
-        <div class="card-header">
-            <h5>댓글</h5>
-        </div>
+    <div class="card mb-2">
         <div class="card-body">
             <ul class="list-group list-group-flush" id="replyList">
-                <!-- 기존 댓글들이 여기에 동적으로 추가됩니다 -->
+                <li class="list-group-item">
+                    <textarea class="form-control" id="content" name="content" rows="3"></textarea>
+                    <button type="button" id="addReplyButton" class="btn btn-dark mt-3" >댓글</button>
+                </li>
             </ul>
-            <div class="mt-3">
-                <textarea class="form-control" id="content" name="content" rows="3" placeholder="댓글을 입력하세요..."></textarea>
-                <button type="button" id="addReplyButton" class="btn btn-primary mt-2">댓글 작성</button>
-            </div>
         </div>
     </div>
 </div>
