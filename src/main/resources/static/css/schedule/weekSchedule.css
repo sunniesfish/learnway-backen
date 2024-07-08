@@ -147,3 +147,112 @@
     padding: 10px;
 }
 
+/*주간요약*/
+/* 주간 요약 모달 스타일 */
+.weekly-summary-modal .modal-content {
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.weekly-summary-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+}
+
+.weekly-summary-modal .modal-title {
+  color: #495057;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.weekly-summary-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.weekly-summary-modal h4 {
+  color: #007bff;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.weekly-summary-modal ul {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.weekly-summary-modal li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.weekly-summary-modal .modal-footer {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem;
+}
+
+.weekly-summary-modal .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.weekly-summary-modal .btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+/* 스크롤바 스타일링 (선택사항) */
+.weekly-summary-modal .modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.weekly-summary-modal .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.weekly-summary-modal .modal-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.weekly-summary-modal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+#weeklySummaryContent {
+    white-space: pre-wrap;
+  }
+  
+  /*로딩*/
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 57%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    text-align: center;
+    padding: 100px 200px; /* 패딩 값 조정 */
+    background-color: transparent;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+  }
+
+  .loading-spinner {
+    font-size: 60px;
+    color: #FF8200;
+    animation: spin 1s linear infinite;
+  }
+
+  .loading-message {
+    margin-top: 20px;
+    font-size: 20px;
+    color: #2c3e50;
+    font-weight: bold;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

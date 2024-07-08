@@ -52,6 +52,9 @@ dependencies {
     // Thymeleaf Extras for Java 8 Time
     implementation 'org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE'
     
+    //GTP
+    implementation group: 'com.theokanning.openai-gpt3-java', name: 'service', version: '0.18.2'
+    
 }
 
 tasks.named('test') {
