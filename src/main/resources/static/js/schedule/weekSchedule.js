@@ -153,10 +153,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			    // 첫 번째 진도 내역 필드 처리
 				var firstMaterialId = $("#material0").val();
 				var firstProgress = $("#progress0").val();
+				var achieveRate0 = $("#achieveRate0").val();
 				if (firstMaterialId && firstProgress) {
 				    progressList.push({
 				        materialId: firstMaterialId,
-				        progress: firstProgress
+				        progress: firstProgress,
+				        achieveRate:achieveRate0
 				    });
 				}
 				
@@ -164,10 +166,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				$("#progressEntries .progress-entry:not(:first)").each(function() {
 				    var materialId = $(this).find("select[name='material[]']").val();
 				    var progress = $(this).find("input[name='progress[]']").val();
+				    var achieveRate = $(this).find("input[name='achieveRate[][]']").val();
 				    if (materialId && progress) {
 				        progressList.push({
 				            materialId: materialId,
-				            progress: progress
+				            progress: progress,
+				            achieveRate: achieveRate
 				        });
 				    }
 				});
@@ -188,7 +192,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				  alert("모든 학습 종류를 선택하세요");
 				} else if (progressList.some(item => item.progress == null || item.progress.trim() == "")) {
 				  alert("모든 진도 내역을 입력하세요");
-				} else if (new Date(endTime) - new Date(startTime) < 0) {
+				} else if (progressList.some(item => item.achieveRate < 0 || item.achieveRate > 100)) {
+				  alert("달성율은 0부터 100 사이의 값을 입력하세요");
+				}  else if (new Date(endTime) - new Date(startTime) < 0) {
                   alert("종료 시간이 시작 시간보다 먼저입니다");
                 } else {
                 	
@@ -633,10 +639,12 @@ document.addEventListener('DOMContentLoaded', function() {
 				    // 첫 번째 진도 내역 필드 처리
 					var firstMaterialId = $("#material0").val();
 					var firstProgress = $("#progress0").val();
+					var achieveRate0 = $("#achieveRate0").val();
 					if (firstMaterialId && firstProgress) {
 					    progressList.push({
 					        materialId: firstMaterialId,
-					        progress: firstProgress
+					        progress: firstProgress,
+					        achieveRate:achieveRate0
 					    });
 					}
 					
@@ -644,10 +652,12 @@ document.addEventListener('DOMContentLoaded', function() {
 					$("#progressEntries .progress-entry:not(:first)").each(function() {
 					    var materialId = $(this).find("select[name='material[]']").val();
 					    var progress = $(this).find("input[name='progress[]']").val();
+					    var achieveRate = $(this).find("input[name='achieveRate[][]']").val();
 					    if (materialId && progress) {
 					        progressList.push({
 					            materialId: materialId,
-					            progress: progress
+					            progress: progress,
+					            achieveRate: achieveRate
 					        });
 					    }
 					});
@@ -668,7 +678,9 @@ document.addEventListener('DOMContentLoaded', function() {
 					  alert("모든 학습 종류를 선택하세요");
 					} else if (progressList.some(item => item.progress == null || item.progress.trim() == "")) {
 					  alert("모든 진도 내역을 입력하세요");
-					} else if (new Date(endTime) - new Date(startTime) < 0) {
+					} else if (progressList.some(item => item.achieveRate < 0 || item.achieveRate > 100)) {
+					  alert("달성율은 0부터 100 사이의 값을 입력하세요");
+					}else if (new Date(endTime) - new Date(startTime) < 0) {
 	                  alert("종료 시간이 시작 시간보다 먼저입니다");
 	                } else {
    	                	
@@ -840,23 +852,22 @@ document.addEventListener('DOMContentLoaded', function() {
        	      
        	      // 현재 뷰가 월간 뷰인지 확인
        	    if (info.view.type === 'dayGridMonth') {
-       	        var avgAchieveRate = info.event.extendedProps.avgAchieveRate || 0;
-       	        if (avgAchieveRate > 0) {
-       	            // 달성율이 0보다 큰 경우 배경색 설정
-       	            info.el.style.backgroundColor = 'transparent';
-       	            info.el.style.borderColor = 'transparent';
-       	        } else {
-       	            // 달성율이 0인 경우 투명하게 설정
-       	            info.el.style.backgroundColor = 'transparent';
-       	            info.el.style.borderColor = 'transparent';
-       	            // 텍스트도 숨기기
-       	            info.el.style.color = 'transparent';
-       	            // 이벤트 내용 숨기기
-       	            var eventContent = info.el.querySelector('.fc-event-title, .fc-event-time');
-       	            if (eventContent) {
-       	                eventContent.style.display = 'none';
-       	            }
-       	        }
+       	        if (info.event.title) {
+				  // 일정이 있는 경우 배경색 설정
+				  info.el.style.backgroundColor = 'transparent';
+				  info.el.style.borderColor = 'transparent';
+				} else {
+				  // 일정이 없는 경우 투명하게 설정
+				  info.el.style.backgroundColor = 'transparent';
+				  info.el.style.borderColor = 'transparent';
+				  // 텍스트도 숨기기
+				  info.el.style.color = 'transparent';
+				  // 이벤트 내용 숨기기
+				  var eventContent = info.el.querySelector('.fc-event-title, .fc-event-time');
+				  if (eventContent) {
+				    eventContent.style.display = 'none';
+				  }
+				}
        	      }else{
        	      
 	       	      //30분만 일정 등록했을때, 컨텐츠가 칸 밖으로 넘어가는 것 처리 
@@ -875,6 +886,29 @@ document.addEventListener('DOMContentLoaded', function() {
 				      eventContent.style.overflow = 'hidden';
 				    });
 				  }
+				  
+				  //1시간 일정 등록했을때, 컨텐츠가 칸 밖으로 넘어가는 것 처리 
+				if (eventDuration <= 60 * 60 * 1000 && eventDuration > 30 * 60 * 1000) { // 1시간 이하의 이벤트인 경우
+				  var eventContent = eventElement.querySelector('.fc-event-content');
+				  var subtitle = eventElement.querySelector('.fc-event-subtitle');
+				  
+				  eventContent.style.maxHeight = '55px';
+				  subtitle.style.maxHeight = '20px'; // subtitle의 높이를 제한
+				  subtitle.style.overflow = 'hidden'; // subtitle에만 overflow: hidden 적용
+				
+				  eventElement.addEventListener('mouseover', function() {
+				    eventContent.style.maxHeight = 'none';
+				    subtitle.style.maxHeight = 'none';
+				    subtitle.style.overflow = 'visible';
+				  });
+				
+				  eventElement.addEventListener('mouseout', function() {
+				    eventContent.style.maxHeight = '55px';
+				    subtitle.style.maxHeight = '20px'; // 마우스 아웃 시에도 subtitle의 높이 제한
+				    subtitle.style.overflow = 'hidden';
+				  });
+				}
+								  
 			  }
        	    },
        	 eventContent: function(arg) { //주간 일정표 칸 커스텀 
@@ -886,11 +920,15 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	  var studyway = event.extendedProps.studyway || '';
 	          var scheduleAchieveRate = event.extendedProps.scheduleAchieveRate || 0;
 	          var subTitle = event.extendedProps.subTitle || '';
+	          var textColor = scheduleAchieveRate == 100 ? '#D32F2F' : 'black'; // 100%일 때 빨간색, 그 외에는 검정색
+	          var fontWeight = scheduleAchieveRate == 100 ? 'bold' : 'normal';
+	          var heartIcon = scheduleAchieveRate == 100 ? '<img src="/img/schedule/redheart.png" alt="100% 달성" style="width: 11px; height: 12px; vertical-align: middle; margin-bottom: 2px;"> ' : '';
+
 	
 	          var html =  '<div class="fc-event-content">' +
 				          '<div class="fc-event-top">'+
 				          '<div class="fc-event-studyway">' + studyway + '</div>' +
-				          '<div class="fc-event-achieveRate">' + scheduleAchieveRate + '%</div>' + '</div>' +
+				          '<div class="fc-event-achieveRate" style="color: ' + textColor + '; font-weight: ' + fontWeight + ';">' + heartIcon + scheduleAchieveRate + '%</div>' + '</div>' +
 				          '<div class="progress-bar" style="--progress: ' + scheduleAchieveRate + '%;"></div>' +
 				          '<div class="fc-event-subtitle">' + subTitle + '</div>' +
 				          '</div>';

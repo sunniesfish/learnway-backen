@@ -55,9 +55,7 @@ public class ScheduleRestController {
 	
 	@Autowired
 	private DailyAchieveRepository dailyAchieveRepository;
-	
-	@Autowired
-	private MemberRepository memberRepository;
+
 	
 	//일일 달성율이 담긴 월간 일정표 불러오기
 	@GetMapping("/getMonthlyAchievement")
@@ -113,7 +111,7 @@ public class ScheduleRestController {
 	        }
 	       
 	     // 해당 날짜와 멤버 ID로 DailyAchieve 조회
-	        Optional<DailyAchieve> achieve = dailyAchieveRepository.findByMemberIdAndDate(member.getId(), date);
+	        Optional<DailyAchieve> achieve = dailyAchieveRepository.findByMemberIdAndDate(member.getMemberId(), date);
 	       if(achieve.isPresent()) {
 	    	    Map<String, Object> achieveData = new HashMap<>();
 	    	    achieveData.put("avgAchieveRate", achieve.get().getAvgAchieveRate());

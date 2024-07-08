@@ -68,6 +68,7 @@ public class ScheduleService {
 		                    .orElseThrow(() -> new RuntimeException("Material not found")));	            
 		            progress.setProgress(progressDto.getProgress());
 		            progress.setScheduleId(schedule);
+		            progress.setAchieveRate(progressDto.getAchieveRate());
 		            progress.setMemberId(member.getMemberId());
 		            progresses.add(progress);
 		        }
@@ -188,7 +189,7 @@ public class ScheduleService {
 		    LocalDate date = dateTime.toLocalDate();
 		    
 		    // 해당 날짜에 대한 DailyAchieve 객체가 이미 존재하는지 확인
-		    Optional<DailyAchieve> existingAchieve = dailyAchieveRepository.findByMemberIdAndDate(memberId, date);
+		    Optional<DailyAchieve> existingAchieve = dailyAchieveRepository.findByMemberIdAndDate(member.getMemberId(), date);
 
 		    if (existingAchieve.isPresent()) {
 		        // 이미 존재하는 경우, 기존 객체 업데이트
