@@ -26,19 +26,19 @@ import lombok.NoArgsConstructor;
 @Table(name="Chatroommember")
 public class ChatRoomMember {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="chatmem_id",nullable = false)
-	private Integer chatMemId;
-	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "id", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="chatmem_id", nullable = false)
+    private Integer chatMemId;
+    
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id", nullable = false)
     private Member member;
-	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "study_chatroomid", nullable = false)
+    
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "study_chatroomid", nullable = false)
     private ChatRoom chatRoom;
-	
-	@Column(name = "chatmem_has_entered", nullable = false)
+    
+    @Column(name = "chatmem_has_entered", nullable = false)
     private boolean hasEntered;
 }

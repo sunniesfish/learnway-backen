@@ -135,7 +135,7 @@ public class NoticeController {
 			}
 		
 		}
-		noticeService.write(dto);
+		noticeService.write(dto,member);
 		return "redirect:/notice/noticeList";
 	}
 	
