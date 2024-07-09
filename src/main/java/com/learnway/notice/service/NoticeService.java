@@ -130,6 +130,7 @@ public class NoticeService {
 		dto.setNoticeContent(notice.getNoticeContent());
 		dto.setNoticeImgPath(notice.getNoticeImgPath());
 		dto.setNoticeImgUname(notice.getNoticeImgUname());
+		dto.setMemberId(notice.getMember());
 
 		return dto;
 	}
