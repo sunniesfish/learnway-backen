@@ -31,15 +31,11 @@ public class SseController {
     public SseEmitter subscribe(@PathVariable("consultantId") Long consultantId,Authentication authentication) {
     	ConsultantDetails consultant = (ConsultantDetails) authentication.getPrincipal();
     	Long sessionId = consultant.getId();
-    	System.out.println("1번 : " + consultantId );
-    	System.out.println("1번 : " + sessionId);
         if (sessionId == null || !sessionId.equals(consultantId)) {
             // 상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리
         	System.out.println("상담사가 로그인하지 않은 상태이거나, 다른 상담사의 ID로 요청이 온 경우 처리");
             return null;
         }
-
-        System.out.println("상담사id 요청 엔드포인트 : " + consultantId);
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         loggedInEmitters.put(consultantId, emitter);//키값으로 상담사 pk값 벨류로 메세지
 
@@ -69,9 +65,8 @@ public class SseController {
     }
 
     public void sendNotificationToConsultant(Long consultantId, String message) {
-    	System.out.println("2번");
         if (loggedInEmitters.containsKey(consultantId)) {
-        	System.out.println("2-1번");
+        	System.out.println("상담사 알림 보내기");
             SseEmitter emitter = loggedInEmitters.get(consultantId);
             try {
                 System.out.println("Sending notification to consultant: " + consultantId);
@@ -81,7 +76,7 @@ public class SseController {
                 loggedInEmitters.remove(consultantId);
             }
         } else {
-        	System.out.println("2-2번");
+        	System.out.println("상담사 로그아웃상태 맵에 담아놓기");
             // 상담사가 로그아웃 상태일 때 대기열에 저장
             Queue<String> notifications = notificationQueue.getOrDefault(consultantId, new ConcurrentLinkedQueue<>());
             notifications.offer(message);
