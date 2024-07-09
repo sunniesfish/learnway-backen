@@ -120,6 +120,13 @@ public class ScheduleService {
 					schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
 					        .orElseThrow(() -> new RuntimeException("Subject not found")));
 					
+					// 삭제된 Progress 처리
+			        if (dto.getDeletedProgressIds() != null && !dto.getDeletedProgressIds().isEmpty()) {
+			            for (Long deletedId : dto.getDeletedProgressIds()) {
+			                progressRepository.deleteById(deletedId);
+			            }
+			        }
+			        
 					//Progress 엔티티 생성 및 설정
 					List<Progress> progresses = new ArrayList<>();
 					for (ProgressDto progressDto : dto.getProgresses()) {
