@@ -3,6 +3,7 @@ package com.learnway.study.domain;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.learnway.member.domain.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,12 +32,12 @@ public class ChatMessage {
     @Column(name="chat_msg_id", nullable = false)
     private Integer msgid;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "study_chatroomid", nullable = false)
     @JsonBackReference
     private ChatRoom chatroom;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id", nullable = false)
     private Member member;
 

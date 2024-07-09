@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.learnway.member.domain.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,11 +41,11 @@ public class StudyReply {
 	@Column(name="likes")
 	private String likes;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_postid", nullable = false)
 	@JsonBackReference
     private Study study;

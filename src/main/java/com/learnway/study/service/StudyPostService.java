@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
+import com.learnway.study.domain.StudyProblem;
+import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.StudyDto;
 
@@ -24,6 +26,8 @@ public class StudyPostService {
 	private StudyRepository studyRepository;
 	@Autowired
 	private MemberRepository memberRepository;
+	@Autowired
+	private StudyProblemRepository studyProblemRepository;
 	
 	//모든게시글 출력
 	public List<Study> findAll() {
@@ -128,6 +132,30 @@ public class StudyPostService {
 	//게시글 제목검색 메서드
 	public List<Study> searchBoardList(StudyDto dto) {
 		return studyRepository.findByTitle(dto.getTitle());
+	}
+	
+	//게시글 삭제 메서드
+//	public void boardDelete(StudyDto dto,Principal principal) {
+//	System.out.println(dto.getPostid() + "게시글id");
+//	Study study = Study.builder().postid(dto.getPostid()).member(memberRepository.findByMemberId(principal.getName()).get())
+//			.build();
+//	studyRepository.delete(study);
+//}
+	public void boardDelete(StudyDto dto, Principal principal) {
+	    // 게시글 ID를 사용하여 Study 엔티티 조회
+		Study study = Study.builder().postid(dto.getPostid()).member(memberRepository.findByMemberId(principal.getName()).get())
+				.build();
+	    if (study != null) {
+	        // 연결된 problems 데이터 수동 삭제
+	        List<StudyProblem> problems = study.getProblems();
+	        if (problems != null) {
+	            for (StudyProblem problem : problems) {
+	                studyProblemRepository.delete(problem);
+	            }
+	        }
+	        // Study 엔티티 삭제
+	        studyRepository.delete(study);
+	    }
 	}
 
 }

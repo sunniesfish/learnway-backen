@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.learnway.member.domain.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,11 +31,11 @@ public class ChatRoomMember {
 	@Column(name="chatmem_id",nullable = false)
 	private Integer chatMemId;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_chatroomid", nullable = false)
     private ChatRoom chatRoom;
 	

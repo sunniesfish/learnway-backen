@@ -53,6 +53,12 @@ public class StudyRestController {
 	}
 	
 	
+	@PostMapping("/study/delete")
+	public void boardDelete(@RequestBody StudyDto dto,Principal principal) {
+		
+		studyPostService.boardDelete(dto,principal);
+	}
+	
 	//댓글 추가 메서드
 	@PostMapping("/member/replyadd")
 	public List<StudyReplyResponseDto> replyAdd(@RequestBody StudyReplyDto dto,Principal principal) {

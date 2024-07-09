@@ -24,6 +24,8 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	  Page<Study> findByPostidIn(List<Integer> postIds, Pageable pageable);
 	  
 	  Page<Study> findByPostidIn(int[] detail, Pageable pageable);
+	  
+	  Study findByPostid(int postid);
 }
 
 

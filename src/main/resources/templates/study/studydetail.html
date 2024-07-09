@@ -64,7 +64,7 @@
                                         <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
                                         <input type="submit" value="수정" class="btn btn-secondary">
                                     </form>
-                                    <button onclick="window.location.href='/studyupdate'" class="btn btn-danger ml-2">삭제</button>
+                                    <button class="btn btn-danger ml-2" id="boarddelete" name="boarddelete">삭제</button>
                                 </div>
                             </div>
                         </li>
@@ -119,9 +119,43 @@ $(document).ready(function() {
     correct_ck();
     addReply();
     loadReplyList(); // 페이지 로드 시 기존 댓글 목록 불러오기
+    clickDelete(); //게시글 삭제 메서드
 }); 
 
+/* 삭제버튼 js */
+ 
+function clickDelete() {
+	
+	var postId = $('#postid').val();
+	
+    $('#boarddelete').click(function() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            if (confirm("생성된 채팅방도 삭제됩니다.")) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/study/delete",
+                    data: JSON.stringify({ postid: postId }),
+                    contentType: "application/json",
+                    success: function(response) {
+                        alert('게시글이 삭제되었습니다.');
+                        window.location.href = "/studylist";
+                        // 성공 시 추가로 실행할 코드가 있다면 여기에 작성
+                    },
+                    error: function(error) {
+                        console.log('에러', error);
+                        alert('삭제 중 오류가 발생했습니다.');
+                    }
+                });
+            } else {
+                alert('오답입니다.');
+            }
+        } else {
+            return false;
+        }
+    });
+}
 
+ 
 /* 정답체크 js */
 function correct_ck() {
     $('#correct_ck').click(function() {
