@@ -45,8 +45,8 @@ public class StudyProblem {
 	private String correct;
 	
 	
-//	@OneToMany(mappedBy = "Problems_img", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private List<StudyProblemImg> problemsImg;
+	@OneToMany(mappedBy = "studyProblem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudyProblemImg> problemsImg;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_postid", nullable = false)
