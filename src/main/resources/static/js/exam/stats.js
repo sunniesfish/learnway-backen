@@ -75,7 +75,7 @@ function Stats() {
                 console.log("examTypeData",examTypeData)
                 return res.json();
             });
-            setExamTypeList(examTypeData);
+            setExamTypeList(examTypeData? examTypeData : ["all"]);
         } catch (error) {
             console.error('Error fetching exam types:', error);
         }
