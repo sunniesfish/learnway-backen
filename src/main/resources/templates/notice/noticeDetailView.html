@@ -21,9 +21,9 @@
 	                <div class="notice-detail">
 	                    <h2 class="mb-3" th:text="${notice.noticeTitle}">글 제목</h2>
 	                    <div class="media mb-3">
-	                        <img th:src="${notice.noticeImgPath}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64">
+	                         <img th:src="${notice.memberId.memberImage}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64"> 
 	                        <div class="media-body">
-	                            <!-- <p class="mt-0 author-info" th:text="${notice.member.memberName}">작성자명</p> -->
+	                            <p class="mt-0 author-info" th:text="${notice.memberId.memberId}">작성자명</p>
 	                            <p class="author-info" th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}">작성일자</p>
 	                        </div>
 	                    </div>
