@@ -135,7 +135,7 @@ public class NoticeService {
 		return dto;
 	}
 
-	//카테고리
+	//카테고리 
 	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
 		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
 	}
