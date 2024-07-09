@@ -48,6 +48,7 @@ function Stats() {
                     series.forEach(seriesData => {
                         exam.scoreList.forEach(score => {
                             if (seriesData.name === score.subject.subject) {
+                                console.log("seriesData.name subject.subject",dataKey,seriesData.name, score.subject.subject);
                                 seriesData.data.push(score[dataKey]);
                             }
                         });
