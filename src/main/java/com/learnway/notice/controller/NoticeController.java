@@ -78,7 +78,7 @@ public class NoticeController {
 		model.addAttribute("priNotice",priNotice);
 		
 		
-		return "/notice/noticeListView";
+		return "notice/noticeListView";
 	}
 	
 	//글쓰기 폼
@@ -89,7 +89,7 @@ public class NoticeController {
 //		        redirectAttributes.addFlashAttribute("errorMessage", "로그인을 하셔야 글쓰기를 할 수 있습니다.");
 //		        return "redirect:/exhibitscape/community/communityList"; // 로그인 페이지로 리다이렉트
 //		    }
-			return "/notice/noticeWriteView";
+			return "notice/noticeWriteView";
 		}
 		
 		
@@ -148,7 +148,7 @@ public class NoticeController {
 		dto = noticeService.findDetail(noticeId);
 		model.addAttribute("notice",dto);
 		
-		return "/notice/noticeDetailView";
+		return "notice/noticeDetailView";
 	}
 	
 	//글수정 페이지
@@ -162,7 +162,7 @@ public class NoticeController {
 	    
 		model.addAttribute("notice",dto);
 		
-		return "/notice/noticeReView";
+		return "notice/noticeReView";
 	}
 	
 	//글 수정
