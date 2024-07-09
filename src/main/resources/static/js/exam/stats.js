@@ -171,7 +171,7 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, revers
     return {
         series: series,
         chart: {
-            height: 700,
+            height: "60vh",
             width: "100%",
             type: 'line',
             dropShadow: {
