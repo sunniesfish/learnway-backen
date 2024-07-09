@@ -33,7 +33,7 @@ public class Notice {
 	@Column
 	private String noticeTitle;
 	
-	@Column
+	@Column(columnDefinition = "TEXT")
 	private String noticeContent;
 	
 	@Column
