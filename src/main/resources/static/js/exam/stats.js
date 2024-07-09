@@ -19,7 +19,7 @@ function Stats() {
     console.log("stat")
     const [cat, setCat] = React.useState("score");
     const [examType, setExamType] = React.useState("all");
-    const [examTypeList, setExamTypeList] = React.useState([]);
+    const [examTypeList, setExamTypeList] = React.useState(["all"]);
     const [pageNo, setPageNo] = React.useState(1);
     const [pages, setPages] = React.useState(0);
     const [scoreOption, setScoreOption] = React.useState();
@@ -75,7 +75,7 @@ function Stats() {
                 console.log("examTypeData",examTypeData)
                 return res.json();
             });
-            setExamTypeList(examTypeData);
+            setExamTypeList(prev => examTypeData? examTypeData : prev);
         } catch (error) {
             console.error('Error fetching exam types:', error);
         }
