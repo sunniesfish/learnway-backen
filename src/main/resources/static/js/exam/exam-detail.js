@@ -185,7 +185,7 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
-            const subjectData = await response();
+            const subjectData = await response.json();
             setSubjects(subjectData)
             if(onModify) {
                 fetchData(scoreId);
