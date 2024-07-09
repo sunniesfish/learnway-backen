@@ -34,6 +34,9 @@ jobs:
   
       - name: Update db AWS key
         run: sed -i 's/<AWS_SECRET__ACCESS_KEY>/${{ secrets.AWS_SECRET__ACCESS_KEY }}/' src/main/resources/application.properties
+      
+      - name: Update GPT API key
+        run: sed -i 's/<GPT_API_KEY>/${{ secrets.GPT_API_KEY }}/' src/main/resources/application.properties
   
 
       - name: Grant execute permission for gradlew
