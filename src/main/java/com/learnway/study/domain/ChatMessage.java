@@ -36,6 +36,7 @@ public class ChatMessage {
     @JoinColumn(name = "study_chatroomid", nullable = false)
     @JsonBackReference
     private ChatRoom chatroom;
+ 
     
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id", nullable = false)

@@ -30,7 +30,7 @@ public class CustomUserDetails implements UserDetails {
     public String getImage() {
         String memberImage = member.getMemberImage();
         if (memberImage != null && !memberImage.isEmpty() && !memberImage.equals("/img/member/member-default.png")) {
-            return "/api/member/uploads/" + memberImage;
+            return memberImage;
         } else {
             return "/img/member/member-default.png"; // 기본 이미지 경로로 설정
         }

@@ -8,8 +8,10 @@ import lombok.Data;
 @Data
 public class StudyDto {
 	
+	
 	private Integer postid;
 	
+	private Integer id;
 	
 	private String title;
 	
@@ -20,12 +22,18 @@ public class StudyDto {
 	private Date createdate;
 	
 	private Date startdate;
-	
 	private Date enddate;
+	
+	
+	private String startdatetest;
+	private String enddatetest;
 	
 	private byte isjoin;
 	
 	private String search;
 	private String detailSearch;
 	private int[] detailSearchArray;
+	
+	
+	
 }
