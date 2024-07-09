@@ -45,7 +45,7 @@ public class StudyProblem {
 	private String correct;
 	
 	
-	@OneToMany(mappedBy = "studyProblem", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "studyProblem", cascade = CascadeType.REMOVE)
     private List<StudyProblemImg> problemsImg;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)

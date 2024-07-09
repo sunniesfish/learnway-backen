@@ -65,19 +65,19 @@ public class Study {
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
 	@JsonManagedReference
 	private List<StudyTag> tags;
 	
-	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<StudyReply> replies;
 	
-	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     @JsonManagedReference
     private List<ChatRoom> chatroom;
 	
-	 @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+	 @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
 	private List<StudyProblem> problems;
 
 	

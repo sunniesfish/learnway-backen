@@ -11,10 +11,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyProblem;
+import com.learnway.study.domain.StudyProblemImgRepository;
 import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.StudyDto;
@@ -28,6 +30,8 @@ public class StudyPostService {
 	private MemberRepository memberRepository;
 	@Autowired
 	private StudyProblemRepository studyProblemRepository;
+	@Autowired
+	private StudyProblemImgRepository studyProblemImgRepository;
 	
 	//모든게시글 출력
 	public List<Study> findAll() {
@@ -141,21 +145,28 @@ public class StudyPostService {
 //			.build();
 //	studyRepository.delete(study);
 //}
+	
+	@Transactional
 	public void boardDelete(StudyDto dto, Principal principal) {
 	    // 게시글 ID를 사용하여 Study 엔티티 조회
-		Study study = Study.builder().postid(dto.getPostid()).member(memberRepository.findByMemberId(principal.getName()).get())
+		Study study = Study.builder().postid(dto.getPostid()).
+				member(memberRepository.findByMemberId(principal.getName()).get())
 				.build();
 	    if (study != null) {
 	        // 연결된 problems 데이터 수동 삭제
 	        List<StudyProblem> problems = study.getProblems();
 	        if (problems != null) {
+	        	
+	        }
 	            for (StudyProblem problem : problems) {
+	            	System.out.println(problem.getProblemid() + " 문제아이디");
+	            	
 	                studyProblemRepository.delete(problem);
 	            }
 	        }
 	        // Study 엔티티 삭제
 	        studyRepository.delete(study);
-	    }
+	    
 	}
 
 }
