@@ -1,5 +1,6 @@
 package com.learnway.study.domain;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.learnway.member.domain.Member;
@@ -12,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +32,11 @@ public class ChatRoomMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="chatmem_id", nullable = false)
     private Integer chatMemId;
+    
+    
+    @OneToMany(mappedBy = "chatRoomMember", cascade = CascadeType.REMOVE)
+    private List<ChatMessage> chatMessage;
+    
     
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id", nullable = false)

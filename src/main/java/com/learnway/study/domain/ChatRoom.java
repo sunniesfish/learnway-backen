@@ -33,6 +33,11 @@ public class ChatRoom {
     @Column(name="study_chatroomid", nullable = false)
     private Integer chatroomid;
     
+
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ChatMessage> messages;
+
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "study_postid", nullable = false)
     private Study study;
@@ -41,13 +46,10 @@ public class ChatRoom {
     @JoinColumn(name = "id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ChatMessage> messages;
     
-    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
     private List<ChatRoomMember> chatRoomMember;
-
+    
     @Column(name="study_roomname", nullable = false)
     private String roomname;
 }

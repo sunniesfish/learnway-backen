@@ -21,6 +21,9 @@ import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.StudyDto;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Service
 public class StudyPostService {
 	
@@ -32,6 +35,8 @@ public class StudyPostService {
 	private StudyProblemRepository studyProblemRepository;
 	@Autowired
 	private StudyProblemImgRepository studyProblemImgRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	//모든게시글 출력
 	public List<Study> findAll() {
@@ -146,9 +151,57 @@ public class StudyPostService {
 //	studyRepository.delete(study);
 //}
 	
+//	@Transactional
+//	public void boardDelete(StudyDto dto, Principal principal) {
+//	    Study study = studyRepository.findByPostid(dto.getPostid());
+//	    if (study != null) {
+//	        study.getReplies().clear();
+//	        study.getChatroom().clear();
+//	        study.getTags().clear();
+//	        study.getCorrectCheck().clear();
+//	        study.getProblems().clear();
+//	        study.toBuilder().member(null);
+//	        studyRepository.save(study);
+//	        studyRepository.delete(study);
+//	    }
+//	}
+	
 	@Transactional
 	public void boardDelete(StudyDto dto, Principal principal) {
-	    Study study = studyRepository.findByPostid(dto.getPostid());
-	    studyRepository.delete(study);
+	    // 자식 테이블 데이터 먼저 삭제
+	    entityManager.createNativeQuery("DELETE FROM study_reply WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM study_tag WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM correct_check WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM problems_img WHERE study_problemid IN (SELECT study_problemid FROM problems WHERE study_postid = :studyId)")
+        .setParameter("studyId", dto.getPostid())
+        .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM problems WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    
+	    entityManager.createNativeQuery("DELETE FROM chat_message WHERE study_chatroomid IN (SELECT study_chatroomid FROM study_chatroom WHERE study_postid = :postid)")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
+	    
+	    entityManager.createNativeQuery("DELETE FROM chatroommember WHERE study_chatroomid IN (SELECT study_chatroomid FROM study_chatroom WHERE study_postid = :postid)")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
+	    
+	    
+	    
+	    entityManager.createNativeQuery("DELETE FROM study_chatroom WHERE study_postid = :postid")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
+
+	    // Study 테이블 데이터 삭제
+	    entityManager.createNativeQuery("DELETE FROM study WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
 	}
 }

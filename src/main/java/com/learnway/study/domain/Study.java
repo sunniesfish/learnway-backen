@@ -62,21 +62,26 @@ public class Study {
 	@Column(name="study_isjoin",nullable = false)
 	private byte isjoin;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "id" ,nullable = false)
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id", nullable = false)
+	private Member member;
 	
+	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+	@JsonManagedReference
+	private List<StudyReply> replies;
+	
+	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
+	@JsonManagedReference
+	private List<ChatRoom> chatroom;
+
 	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
 	@JsonManagedReference
 	private List<StudyTag> tags;
 	
 	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
-    private List<StudyReply> replies;
+	@JsonManagedReference
+	private List<CorrectCheck> correctCheck;
 	
-	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
-    @JsonManagedReference
-    private List<ChatRoom> chatroom;
 	
 	 @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
 	private List<StudyProblem> problems;
