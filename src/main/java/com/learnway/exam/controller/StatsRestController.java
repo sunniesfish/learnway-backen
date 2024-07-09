@@ -31,12 +31,8 @@ public class StatsRestController {
     ) {
         Long memId = userDetails.getMemberId();
 
-        if (memId == null) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-        } else {
-            Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
-            return new ResponseEntity(page, HttpStatus.OK);
-        }
+        Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo - 1, 10));
+        return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
 
@@ -48,16 +44,17 @@ public class StatsRestController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long memId = userDetails.getMemberId();
-        if (memId == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        Page<Exam> page;
+        if(!examTypeName.equals("all")){
+            page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
         } else {
-            Page<Exam> page;
-            if(!examTypeName.equals("all")){
-                page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
-            } else {
-                page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
-            }
+            page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
+        }
+
+        if(page != null){
             return new ResponseEntity<>(page, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -71,11 +68,12 @@ public class StatsRestController {
     ) {
         Long memId = userDetails.getMemberId();
 
-        if (memId == null) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+
+        Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
+        if(page != null){
+            return new ResponseEntity<>(page, HttpStatus.OK);
         } else {
-            Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo-1, 10));
-            return new ResponseEntity(page, HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -88,16 +86,17 @@ public class StatsRestController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         Long memId = userDetails.getMemberId();
-        if (memId == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        Page<Exam> page;
+        if(!examTypeName.equals("all")){
+            page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
         } else {
-            Page<Exam> page;
-            if(!examTypeName.equals("all")){
-                page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
-            } else {
-                page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
-            }
+            page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
+        }
+        if(page != null){
             return new ResponseEntity<>(page, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
