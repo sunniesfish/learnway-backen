@@ -17,7 +17,7 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.onload(() => render(examId))
+window.onload = () => render(examId);
 
 function render(examId){
     console.log("render",examId)
