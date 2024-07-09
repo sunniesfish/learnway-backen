@@ -1,6 +1,7 @@
 package com.learnway.study.controller;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +73,47 @@ public class StudyController {
 
 	    return "study/studylist";
 	}
+	
+	
+	@PostMapping("/studylist/search")
+	public String studyListSearch(@PageableDefault(size = 7) Pageable pageable, Model model,
+	                              @ModelAttribute StudyDto dto) {
+
+	    if (dto.getDetailSearch() != null && !dto.getDetailSearch().isEmpty()) {
+	        // String으로 받은 값을 ',' 기준으로 분할하여 int 배열로 변환
+	        int[] detailSearchArray = Arrays.stream(dto.getDetailSearch().split(",")).mapToInt(Integer::parseInt).toArray();
+	        // 변환된 배열을 dto에 설정
+	        dto.setDetailSearchArray(detailSearchArray);
+	    }
+
+	    Page<Study> studies = studyPostService.boardSearchList(dto, pageable);
+
+	    if ((dto.getDetailSearch() == null || dto.getDetailSearch().isEmpty()) &&
+	        (dto.getTitle() == null || dto.getTitle().isEmpty())) {
+	        return "redirect:/studylist";
+	    }
+
+	    int startPage;
+	    int endPage;
+
+	    if (studies.getTotalPages() == 0) {
+	        // 검색 결과가 없을 때 startPage와 endPage를 1로 설정
+	        startPage = 1;
+	        endPage = 1;
+	        model.addAttribute("list", Page.empty(pageable));
+	    } else {
+	        startPage = Math.max(1, studies.getNumber() + 1 - 4);
+	        endPage = Math.min(studies.getNumber() + 1 + 4, studies.getTotalPages());
+	        model.addAttribute("list", studies);
+	    }
+
+	    model.addAttribute("startPage", startPage);
+	    model.addAttribute("endPage", endPage);
+
+	    return "study/studySearchList";
+	}
+	
+	
 
 	
 	@GetMapping(value="/studyadd")

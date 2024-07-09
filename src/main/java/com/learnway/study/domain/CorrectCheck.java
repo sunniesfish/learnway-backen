@@ -2,6 +2,7 @@ package com.learnway.study.domain;
 
 import com.learnway.member.domain.Member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,11 +30,11 @@ public class CorrectCheck {
 	@Column(name="CorrectCk_id" , nullable = false)
 	private Integer correctId;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_postid", nullable = false)
     private Study study;
 	

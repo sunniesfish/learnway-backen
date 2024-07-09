@@ -61,22 +61,30 @@ public class Study {
 	@Column(name="study_isjoin",nullable = false)
 	private byte isjoin;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id", nullable = false)
     private Member member;
 	
-	@OneToMany(mappedBy = "study" , cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference
 	private List<StudyTag> tags;
 	
-	@OneToMany(mappedBy = "study")
+	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<StudyReply> replies;
 	
-	@OneToMany(mappedBy = "study")
+	@OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ChatRoom> chatroom;
 	
+	 @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<StudyProblem> problems;
+
+	
+	 
+	 
+	 
+	 
 	@Transient
 	private int repliesCount;
 	
@@ -88,10 +96,5 @@ public class Study {
 	this.repliesCount = this.replies != null ? this.replies.size() : 0;
 	this.chatroomCount = this.chatroom != null ? this.chatroom.size() : 0;
 	    }
-	
-	
-	
-	
-	
 	
 }
