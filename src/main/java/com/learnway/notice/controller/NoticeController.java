@@ -78,7 +78,7 @@ public class NoticeController {
 		model.addAttribute("priNotice",priNotice);
 		
 		
-		return "/notice/noticeListView";
+		return "notice/noticeListView";
 	}
 	
 	//글쓰기 폼
