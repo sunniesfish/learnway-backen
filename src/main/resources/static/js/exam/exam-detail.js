@@ -3,7 +3,7 @@ const examGoBackBtn = document.querySelector(".exam-detail__goback-btn")
 const examDetailModal = document.querySelector(".exam-detail__modal__info");
 const examModalOverlay = document.querySelector(".exam-detail__modal__detail-overlay");
 examDetailBtn.addEventListener("click",handleRegBtnClick);
-examGoBackBtn.addEventListener("clicl",()=>{
+examGoBackBtn.addEventListener("click",()=>{
     location.href = "/exam/list/1"
 })
 
