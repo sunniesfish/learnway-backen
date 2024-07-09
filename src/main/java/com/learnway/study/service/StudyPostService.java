@@ -1,6 +1,9 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -11,13 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
-import com.learnway.study.domain.StudyProblem;
+import com.learnway.study.domain.StudyProblemImgRepository;
 import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.dto.StudyDto;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class StudyPostService {
@@ -28,6 +35,10 @@ public class StudyPostService {
 	private MemberRepository memberRepository;
 	@Autowired
 	private StudyProblemRepository studyProblemRepository;
+	@Autowired
+	private StudyProblemImgRepository studyProblemImgRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
 	
 	//모든게시글 출력
 	public List<Study> findAll() {
@@ -99,6 +110,14 @@ public class StudyPostService {
 	//현재메서드는 게시글작성 및  return 값으로는 작성중인 potsId값 반환
 	public Study boardadd(StudyDto dto,Principal principal) {
 		
+		 Date startdate=parseStringToSqlDate(dto.getStartdatetest());
+		 Date enddate=parseStringToSqlDate(dto.getEnddatetest());
+		
+		 dto.setStartdate(startdate);
+		 dto.setEnddate(enddate);
+		 
+		if(dto.getStartdatetest()!=null ||!dto.getStartdatetest().isEmpty() &&
+				dto.getEnddatetest()!=null ||!dto.getEnddatetest().isEmpty()) {
 		Study study = Study.builder().title(dto.getTitle())
 									       .content(dto.getContent())
 									       .viewcount("0")
@@ -106,13 +125,30 @@ public class StudyPostService {
 									       .enddate(dto.getEnddate())
 									       .isjoin((byte) dto.getIsjoin()).
 									       member(memberRepository.findByMemberId(principal.getName()).get()).build();
-		
+		return studyRepository.save(study);
+		}
+		Study study = Study.builder().title(dto.getTitle())
+			       .content(dto.getContent())
+			       .viewcount("0")
+			       .isjoin((byte) dto.getIsjoin()).
+			       member(memberRepository.findByMemberId(principal.getName()).get()).build();
 	    
 		return studyRepository.save(study);
 		
 		
 	}
-	
+	  private Date parseStringToSqlDate(String dateString) {
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        Date date = null;
+	        try {
+	            java.util.Date utilDate = sdf.parse(dateString);
+	            date = new Date(utilDate.getTime());
+	        } catch (ParseException e) {
+	            e.printStackTrace(); // 예외 처리 필요
+	        }
+	        return date;
+	    }
+	  
 	// 게시글 수정 메서드
 	public Study boardUpdate(StudyDto dto,Principal principal) {
 		
@@ -129,6 +165,8 @@ public class StudyPostService {
 		
 	}
 	
+	
+	
 	//게시글 제목검색 메서드
 	public List<Study> searchBoardList(StudyDto dto) {
 		return studyRepository.findByTitle(dto.getTitle());
@@ -141,21 +179,58 @@ public class StudyPostService {
 //			.build();
 //	studyRepository.delete(study);
 //}
+	
+//	@Transactional
+//	public void boardDelete(StudyDto dto, Principal principal) {
+//	    Study study = studyRepository.findByPostid(dto.getPostid());
+//	    if (study != null) {
+//	        study.getReplies().clear();
+//	        study.getChatroom().clear();
+//	        study.getTags().clear();
+//	        study.getCorrectCheck().clear();
+//	        study.getProblems().clear();
+//	        study.toBuilder().member(null);
+//	        studyRepository.save(study);
+//	        studyRepository.delete(study);
+//	    }
+//	}
+	
+	@Transactional
 	public void boardDelete(StudyDto dto, Principal principal) {
-	    // 게시글 ID를 사용하여 Study 엔티티 조회
-		Study study = Study.builder().postid(dto.getPostid()).member(memberRepository.findByMemberId(principal.getName()).get())
-				.build();
-	    if (study != null) {
-	        // 연결된 problems 데이터 수동 삭제
-	        List<StudyProblem> problems = study.getProblems();
-	        if (problems != null) {
-	            for (StudyProblem problem : problems) {
-	                studyProblemRepository.delete(problem);
-	            }
-	        }
-	        // Study 엔티티 삭제
-	        studyRepository.delete(study);
-	    }
-	}
+	    // 자식 테이블 데이터 먼저 삭제
+	    entityManager.createNativeQuery("DELETE FROM study_reply WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM study_tag WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM correct_check WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM problems_img WHERE study_problemid IN (SELECT study_problemid FROM problems WHERE study_postid = :studyId)")
+        .setParameter("studyId", dto.getPostid())
+        .executeUpdate();
+	    entityManager.createNativeQuery("DELETE FROM problems WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	    
+	    entityManager.createNativeQuery("DELETE FROM chat_message WHERE study_chatroomid IN (SELECT study_chatroomid FROM study_chatroom WHERE study_postid = :postid)")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
+	    
+	    entityManager.createNativeQuery("DELETE FROM chatroommember WHERE study_chatroomid IN (SELECT study_chatroomid FROM study_chatroom WHERE study_postid = :postid)")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
+	    
+	    
+	    
+	    entityManager.createNativeQuery("DELETE FROM study_chatroom WHERE study_postid = :postid")
+	    .setParameter("postid", dto.getPostid())
+	    .executeUpdate();
 
+	    // Study 테이블 데이터 삭제
+	    entityManager.createNativeQuery("DELETE FROM study WHERE study_postid = :postid")
+	            .setParameter("postid", dto.getPostid())
+	            .executeUpdate();
+	}
 }

@@ -33,7 +33,7 @@ public class ConsultantDetails implements UserDetails {
 
         String consultImage = consultant.getImageUrl();
         if (consultImage != null && !consultImage.isEmpty() && !consultImage.equals("/img/member/member-default.png")) {
-            return "/api/member/uploads/" + consultImage;
+            return /*"/api/member/uploads/" +*/ consultImage;
         } else {
             return "/img/member/member-default.png"; // 기본 이미지 경로로 설정
         }

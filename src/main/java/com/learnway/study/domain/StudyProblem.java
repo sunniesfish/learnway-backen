@@ -1,5 +1,6 @@
 package com.learnway.study.domain;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.learnway.member.domain.Member;
@@ -19,11 +20,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Builder
 @Getter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder(toBuilder = true)
 @Table(name="Problems")
 public class StudyProblem {
 
@@ -52,7 +53,7 @@ public class StudyProblem {
 	@JoinColumn(name = "study_postid", nullable = false)
 	private Study study;
 	
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name = "id", nullable = false)
 	private Member memid;
 	

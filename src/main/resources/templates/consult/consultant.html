@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>상담사 마이페이지</title>
+    <title>LearnWay</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -696,11 +696,14 @@
                     dataType: 'json',
                     success: function(user) {
                         var userInfoContent = `
-                            <p><img src="${user.userImg}" alt="User Image" style="max-width: 100%; height: auto;"></p>
-                            <p>이름: ${user.userName}</p>
-                            <p>나이:  ${user.userAge} 세</p>
-                            <p>성적통계: ${user.stats}</p>
-                            <p>목표대학: ${user.targetUniversity}</p>
+                            <p><img src="${user.memberImg}" alt="User Image" style="max-width: 100%; height: auto;"></p>
+                            <p>이름: ${user.memberName}</p>
+                            <p>나이:  ${user.memberAge} 세</p>
+                            <p>성별: ${user.memberGender}</p>
+                            <p>연락처: ${user.memberPhone}</p>
+                            <p>Email: ${user.memberEmail}</p>
+                            <p>주소: ${user.memberAllAddress}</p>
+                            <p>${user.memberSchool} 학교 ${user.memberGrade} 학년</p>
                             <p>상담요청내용: ${user.requestContents}</p>
                         `;
                         $('#userInfoContent').html(userInfoContent);

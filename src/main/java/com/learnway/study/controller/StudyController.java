@@ -90,7 +90,7 @@ public class StudyController {
 
 	    if ((dto.getDetailSearch() == null || dto.getDetailSearch().isEmpty()) &&
 	        (dto.getTitle() == null || dto.getTitle().isEmpty())) {
-	        return "redirect:/studylist";
+	        return "redirect:studylist";
 	    }
 
 	    int startPage;
@@ -145,9 +145,11 @@ public class StudyController {
 	public String studyadd(StudyDto studyDto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto,
 			@RequestParam("imgpath") MultipartFile[] files,Principal principal) {
+		
+		System.out.println("컨트롤러 접근");
 		System.out.println(studyTagDto.getTag());
 		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
-		return "redirect:/studylist";
+		return "redirect:studylist";
 	}
 	
 	//게시글 수정 메서드
@@ -159,7 +161,7 @@ public class StudyController {
 		System.out.println("게시글 id 수정창" + studyDto.getPostid());
 		studyService.updateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		
-		return "redirect:/studylist";
+		return "redirect:studylist";
 	}
 	
 	

@@ -1,9 +1,7 @@
 package com.learnway.consult.service;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -19,6 +17,7 @@ import com.learnway.consult.domain.ReservationRepository;
 import com.learnway.consult.dto.ReservationDTO;
 import com.learnway.consult.dto.UserInfoDTO;
 import com.learnway.member.domain.Member;
+import com.learnway.member.domain.MemberGender;
 import com.learnway.member.domain.MemberRepository;
 
 @Service
@@ -97,17 +96,32 @@ public class ReservationService {
             List<ReservationEntity> list = reservationRepository.findBymember_id(member.getId());
             System.out.println("컨텐츠 : " + list.toString());
             System.out.println("컨텐츠 : " + list.get(0).getReservationContent());
+            //가져올 학생정보
             String requestContents = list.get(0).getReservationContent();
-            String userImg = member.getMemberImage();
-            LocalDate memberBirth = member.getMemberBirth();
-            String age = String.valueOf(calculateAge(memberBirth));
+            String memberImg = member.getMemberImage();   //프로필이미지
+            LocalDate memberBirth = member.getMemberBirth(); //생년월일
+            String memberEmail = member.getMemberEmail();    //이메일
+            String memberSchool = member.getMemberSchool();    //학교
+            int memberGrade = member.getMemberGrade();            // 학년 (1~6 숫자)
+            String memberGender = member.getMemberGender().name(); //성별
+            String memberPhone = member.getMemberPhone();  //연락처
+            
+            String memberAddress = member.getMemberAddress();        // 주소
+            String memberDetailadd = member.getMemberDetailadd();     // 상세 주소 (주소 외 나머지 주소)
+            String memberAllAddress = 	memberAddress + " " +  memberDetailadd;
+            String age = String.valueOf(calculateAge(memberBirth)); //생년월일을 나이로 변환
             return new UserInfoDTO(
                 member.getId(),
                 member.getMemberName(),
                 age,
-                requestContents,
-                userImg
-                
+                memberGender,
+                memberPhone,
+                memberEmail,
+                memberAllAddress,
+                memberSchool,
+                memberGrade,
+                memberImg,
+                requestContents
             );
         } else {
             throw new NoSuchElementException("User not found with id: " + userId);

@@ -1,11 +1,9 @@
 package com.learnway.schedule.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.learnway.global.domain.Material;
-import com.learnway.global.domain.Studyway;
-import com.learnway.global.domain.Subject;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,7 +43,8 @@ public class Progress {
 	@JoinColumn(name = "scheduleId")
 	private Schedule scheduleId;
 
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name = "materialId",unique = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Material materialId;
 }
