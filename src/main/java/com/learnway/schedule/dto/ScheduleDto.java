@@ -32,6 +32,8 @@ public class ScheduleDto {
 	private double scheduleAchieveRate;
 	private List<ProgressDto> progresses;
 	private Member member; 
+	private List<Long> deletedProgressIds;
+	
 	@Override
 	public String toString() {
 		return "ScheduleDto [scheduleId=" + scheduleId + ", startTime=" + startTime + ", endTime=" + endTime
