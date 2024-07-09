@@ -152,8 +152,11 @@ public class StudyPostService {
 		Study study = Study.builder().postid(dto.getPostid()).
 				member(memberRepository.findByMemberId(principal.getName()).get())
 				.build();
+		System.out.println(study.getProblems());
+		
 	    if (study != null) {
 	        // 연결된 problems 데이터 수동 삭제
+	    	System.out.println("--1--");
 	        List<StudyProblem> problems = study.getProblems();
 	        if (problems != null) {
 	        	
