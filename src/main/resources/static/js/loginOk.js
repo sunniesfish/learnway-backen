@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     eventContent: function(arg) {
 	    if (arg.event.title === "●") {
 	      return {
-			html: '<div class="event-dot"></div>'	      
+      html: '<img src="/img/schedule/check3.png" alt="Check" style="width: 20px; height: 20px;  margin: 0 auto; display: block;">'
 			};
 	    }
 	  },
@@ -27,12 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		    month: month,
 		},
         success: function(data) {
-			console.log(data);
           var events = data.map(function(dto) {
             return {
               title: dto.scheduleId != null ? "●" : "",
-              start: dto.startTime,
-              allDay: true
+              start: dto.startTime
             };
           });
           successCallback(events);
