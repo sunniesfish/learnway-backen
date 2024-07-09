@@ -1,7 +1,11 @@
 const examDetailBtn = document.querySelector(".exam-detail__detail-btn");
+const examGoBackBtn = document.querySelector(".exam-detail__goback-btn")
 const examDetailModal = document.querySelector(".exam-detail__modal__info");
 const examModalOverlay = document.querySelector(".exam-detail__modal__detail-overlay");
 examDetailBtn.addEventListener("click",handleRegBtnClick);
+examGoBackBtn.addEventListener("clicl",()=>{
+    location.href = "/exam/list/1"
+})
 
 function handleRegBtnClick(event){
     event.preventDefault();
@@ -72,6 +76,12 @@ function Subjects({examId}){
         setOnModify(false);
         setDetail("")
     };
+    const handleGoPrev = () => {
+        pageNo > 1 && setPageNo(prev => prev - 1);
+    }
+    const handleGoNext = () => {
+        pageNo < data.totalPages && setPageNo(prev => prev + 1);
+    }
     return(
         <>
         <div className="exam-detail__container">
@@ -105,7 +115,7 @@ function Subjects({examId}){
         <div className="pagination">
             { data?
             <>
-            <button>prev</button>
+            <button onClick={handleGoPrev}>prev</button>
                 {Array.from(
                     {length:data.totalPages > pages + 5? 5 : data.totalPages % 5},
                     (_,i) => i
@@ -124,7 +134,7 @@ function Subjects({examId}){
                         </div>
                     )
                 })}
-            <button>next</button>
+            <button onClick={handleGoNext}>next</button>
             </>            
             :
             null

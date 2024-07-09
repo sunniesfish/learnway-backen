@@ -4,7 +4,6 @@ async function fetchTypeStats(examType, pageNo) {
     return response.json();
 }
 
-console.log("stas page")
 const statsRoot = document.getElementById("stats-root");
 
 // window.addEventListener("onload", render);
@@ -28,9 +27,9 @@ function Stats() {
     const [isOption, setIsOption] = React.useState(false);
 
     const fetchData = async () => {
-        console.log("fetchData")
         try {
             const statdata = await fetchTypeStats(examType, pageNo);
+            console.log("fetchData",statdata)
             setPages(statdata.totalPages);
             console.log("data", statdata)
             const subjects = await fetch("/api/subject/").then(res => {
@@ -68,7 +67,6 @@ function Stats() {
         }
     };
     const fetchExamTypeData = async () => {
-        console.log("fetch type data")
         try {
             const examTypeData = await fetch("/api/examtype/all").then(res => {
                 if (!res.ok) throw new Error('Failed to fetch exam types');
@@ -86,7 +84,6 @@ function Stats() {
     }, [scoreOption, gradeOption, stdOption]);
 
     React.useEffect(() => {
-        console.log("in useEffect")
         fetchData();
     }, [pageNo, examType]);
     
@@ -153,6 +150,8 @@ function ChartType({ cat, option }) {
 }
 
 function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, reversed) {
+    console.log("series",series);
+    console.log("xaxis",xaxisCat);
     return {
         series: series,
         chart: {
