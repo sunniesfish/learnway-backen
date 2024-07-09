@@ -118,7 +118,7 @@ public class StudyController {
 	
 	@GetMapping(value="/studyadd")
 	public String studyAddView() {
-		return "/study/studyadd";
+		return "study/studyadd";
 	}
 	
 	
