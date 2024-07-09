@@ -106,7 +106,7 @@ public class NoticeController {
 		}
 		
 		//이미지 URI
-		String imgURI = null; 
+		String imgURI = null;
 		
 		//이미지가 없는 경우에도 글 쓸 수 있도록 처리
 		for (MultipartFile file : files) {

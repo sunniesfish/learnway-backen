@@ -62,11 +62,74 @@
         </div>
     </div>
 </div>
+
+<!-- 비밀번호 변경 후 성공 메시지 모달 -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">알림</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p th:text="${message}"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline-success" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ID 찾기 결과 모달 -->
+<div class="modal fade" id="idFindModal" tabindex="-1" role="dialog" aria-labelledby="idFindModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idFindModalLabel">ID 찾기 결과</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>입력해주신 정보로 가입된 아이디는 다음과 같습니다.</p>
+                <ul id="foundIds"></ul>
+                <p>로그인 혹은 비밀번호 찾기를 진행해 주세요.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <script>
     // 로그인 실패 시 모달
     $(document).ready(function() {
         if (window.location.search.includes('error=true')) {
             $('#errorModal').modal('show');
+        }
+    });
+    // 비밀번호 찾기 후 로그인 창
+    $(document).ready(function() {
+        // URL에 passwordResetSuccess=true가 포함되어 있으면 성공 모달 표시
+        if (window.location.search.includes('passwordResetSuccess=true')) {
+            $('#successModal').modal('show');
+        }
+    });
+    // 아이디 찾기 모달
+    $(document).ready(function() {
+        // id-find 에서 idFindSuccess 값 받음(list)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('idFindSuccess')) {
+            const ids = urlParams.get('idFindSuccess').split(',');
+            const $foundIds = $('#foundIds');
+            $foundIds.empty();
+            ids.forEach(id => {
+                $foundIds.append(`<li>${id}</li>`);
+            });
+            $('#idFindModal').modal('show');
         }
     });
 </script>
