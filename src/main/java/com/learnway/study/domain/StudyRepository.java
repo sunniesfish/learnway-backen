@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,6 +18,14 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	  List<Study> findByTitle(String title);
 	  
 	  List<Study> findByStartdateGreaterThanEqual(Date startDate);
+	  
+	  Page<Study> findByTitleContaining(String title, Pageable pageable);
+	  
+	  Page<Study> findByPostidIn(List<Integer> postIds, Pageable pageable);
+	  
+	  Page<Study> findByPostidIn(int[] detail, Pageable pageable);
+	  
+	  Study findByPostid(int postid);
 }
 
 

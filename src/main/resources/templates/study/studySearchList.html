@@ -322,11 +322,19 @@
             <a class="page-link" th:href="@{/studylist(page=${list.number - 1})}" tabindex="-1">&laquo;</a>
         </li>
 
-        <th:block th:with="start=${T(java.lang.Math).max(1, list.number-2)}, 
-                            end=${T(java.lang.Math).min(list.totalPages, list.number+3)}">
-            <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" 
-                th:classappend="${num == list.number + 1} ? 'active'">
-                <a class="page-link" th:href="@{/studylist(page=${num - 1})}" th:text="${num}"></a>
+        <th:block th:if="${list.totalPages > 0}">
+            <th:block th:with="start=${T(java.lang.Math).max(1, list.number-2)}, 
+                                end=${T(java.lang.Math).min(list.totalPages, list.number+3)}">
+                <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" 
+                    th:classappend="${num == list.number + 1} ? 'active'">
+                    <a class="page-link" th:href="@{/studylist(page=${num - 1})}" th:text="${num}"></a>
+                </li>
+            </th:block>
+        </th:block>
+        
+        <th:block th:if="${list.totalPages == 0}">
+            <li class="page-item active">
+                <a class="page-link" href="#">1</a>
             </li>
         </th:block>
 

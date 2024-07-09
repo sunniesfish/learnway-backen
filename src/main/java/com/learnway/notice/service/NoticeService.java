@@ -46,10 +46,9 @@ public class NoticeService {
 
 
 	//글쓰기
-	public void write(NoticeDto dto, String memberId) {
+	public void write(NoticeDto dto, Member member) {
 
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
-
 
 		Notice notice = new Notice();
 		notice.setNoticeId(dto.getNoticeId());
@@ -61,7 +60,8 @@ public class NoticeService {
 		notice.setCreateDate(LocalDateTime.now());
 		notice.setPriority(dto.isPriority());
 		notice.setCategory(dto.getCategory());
-		notice.setMemberId(memberId);
+		notice.setMember(member);
+		notice.setMember(dto.getMemberId());
 
 		noticeRepository.save(notice);
 

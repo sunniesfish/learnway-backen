@@ -1,5 +1,6 @@
 package com.learnway.study.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class StudyProblemImg {
 	@Column(name="study_imgpath")
 	private String imgpath;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_problemid", nullable = false)
 	private StudyProblem studyProblem;
 }
