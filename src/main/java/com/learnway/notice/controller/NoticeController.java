@@ -1,20 +1,15 @@
 package com.learnway.notice.controller;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.security.Principal;
-import java.util.Optional;
-import java.util.UUID;
 
 import com.learnway.global.exceptions.S3Exception;
 import com.learnway.global.service.S3ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -30,6 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.learnway.global.exceptions.DataNotExeption;
 import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
+import com.learnway.member.service.CustomUserDetails;
 import com.learnway.notice.domain.Notice;
 import com.learnway.notice.dto.NoticeDto;
 import com.learnway.notice.service.NoticeService;
@@ -48,9 +44,6 @@ public class NoticeController {
 
 	@Autowired
 	private S3ImageService s3ImageService;
-	
-	@Autowired
-	private MemberRepository memberRepository;
 	
 	
 	//공지사항 리스트 불러오기
@@ -103,39 +96,46 @@ public class NoticeController {
 	//글쓰기
 	@PostMapping("/write")
 	public String noticeWrtie(NoticeDto dto,@RequestParam("comFile") MultipartFile[] files,
-							  Principal principal) {
+							  Authentication authentication) {
 
-		String memberId = dto.getMemberId();
-		Optional<Member> member = memberRepository.findByMemberId(memberId);
+		Member member = null;
+		if(authentication != null && authentication.isAuthenticated()) {
+			CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+            member = user.getMember();
+            dto.setMemberId(member);
+		}
+		
 		//이미지 URI
 		String imgURI = null;
 		
-		//파일 업로드 처리
-		MultipartFile file = files[0];
-		//이미지가 아닌경우 리턴
-		if(!file.getContentType().startsWith("image")) {
-			return "redirect:/notice/noticeList";
-		}
+		//이미지가 없는 경우에도 글 쓸 수 있도록 처리
+		for (MultipartFile file : files) {
 		
-		try {
-			//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
-			String imgOgName = file.getOriginalFilename();
-			//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
-			imgOgName = imgOgName.substring(imgOgName.lastIndexOf("\\")+1);
-
-
-			//S3에 업로드하고 이미지 URI 반환
-			imgURI = s3ImageService.upload(file, imgPath);
-			
-			//DB에 이미지 URI 저장
-			if(imgURI != null) {
-				dto.setNoticeImgPath(imgURI);
-				dto.setNoticeImgUname(imgOgName);
+			if(!file.getContentType().startsWith("image")) {
+				continue;
 			}
-		} catch (S3Exception e) {
-			e.printStackTrace();
+			
+			try {
+				//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
+				String imgOgName = file.getOriginalFilename();
+				//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
+				imgOgName = imgOgName.substring(imgOgName.lastIndexOf("\\")+1);
+	
+	
+				//S3에 업로드하고 이미지 URI 반환
+				imgURI = s3ImageService.upload(file, imgPath);
+				
+				//DB에 이미지 URI 저장
+				if(imgURI != null) {
+					dto.setNoticeImgPath(imgURI);
+					dto.setNoticeImgUname(imgOgName);
+				}
+			} catch (S3Exception e) {
+				e.printStackTrace();
+			}
+		
 		}
-		noticeService.write(dto, member);
+		noticeService.write(dto);
 		return "redirect:/notice/noticeList";
 	}
 	
@@ -153,7 +153,7 @@ public class NoticeController {
 	
 	//글수정 페이지
 	@GetMapping("/rewriteView/{noticeId}")
-	public String rewriteView(@PathVariable("noticeId") Long noticeId,Model model,Principal principal) throws DataNotExeption{
+	public String rewriteView(@PathVariable("noticeId") Long noticeId,Model model) throws DataNotExeption{
 		NoticeDto dto = noticeService.findDetail(noticeId);
 		
 		// <br> 태그를 줄바꿈 문자로 변환
@@ -170,9 +170,6 @@ public class NoticeController {
 	@PostMapping("/rewrite/{noticeId}")
 	public String postMethodName( @ModelAttribute NoticeDto dto,@RequestParam("comFile") MultipartFile[] files) {
 		
-//		if(!comDTO.getMemberId().equals(principal.getName())){
-//			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"수정 권한이 없습니다.");
-//		}
 		String imgURI = dto.getNoticeImgPath();
 		String imgOgName = dto.getNoticeImgUname();
 

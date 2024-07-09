@@ -17,8 +17,7 @@
 <div class="main__content">
   <!-- 이곳에 작업합시다 -->
   <div class="container mt-5">
-    <form action="/notice/write" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="memberId" th:value="${#authentication.getPrincipal().getUsername()}" sec:authorize="isAuthenticated()">      
+    <form action="/notice/write" method="post" enctype="multipart/form-data">    
 		<div class="form-group row align-items-center">
           <div class="col-2">
               <select class="form-control" id="category" name="category" required>
