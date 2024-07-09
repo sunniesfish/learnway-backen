@@ -131,7 +131,7 @@ public class StudyController {
 		if(study.isPresent()) {
 			model.addAttribute("study",study.get());
 			model.addAttribute("postid",dto.getPostid());
-			return "/study/studyupdate";
+			return "study/studyupdate";
 		}
 		else {
 			model.addAttribute("errmsg","게시글을 찾을 수 없습니다.");
