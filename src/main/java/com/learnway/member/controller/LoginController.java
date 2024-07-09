@@ -55,11 +55,6 @@ public class LoginController {
         }
     }
 
-    // 시큐리티 로그인 성공 후 Redirect 경로 Get 매핑 -> 하기 메서드는 로그인 후 홈이 설정되면 삭제될 예정
-    @GetMapping("/loginOk")
-    public String loginOK() {
-        return "loginOk";
-    }
     // 임시 테스트 로깅
     @GetMapping("/consult/home")
     public String consultHome() {

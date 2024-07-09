@@ -2,7 +2,6 @@ package com.learnway.schedule.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.learnway.global.domain.MaterialRepository;
 import com.learnway.global.domain.StudywayRepository;
 import com.learnway.global.domain.SubjectRepository;
+import com.learnway.member.domain.Member;
 import com.learnway.schedule.domain.DailyAchieve;
 import com.learnway.schedule.domain.DailyAchieveRepository;
 import com.learnway.schedule.domain.Progress;
@@ -48,48 +48,45 @@ public class ScheduleService {
 
 	    // 스케쥴 추가하기 (주간)
     	@Transactional
-		public void add(ScheduleDto dto) {
-
-			Schedule schedule = new Schedule();
-			schedule.setStartTime(dto.getStartTime());
-			schedule.setEndTime(dto.getEndTime());
-			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
-			        .orElseThrow(() -> new RuntimeException("Studyway not found")));
-			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
-			        .orElseThrow(() -> new RuntimeException("Subject not found")));
-			schedule.setMemberId(dto.getMemberId());
-			
-			//Progress 엔티티 생성 및 설정
-			List<Progress> progresses = new ArrayList<>();
-			for (ProgressDto progressDto : dto.getProgresses()) {
-	            Progress progress = new Progress();
-	            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
-	                    .orElseThrow(() -> new RuntimeException("Material not found")));	            
-	            progress.setProgress(progressDto.getProgress());
-	            progress.setScheduleId(schedule);
-	            progress.setMemberId(schedule.getMemberId());
-	            progresses.add(progress);
-	        }
-			schedule.setProgresses(progresses);
-			scheduleRepository.save(schedule);
+		public void add(ScheduleDto dto,Member member) {
+    		
+				Schedule schedule = new Schedule();
+				schedule.setStartTime(dto.getStartTime());
+				schedule.setEndTime(dto.getEndTime());
+				schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
+				        .orElseThrow(() -> new RuntimeException("Studyway not found")));
+				schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
+				        .orElseThrow(() -> new RuntimeException("Subject not found")));
+				schedule.setMember(member);
+				
+				//Progress 엔티티 생성 및 설정
+				List<Progress> progresses = new ArrayList<>();
+				for (ProgressDto progressDto : dto.getProgresses()) {
+		            Progress progress = new Progress();
+		            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
+		                    .orElseThrow(() -> new RuntimeException("Material not found")));	            
+		            progress.setProgress(progressDto.getProgress());
+		            progress.setScheduleId(schedule);
+		            progress.setAchieveRate(progressDto.getAchieveRate());
+		            progress.setMemberId(member.getMemberId());
+		            progresses.add(progress);
+		        }
+				schedule.setProgresses(progresses);
+				scheduleRepository.save(schedule);
 		}
 		
 		//일정 전부 불러오기
-		public List<Schedule> findAllByMemberId(String memberId){
+		public List<Schedule> findAllByMemberId(Long memberId){
 			return scheduleRepository.findAllByMemberId(memberId);
 		}
 		
 		@Transactional
 		//일정 시간만 변경하기 (주간)
-		public void updateScheduleTime(ScheduleDto dto,String memberId) {
+		public void updateScheduleTime(ScheduleDto dto,Member member) {
 			
 			Schedule schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(() 
 					-> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + dto.getScheduleId()));
-			
-			// 멤버 ID 확인
-	        if (!schedule.getMemberId().equals(dto.getMemberId())) {
-	            throw new RuntimeException("해당 일정은 다른 멤버의 일정입니다.");
-	        }
+		
 	        
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
@@ -101,63 +98,56 @@ public class ScheduleService {
 		}
 		
 		//일일 스케쥴 가져오기
-		public Optional<Schedule> getDetail(Long id,String memberId){
-			return scheduleRepository.findByScheduleIdAndMemberId(id,memberId);
+		public Optional<Schedule> getDetail(Long id, Long memberId){
+				return scheduleRepository.findByScheduleIdAndMemberId(id,memberId);
+			
 		}
 		
 		@Transactional
 		//일정 전부 변경하기 (주간)
-		public void updateSchedule(ScheduleDto dto,String memberId) {
+		public void updateSchedule(ScheduleDto dto,Member member) {
 			
-			
-			
-		    Optional<Schedule> existingSchedule = scheduleRepository.findByScheduleIdAndMemberId(dto.getScheduleId(),memberId);
-		    if (existingSchedule.isPresent()) {
-		        Schedule schedule = existingSchedule.get();
-		        
-		        // 멤버 ID 확인
-		        if (!schedule.getMemberId().equals(dto.getMemberId())) {
-		            throw new RuntimeException("해당 일정은 다른 멤버의 일정입니다.");
-		        }
-		        
-		        // DTO의 값으로 schedule 객체 업데이트
-		        schedule.setStartTime(dto.getStartTime());
-		        schedule.setEndTime(dto.getEndTime());
-		        schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
-				        .orElseThrow(() -> new RuntimeException("Studyway not found")));
-				schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
-				        .orElseThrow(() -> new RuntimeException("Subject not found")));
-				
-				//Progress 엔티티 생성 및 설정
-				List<Progress> progresses = new ArrayList<>();
-				for (ProgressDto progressDto : dto.getProgresses()) {
-		            Progress progress;
-		            if (progressDto.getProgressId() != null) {
-		                // 기존의 Progress 엔티티 조회
-		                progress = progressRepository.findById(progressDto.getProgressId())
-		                        .orElseThrow(() -> new RuntimeException("Progress not found"));
-		            } else {
-		                // 새로운 Progress 엔티티 생성
-		                progress = new Progress();
-		            }
-		            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
-		                    .orElseThrow(() -> new RuntimeException("Material not found")));
-		            progress.setProgress(progressDto.getProgress());
-		            progress.setScheduleId(schedule);
-		            progress.setAchieveRate(progressDto.getAchieveRate());
-		            progresses.add(progress);
-		        }
-				
-				schedule.setProgresses(progresses);
-				scheduleRepository.save(schedule);
-		        
-		    } else {
-		        throw new RuntimeException("일정을 찾을 수 없습니다.");
-		    }
+			    Optional<Schedule> existingSchedule = scheduleRepository.findByScheduleIdAndMemberId(dto.getScheduleId(),member.getId());
+			    if (existingSchedule.isPresent()) {
+			        Schedule schedule = existingSchedule.get();
+		
+			        
+			        // DTO의 값으로 schedule 객체 업데이트
+			        schedule.setStartTime(dto.getStartTime());
+			        schedule.setEndTime(dto.getEndTime());
+			        schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
+					        .orElseThrow(() -> new RuntimeException("Studyway not found")));
+					schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
+					        .orElseThrow(() -> new RuntimeException("Subject not found")));
+					
+					//Progress 엔티티 생성 및 설정
+					List<Progress> progresses = new ArrayList<>();
+					for (ProgressDto progressDto : dto.getProgresses()) {
+			            Progress progress;
+			            if (progressDto.getProgressId() != null) {
+			                // 기존의 Progress 엔티티 조회
+			                progress = progressRepository.findById(progressDto.getProgressId())
+			                        .orElseThrow(() -> new RuntimeException("Progress not found"));
+			            } else {
+			                // 새로운 Progress 엔티티 생성
+			                progress = new Progress();
+			            }
+			            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
+			                    .orElseThrow(() -> new RuntimeException("Material not found")));
+			            progress.setProgress(progressDto.getProgress());
+			            progress.setScheduleId(schedule);
+			            progress.setAchieveRate(progressDto.getAchieveRate());
+			            progresses.add(progress);
+			        }
+					
+					schedule.setProgresses(progresses);
+					scheduleRepository.save(schedule);
+		    
+			}
 		}
 		
 		//스케쥴 삭제하기
-		public void deleteSchedule(Long id,String memberId) {
+		public void deleteSchedule(Long id,Long memberId) {
 			// 연관된 Progress 엔티티 먼저 삭제
 			Schedule schedule = scheduleRepository.findByScheduleIdAndMemberId(id,memberId)
 		            .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + id));
@@ -168,20 +158,20 @@ public class ScheduleService {
 		}
 		
 		//일달성율 평균 리스트 조회 
-		public List<DailyAchieveDto> AchieveList(LocalDate start, LocalDate  end, String memberId) {
+		public List<DailyAchieveDto> AchieveList(LocalDate start, LocalDate  end, Member member) {
 		
 			List<DailyAchieveDto> result = new ArrayList<>();
 			
 			LocalDate current = start;
 	        while (current.isBefore(end)) {
 	        	LocalDateTime currentDateTime = current.atTime(6, 0); // 각 날짜의 6시로 설정
-	            DailyAchieve dailyAchieve = createDailyAchieve(currentDateTime,memberId);
+	            DailyAchieve dailyAchieve = createDailyAchieve(currentDateTime,member.getId(),member);
 	            
 	            DailyAchieveDto dto = new DailyAchieveDto();
 	            dto.setDailyAchieveId(dailyAchieve.getDailyAchieveId());
 	            dto.setDate(dailyAchieve.getDate());
 	            dto.setAvgAchieveRate(dailyAchieve.getAvgAchieveRate());
-	            dto.setMemberId(memberId);
+	            dto.setMemberId(member.getMemberId());
 	            
 	            result.add(dto);
 	            current = current.plusDays(1);
@@ -192,13 +182,13 @@ public class ScheduleService {
 		}
 
 		
-		private DailyAchieve createDailyAchieve(LocalDateTime dateTime,String memberId) {
+		private DailyAchieve createDailyAchieve(LocalDateTime dateTime,Long memberId,Member member) {
 			
 			// LocalDateTime을 LocalDate로 변환
 		    LocalDate date = dateTime.toLocalDate();
 		    
 		    // 해당 날짜에 대한 DailyAchieve 객체가 이미 존재하는지 확인
-		    Optional<DailyAchieve> existingAchieve = dailyAchieveRepository.findByMemberIdAndDate(memberId, date);
+		    Optional<DailyAchieve> existingAchieve = dailyAchieveRepository.findByMemberIdAndDate(member.getMemberId(), date);
 
 		    if (existingAchieve.isPresent()) {
 		        // 이미 존재하는 경우, 기존 객체 업데이트
@@ -210,13 +200,13 @@ public class ScheduleService {
 		        DailyAchieve newAchieve = new DailyAchieve();
 		        newAchieve.setDate(date);
 		        newAchieve.setAvgAchieveRate(DailyAvgAchieve(dateTime, memberId));
-		        newAchieve.setMemberId(memberId);
+		        newAchieve.setMemberId(member.getMemberId());
 		        return dailyAchieveRepository.save(newAchieve);
 		    }
 	    }
 		
 		//하루 평균 달성율 구하기
-		public double DailyAvgAchieve(LocalDateTime dateTime,String memberId) {
+		public double DailyAvgAchieve(LocalDateTime dateTime,Long memberId) {
 		    LocalDateTime endTime = dateTime.plusDays(1).minusSeconds(1); //;
 		    List<Schedule> schedules = scheduleRepository.findByMemberIdAndStartTimeBetween(memberId,dateTime, endTime);
 		    

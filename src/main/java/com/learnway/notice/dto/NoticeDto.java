@@ -25,6 +25,6 @@ public class NoticeDto {
 	private Notice nextNotice;
 	private LocalDateTime createDate;
 	private boolean priority;
-	private String memberId; 
+	private Member memberId; 
 	private String category;
 }
