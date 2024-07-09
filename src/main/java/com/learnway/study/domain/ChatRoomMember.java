@@ -34,8 +34,6 @@ public class ChatRoomMember {
     private Integer chatMemId;
     
     
-    @OneToMany(mappedBy = "chatRoomMember", cascade = CascadeType.REMOVE)
-    private List<ChatMessage> chatMessage;
     
     
     @ManyToOne(cascade = CascadeType.REMOVE)

@@ -1,6 +1,9 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -15,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
-import com.learnway.study.domain.StudyProblem;
 import com.learnway.study.domain.StudyProblemImgRepository;
 import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.domain.StudyRepository;
@@ -108,6 +110,14 @@ public class StudyPostService {
 	//현재메서드는 게시글작성 및  return 값으로는 작성중인 potsId값 반환
 	public Study boardadd(StudyDto dto,Principal principal) {
 		
+		 Date startdate=parseStringToSqlDate(dto.getStartdatetest());
+		 Date enddate=parseStringToSqlDate(dto.getEnddatetest());
+		
+		 dto.setStartdate(startdate);
+		 dto.setEnddate(enddate);
+		 
+		if(dto.getStartdatetest()!=null ||!dto.getStartdatetest().isEmpty() &&
+				dto.getEnddatetest()!=null ||!dto.getEnddatetest().isEmpty()) {
 		Study study = Study.builder().title(dto.getTitle())
 									       .content(dto.getContent())
 									       .viewcount("0")
@@ -115,13 +125,30 @@ public class StudyPostService {
 									       .enddate(dto.getEnddate())
 									       .isjoin((byte) dto.getIsjoin()).
 									       member(memberRepository.findByMemberId(principal.getName()).get()).build();
-		
+		return studyRepository.save(study);
+		}
+		Study study = Study.builder().title(dto.getTitle())
+			       .content(dto.getContent())
+			       .viewcount("0")
+			       .isjoin((byte) dto.getIsjoin()).
+			       member(memberRepository.findByMemberId(principal.getName()).get()).build();
 	    
 		return studyRepository.save(study);
 		
 		
 	}
-	
+	  private Date parseStringToSqlDate(String dateString) {
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        Date date = null;
+	        try {
+	            java.util.Date utilDate = sdf.parse(dateString);
+	            date = new Date(utilDate.getTime());
+	        } catch (ParseException e) {
+	            e.printStackTrace(); // 예외 처리 필요
+	        }
+	        return date;
+	    }
+	  
 	// 게시글 수정 메서드
 	public Study boardUpdate(StudyDto dto,Principal principal) {
 		
@@ -137,6 +164,8 @@ public class StudyPostService {
 		
 		
 	}
+	
+	
 	
 	//게시글 제목검색 메서드
 	public List<Study> searchBoardList(StudyDto dto) {

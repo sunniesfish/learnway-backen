@@ -22,12 +22,18 @@ public class StudyDto {
 	private Date createdate;
 	
 	private Date startdate;
-	
 	private Date enddate;
+	
+	
+	private String startdatetest;
+	private String enddatetest;
 	
 	private byte isjoin;
 	
 	private String search;
 	private String detailSearch;
 	private int[] detailSearchArray;
+	
+	
+	
 }

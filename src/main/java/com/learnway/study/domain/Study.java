@@ -19,6 +19,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PostLoad;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -53,10 +55,10 @@ public class Study {
 	@CreationTimestamp
 	private Date createdate;
 	
-	@Column(name="study_startdate",nullable = false)
+	@Column(name="study_startdate",nullable = true)
 	private Date startdate;
 	
-	@Column(name="study_enddate",nullable = false)
+	@Column(name="study_enddate",nullable = true)
 	private Date enddate;
 	
 	@Column(name="study_isjoin",nullable = false)
@@ -89,7 +91,7 @@ public class Study {
 	
 	 
 	 
-	 
+	
 	 
 	@Transient
 	private int repliesCount;
