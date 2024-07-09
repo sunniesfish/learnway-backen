@@ -11,4 +11,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     
 	Optional<Member> findByMemberId(String memberId);
 	List<Member> findByMemberNameContainingIgnoreCase(String memberId);
+	// 비밀번호 변경
+	Optional<Member> findByMemberIdAndMemberEmail(String memberId, String memberEmail);
+	// 아이디 찾기 - 중복된 결과 모두 반환
+	List<Member> findAllByMemberNameAndMemberEmail(String name, String email);
 }

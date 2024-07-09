@@ -1,7 +1,7 @@
 // email 발송
 function sendVerificationEmail() {
     const email = $('#email').val();
-    $.post('/email/send', {email: email}, function(response) {
+    $.post('/api/email/send', {email: email}, function(response) {
         alert(response);
     }).fail(function(xhr) {
         alert(xhr.responseText);
@@ -11,7 +11,7 @@ function sendVerificationEmail() {
 function verifyEmailCode() {
     const email = $('#email').val();
     const code = $('#verificationCode').val();
-    $.post('/email/verify', {email: email, code: code}, function(response) {
+    $.post('/api/email/verify', {email: email, code: code}, function(response) {
         $('#verificationResult').text(response).show();
         // 인증 성공 시 부모 창의 이메일 필드 업데이트
         window.opener.updateEmailVerificationResult(email);
