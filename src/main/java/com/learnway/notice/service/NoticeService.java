@@ -23,58 +23,55 @@ import com.learnway.notice.dto.NoticeDto;
 
 @Service
 public class NoticeService {
-	
+
 	@Value("C:\\learway\\img\\notice")
 	private String uploadPath;
-	
+
 	@Autowired
 	NoticeRepository noticeRepository;
-	
+
 	//페이지 처리
-	public Page<Notice> noticeList(Pageable pageable) {		
+	public Page<Notice> noticeList(Pageable pageable) {
 		return noticeRepository.findAllByOrderByCreateDateDesc(pageable);
 	}
 	//검색 페이지 처리
-	public Page<Notice> noticeSearchList(Pageable pageable,String keyword) {		
+	public Page<Notice> noticeSearchList(Pageable pageable,String keyword) {
 		return noticeRepository.findByNoticeTitleContainingOrderByCreateDateDesc(pageable,keyword);
 	}
 	//우선 공지사항 페이지 처리
-	public Page<Notice> priNoticeList(Pageable pageable) {		
+	public Page<Notice> priNoticeList(Pageable pageable) {
 		return noticeRepository.findByPriorityTrueOrderByCreateDateDesc(pageable);
 	}
 
 
-	
+
 	//글쓰기
-	public void write(NoticeDto dto,Optional<Member> member) {
-		
+	public void write(NoticeDto dto, String memberId) {
+
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
 
-		if(member.isPresent()) {
-			
-			Member savemember=member.get();
-			Notice notice = new Notice();
-			notice.setNoticeId(dto.getNoticeId());
-			notice.setNoticeTitle(dto.getNoticeTitle());
-			notice.setNoticeContent(formattedContent);
 
-			notice.setNoticeImgPath(dto.getNoticeImgPath());
-			notice.setNoticeImgUname(dto.getNoticeImgUname());
-			notice.setCreateDate(LocalDateTime.now());
-			notice.setPriority(dto.isPriority());
-			notice.setCategory(dto.getCategory());
-			notice.setMemberId(member.get().getMemberId());
-			
-			noticeRepository.save(notice);
-		}
-		
+		Notice notice = new Notice();
+		notice.setNoticeId(dto.getNoticeId());
+		notice.setNoticeTitle(dto.getNoticeTitle());
+		notice.setNoticeContent(formattedContent);
+
+		notice.setNoticeImgPath(dto.getNoticeImgPath());
+		notice.setNoticeImgUname(dto.getNoticeImgUname());
+		notice.setCreateDate(LocalDateTime.now());
+		notice.setPriority(dto.isPriority());
+		notice.setCategory(dto.getCategory());
+		notice.setMemberId(memberId);
+
+		noticeRepository.save(notice);
+
 	}
-	
+
 	//글수정
 	public void rewrite(NoticeDto dto) {
-		
+
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
-		
+
 		Notice notice = new Notice();
 		notice.setNoticeId(dto.getNoticeId());
 		notice.setNoticeTitle(dto.getNoticeTitle());
@@ -82,14 +79,14 @@ public class NoticeService {
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
 		notice.setPriority(dto.isPriority());
-		
+
 		noticeRepository.save(notice);
-		
+
 	}
-	
+
 	//글 상세페이지
 	public NoticeDto findDetail(Long noticeId) throws DataNotExeption {
-		
+
 		Optional<Notice> onotice = noticeRepository.findById(noticeId);
 		if(onotice.isPresent()) {
 			Notice notice = onotice.get();
@@ -101,7 +98,7 @@ public class NoticeService {
 			throw new DataNotExeption("notice not found");
 		}
 	}
-	
+
 	//글 삭제
 	public void delete(NoticeDto dto) {
 		noticeRepository.deleteById(dto.getNoticeId());
@@ -109,21 +106,21 @@ public class NoticeService {
 
 	//날짜 폴더 생성
 	public String makeFolder() {
-		
+
 		String str = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String folderPath = str;
-		
+
 		//make folder 
 		File uploadPathFolder = new File(uploadPath,folderPath);
-		
+
 		if(uploadPathFolder.exists()==false) {
 			uploadPathFolder.mkdirs();
 		}
-		
+
 		return folderPath;
 	}
-	
-	
+
+
 	//엔터티 -> dto
 	private NoticeDto convertDto(Notice notice) {
 		NoticeDto dto = new NoticeDto();
@@ -133,10 +130,10 @@ public class NoticeService {
 		dto.setNoticeContent(notice.getNoticeContent());
 		dto.setNoticeImgPath(notice.getNoticeImgPath());
 		dto.setNoticeImgUname(notice.getNoticeImgUname());
-		
+
 		return dto;
 	}
-	
+
 	//카테고리
 	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
 		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
