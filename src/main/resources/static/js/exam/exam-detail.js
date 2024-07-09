@@ -21,7 +21,7 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.onload = () => render(examId);
+render(examId);
 
 function render(examId){
     console.log("render",examId)
@@ -160,6 +160,9 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
     
     const fetchData = async(scoreId) => {
         const response = await fetch(`/api/score/exam/${scoreId}`).then(res => res.json());
+        if (!response.ok) {
+            fetchData();
+        }
         setSubjectCode(response.subject.subjectCode);
         setScore(response.scoreScore);
         setExScore(response.scoreExScore);
