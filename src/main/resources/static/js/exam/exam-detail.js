@@ -17,9 +17,10 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.addEventListener("DOMContentLoaded",()=>render(examId));
+window.addEventListener("onload",()=>render(examId));
 
 function render(examId){
+    console.log("render")
     ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
 }
 
@@ -77,7 +78,7 @@ function Subjects({examId}){
                             <span>{item.scoreScore}</span>
                             <span>/{item.scoreExScore}</span>
                         </div>
-                        <div className="exam-detail__item__grade">{item.scoreGrade} 등급</div>
+                        <div className="exam-detail__item__grade">{item.scoreGrade}등급</div>
                     </div>
                     <div className="exam-detail__item__delete-btn-controller">
                         <button onClick={() => handleDelete(item.scoreId)}>

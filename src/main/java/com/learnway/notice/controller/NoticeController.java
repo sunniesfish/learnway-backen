@@ -45,9 +45,6 @@ public class NoticeController {
 	@Autowired
 	private S3ImageService s3ImageService;
 	
-	@Autowired
-	private MemberRepository memberRepository;
-	
 	
 	//공지사항 리스트 불러오기
 	@GetMapping("/noticeList")
@@ -111,9 +108,9 @@ public class NoticeController {
 		//이미지 URI
 		String imgURI = null;
 		
+		//이미지가 없는 경우에도 글 쓸 수 있도록 처리
 		for (MultipartFile file : files) {
 		
-			//이미지가 없는 경우에도 글 쓸 수 있도록 처리
 			if(!file.getContentType().startsWith("image")) {
 				continue;
 			}
