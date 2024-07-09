@@ -3,6 +3,7 @@ package com.learnway.study.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.learnway.global.exceptions.S3Exception;
+import com.learnway.global.service.S3ImageService;
 //import com.learnway.global.service.S3ImageService;
 import com.learnway.study.domain.StudyProblem;
 import com.learnway.study.domain.StudyProblemImg;
@@ -29,12 +31,12 @@ public class StudyProblemImgService {
 	
 	//해당문제 이미지값 조회
 	public List<StudyProblemImg> problemImgPath(int problemid) {
-		
-		return studyProblemImgRepository.findByStudyProblemProblemid(problemid);
+		 List<StudyProblemImg> result = studyProblemImgRepository.findByStudyProblemProblemid(problemid);
+		    return result.isEmpty() ? Collections.emptyList() : result;
 	}
 	
 	
-/*	@Autowired
+	@Autowired
     private S3ImageService s3ImageService;
 	
 	private static final String dir = "images/studyself/";
@@ -90,10 +92,10 @@ public class StudyProblemImgService {
             }
         }
     }
-*/
+
 	// S3미적용 메서드
 	//문제이미지 업로드 메서드
-	public void problemImgAdd(StudyProblemImgDto dto,MultipartFile[] files,int problemid) {
+	/*public void problemImgAdd(StudyProblemImgDto dto,MultipartFile[] files,int problemid) {
 		for(MultipartFile file : files) {
 			if(!file.isEmpty()&&file.getContentType().startsWith("image")) {
 				String orgfile = file.getOriginalFilename();
@@ -162,6 +164,6 @@ public class StudyProblemImgService {
 		}
 		
 	}
-	
+	*/
 	
 }

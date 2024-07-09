@@ -3,7 +3,6 @@ package com.learnway.exam.controller;
 import com.learnway.exam.domain.Exam;
 import com.learnway.exam.domain.Score;
 import com.learnway.exam.service.ExamService;
-import com.learnway.exam.service.ScoreService;
 import com.learnway.global.domain.Subject;
 import com.learnway.member.service.CustomUserDetails;
 import lombok.AllArgsConstructor;
@@ -39,11 +38,8 @@ public class ScoreRestController {
 
         Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo-1,10));
         page.get().forEach(System.out::println);
-        if (memId == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<Page<Score>>(page, HttpStatus.OK);
-        }
+
+        return new ResponseEntity<Page<Score>>(page, HttpStatus.OK);
     }
     
     /*
@@ -75,8 +71,11 @@ public class ScoreRestController {
         score.setExam(Exam.builder().examId(examId).build());
         score.setSubject(Subject.builder().subjectCode(subjectCode).build());
         score.setMemId(memId);
-        examService.writeScore(score);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        if(examService.writeScore(score, memId)){
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
     /*
@@ -97,8 +96,11 @@ public class ScoreRestController {
         score.setExam(Exam.builder().examId(examId).build());
         score.setSubject(Subject.builder().subjectCode(subjectCode).build());
         score.setMemId(memId);
-        Optional<Score> opScore = examService.updateScore(score);
-        return new ResponseEntity<>(HttpStatus.OK);
+        if(examService.updateScore(score, memId)){
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
     }
 
 

@@ -1,7 +1,11 @@
 const examDetailBtn = document.querySelector(".exam-detail__detail-btn");
+const examGoBackBtn = document.querySelector(".exam-detail__goback-btn")
 const examDetailModal = document.querySelector(".exam-detail__modal__info");
 const examModalOverlay = document.querySelector(".exam-detail__modal__detail-overlay");
 examDetailBtn.addEventListener("click",handleRegBtnClick);
+examGoBackBtn.addEventListener("click",()=>{
+    location.href = "/exam/list/1"
+})
 
 function handleRegBtnClick(event){
     event.preventDefault();
@@ -17,7 +21,7 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.onload = () => render(examId);
+render(examId);
 
 function render(examId){
     console.log("render",examId)
@@ -33,10 +37,8 @@ function Subjects({examId}){
     const [ detail, setDetail ] = React.useState();
     const [ data, setData ] = React.useState("");
     const [ list, setList ] = React.useState([]);
-    const fetchData = async (pageNo) => {
-        // const response = await fetch(`/api/score/${examId}/${pageNo}`).then(res => res.json());
-        // setData(response);
-        // setList(response.content)
+
+    const fetchData = async (pageNo, retryCount = 0) => {
         try {
             const response = await fetch(`/api/score/${examId}/${pageNo}`);
             if (!response.ok) {
@@ -47,13 +49,16 @@ function Subjects({examId}){
             setList(data.content);
         } catch (error) {
             console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchData(pageNo, retryCount + 1), 1000); // Retry after 1 second
+            }
         }
-    }
+    };
     React.useEffect(()=>{
         fetchData(pageNo);
     },[pageNo, showModal1 ]);
     const handleDelete = async (scoreId) => {
-        await fetch(`/api/score/${examId}/${scoreId}`,{method:"DELETE"}).then(res => console.log(res));
+        fetch(`/api/score/${examId}/${scoreId}`,{method:"DELETE"});
         fetchData(pageNo);
     }
     const handleAddSubject = () => setShowModal1(true);
@@ -72,6 +77,12 @@ function Subjects({examId}){
         setOnModify(false);
         setDetail("")
     };
+    const handleGoPrev = () => {
+        pageNo > 1 && setPageNo(prev => prev - 1);
+    }
+    const handleGoNext = () => {
+        pageNo < data.totalPages && setPageNo(prev => prev + 1);
+    }
     return(
         <>
         <div className="exam-detail__container">
@@ -105,7 +116,7 @@ function Subjects({examId}){
         <div className="pagination">
             { data?
             <>
-            <button>prev</button>
+            <button onClick={handleGoPrev}>prev</button>
                 {Array.from(
                     {length:data.totalPages > pages + 5? 5 : data.totalPages % 5},
                     (_,i) => i
@@ -124,7 +135,7 @@ function Subjects({examId}){
                         </div>
                     )
                 })}
-            <button>next</button>
+            <button onClick={handleGoNext}>next</button>
             </>            
             :
             null
@@ -147,23 +158,45 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
     const [ grade, setGrade ] = React.useState(1);
     const [ memo, setMemo ] = React.useState("");
     
-    const fetchData = async(scoreId) => {
-        const response = await fetch(`/api/score/exam/${scoreId}`).then(res => res.json());
-        setSubjectCode(response.subject.subjectCode);
-        setScore(response.scoreScore);
-        setExScore(response.scoreExScore);
-        setStd(response.scoreStdScore);
-        setGrade(response.scoreGrade);
-        setMemo(response.scoreMemo? response.scoreMemo : "");
+    const fetchModalFormData = async(scoreId, retryCount = 0) => {
+        try {
+            const response = await fetch(`/api/score/exam/${scoreId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const jsonData = await response.json();
+            setSubjectCode(jsonData.subject.subjectCode);
+            setScore(jsonData.scoreScore);
+            setExScore(jsonData.scoreExScore);
+            setStd(jsonData.scoreStdScore);
+            setGrade(jsonData.scoreGrade);
+            setMemo(jsonData.scoreMemo? response.scoreMemo : "");
+            
+        } catch (error) {
+            onsole.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 5 times
+                setTimeout(() => fetchModalFormData(scoreId, retryCount + 1), 1000); // Retry after 1 second
+            }
+        }
     }
-    const fetchSubjectData = async () => {
-        const response = async () => fetch("/api/subject/").then(res => res.json());
-        const subjectData = await response();
-        setSubjects(subjectData)
-        if(onModify) {
-            fetchData(scoreId);
-        } else {
-            setSubjectCode(subjectData[0].subjectCode);
+    const fetchSubjectData = async (retryCount = 0) => {
+        try{
+            const response = await fetch("/api/subject/");
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            const subjectData = await response();
+            setSubjects(subjectData)
+            if(onModify) {
+                fetchData(scoreId);
+            } else {
+                setSubjectCode(subjectData[0].subjectCode);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchSubjectData(retryCount + 1), 1000); // Retry after 1 second
+            }
         }
     }
     const handleSubmit = async (event) => {
@@ -252,12 +285,23 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
 
 function SubjectDetailModal({handleOverlayClick ,scoreId, handleOnModify}){
     const [ data, setData ] = React.useState();
-    const fetchData = async(scoreId) => {
-        const jsonResponse = await fetch(`/api/score/exam/${scoreId}`).then(res => res.json());
-        setData(jsonResponse);
+    const fetchModalData = async(scoreId, retryCount = 0) => {
+        try {
+            const response = await fetch(`/api/score/exam/${scoreId}`)
+            if(!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const jsonData = await response.json();
+            setData(jsonData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchModalData(retryCount + 1), 1000); // Retry after 1 second
+            }
+        }
     }
     React.useEffect(()=>{
-        fetchData(scoreId);
+        fetchModalData(scoreId);
     },[]);
     console.log(data)
     return(
