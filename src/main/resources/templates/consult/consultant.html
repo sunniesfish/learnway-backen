@@ -227,6 +227,7 @@
 
     <div class="content">
         <input type="hidden" th:value="${counselor_id}" id="counselor_id">
+        <input type="hidden" th:value="${connectId}" id="connectId">
         <div class="container">
             <h1><span id="titleName"></span></h1>
             <br/>
@@ -598,9 +599,9 @@
                             var formattedEndTime = formatDateTime(reservation.bookingEnd);
                             var formattedTime = `${formattedStartTime} ~ ${formattedEndTime}`;
                             var userName = reservation.member.memberName;
-                            var roomId = counselor_id;
+                            var roomId = reservation.counselor.id;
                             var userId = reservation.member.id;
-                            console.log("userId : " + userId)
+                            var consultantId = reservation.counselor.consultantId;
 			
 							 // 현재 시간이 예약 시간 내에 있는지 확인
                             var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
@@ -614,7 +615,7 @@
                                     <td>${userName}</td>
                                     <td>${formattedTime}</td>
                                     <td><a href="#" class="user-info-link" data-user-id="${userId}">📎 정보확인</a></td>
-                                    <td><a href="#" class="${linkClass} enter-room-link" data-room-id="${roomId}">${linkText}</a></td>
+                                    <td><a href="#" class="${linkClass} enter-room-link" data-room-id="${roomId}" data-consultant-id="${consultantId}" >${linkText}</a></td>
                                 </tr>
                             `;
                             reservationList.append(row);
@@ -630,12 +631,12 @@
             $(document).on('click', 'a.enter-room-link', function(e) {
                 e.preventDefault();
                 var roomId = $(this).data('room-id');
-                var myKey = Math.random().toString(36).substring(2, 11);
+                var myKey = $(this).data('consultant-id');
+                console.log("myKey : "+myKey);
                 // WebSocket 연결 설정
                 //var socket = new SockJS('http://localhost:8095/signaling/video');
-                //var socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+                //var socket = new SockJS('https://192.168.219.105:443/signaling/video');
 				var socket = new SockJS('https://43.202.58.56:443/signaling/video');//aws 테스트
-				
 				var stompClient = Stomp.over(socket);
 				
 				stompClient.connect({}, function (frame) {
@@ -667,8 +668,8 @@
                         if (message === 'successfully') {
                             console.log("방 들어가기 요청 성공");
                             //window.open(`http://localhost:8095/video?roomId=${roomId}`, '_blank');
-                            //window.open(`https://172.30.1.83:8443/signaling/video?roomId=${roomId}`, '_blank');
-                            window.open(`https://43.202.58.56:443/video?roomId=${roomId}`, '_blank');//aws 테스트
+                            //window.open(`https://192.168.219.105:443/consult/video?roomId=${roomId}`, '_blank');
+                            window.open(`https://43.202.58.56:443/consult/video?roomId=${roomId}`, '_blank');//aws 테스트
                         } else if (message === 'full') {
                             console.log("방 들어가기 요청 실패");
                             alert('이미 방이 가득 찼습니다.');

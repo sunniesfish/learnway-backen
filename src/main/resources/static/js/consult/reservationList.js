@@ -36,7 +36,8 @@ function fetchReservations() {
                 var roomId = reservation.counselor.id;
                 var counselorName = reservation.counselor.name; // counselor에서 직접 접근
                 var subject = reservation.counselor.subject; // counselor에서 직접 접근
-
+				var memberId = reservation.member.memberId;
+				
                 // 현재 시간이 예약 시간 내에 있는지 확인
                 var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
                 var linkText = isWithinBookingTime ? '입장하기' : '입장불가';
@@ -49,7 +50,8 @@ function fetchReservations() {
 						  <button 
 						    type="button" 
 						    class="btn ${!isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" 
-						    data-room-id="${roomId}" 
+						    data-room-id="${roomId}"
+						    data-member-id="${memberId}"
 						    ${!isWithinBookingTime ? '' : 'disabled'}
 						  >
 						    ${linkText}
@@ -86,10 +88,11 @@ function fetchReservations() {
     $(document).on('click', '.join-link', function(e) {
         e.preventDefault();
         var roomId = $(this).data('room-id');
-        var myKey = Math.random().toString(36).substring(2, 11);
+        var myKey = $(this).data('member-id');
+        console.log("myKey : "+ myKey);
         // WebSocket 연결 설정
         //var socket = new SockJS('/signaling/video');
-        //var socket = new SockJS('https://172.30.1.83:8443/signaling/video');
+        //var socket = new SockJS('https://192.168.219.105:443/signaling/video');
         var socket = new SockJS('https://43.202.58.56:443/signaling/video');//aws 테스트
         var stompClient = Stomp.over(socket);
         stompClient.debug = null;
@@ -110,8 +113,8 @@ function fetchReservations() {
                 if (message === 'successfully') {
                     console.log("방 들어가기 요청 성공");
                     //window.open(`http://localhost:8080/video?roomId=${roomId}`, '_blank');
-					window.open(`https://43.202.58.56:443/video?roomId=${roomId}`, '_blank');//aws 테스트
-					//window.open(`https://172.30.1.83:8443/signaling/video?roomId=${roomId}`, '_blank');
+					window.open(`https://43.202.58.56:443/member/video?roomId=${roomId}`, '_blank');//aws 테스트
+					//window.open(`https://192.168.219.105:443/member/video?roomId=${roomId}`, '_blank');
                 } else if (message === 'full') {
                     console.log("방 들어가기 요청 실패");
                     alert('이미 방이 가득 찼습니다.');
