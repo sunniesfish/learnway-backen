@@ -17,10 +17,10 @@ const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
-window.addEventListener("onload",()=>render(examId));
+window.onload = () => render(examId);
 
 function render(examId){
-    console.log("render")
+    console.log("render",examId)
     ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
 }
 
@@ -34,9 +34,20 @@ function Subjects({examId}){
     const [ data, setData ] = React.useState("");
     const [ list, setList ] = React.useState([]);
     const fetchData = async (pageNo) => {
-        const response = await fetch(`/api/score/${examId}/${pageNo}`).then(res => res.json());
-        setData(response);
-        setList(response.content)
+        // const response = await fetch(`/api/score/${examId}/${pageNo}`).then(res => res.json());
+        // setData(response);
+        // setList(response.content)
+        try {
+            const response = await fetch(`/api/score/${examId}/${pageNo}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setData(data);
+            setList(data.content);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
     React.useEffect(()=>{
         fetchData(pageNo);
@@ -145,6 +156,16 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
         setGrade(response.scoreGrade);
         setMemo(response.scoreMemo? response.scoreMemo : "");
     }
+    const fetchSubjectData = async () => {
+        const response = async () => fetch("/api/subject/").then(res => res.json());
+        const subjectData = await response();
+        setSubjects(subjectData)
+        if(onModify) {
+            fetchData(scoreId);
+        } else {
+            setSubjectCode(subjectData[0].subjectCode);
+        }
+    }
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = new FormData();
@@ -180,15 +201,9 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
         console.log("option",event);
         setSubjectCode(event.target.value)
     }
-    React.useEffect(async ()=>{
-        const response = async () => fetch("/api/subject/").then(res => res.json());
-        const subjectData = await response();
-        setSubjects(subjectData)
-        if(onModify) {
-            fetchData(scoreId);
-        } else {
-            setSubjectCode(subjectData[0].subjectCode);
-        }
+
+    React.useEffect(()=>{
+        fetchSubjectData()
     },[])
     return(
         <>

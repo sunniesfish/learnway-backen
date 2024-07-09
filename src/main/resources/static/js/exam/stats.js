@@ -7,7 +7,8 @@ async function fetchTypeStats(examType, pageNo) {
 console.log("stas page")
 const statsRoot = document.getElementById("stats-root");
 
-window.addEventListener("onload", render);
+// window.addEventListener("onload", render);
+window.onload = () => render();
 
 function render() {
     console.log("render")
@@ -15,9 +16,10 @@ function render() {
 }
 
 function Stats() {
+    console.log("stat")
     const [cat, setCat] = React.useState("score");
     const [examType, setExamType] = React.useState("all");
-    const [examTypeList, setExamTypeList] = React.useState([]);
+    const [examTypeList, setExamTypeList] = React.useState(["all"]);
     const [pageNo, setPageNo] = React.useState(1);
     const [pages, setPages] = React.useState(0);
     const [scoreOption, setScoreOption] = React.useState();
@@ -25,7 +27,59 @@ function Stats() {
     const [stdOption, setStdOption] = React.useState();
     const [isOption, setIsOption] = React.useState(false);
 
-    console.log("stat")
+    const fetchData = async () => {
+        console.log("fetchData")
+        try {
+            const statdata = await fetchTypeStats(examType, pageNo);
+            setPages(statdata.totalPages);
+            console.log("data", statdata)
+            const subjects = await fetch("/api/subject/").then(res => {
+                if (!res.ok) throw new Error('Failed to fetch subjects');
+                return res.json();
+            });
+
+            let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+            let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+            let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
+
+            let xasisCat = statdata.content.map(exam => exam.examDate);
+
+            const addDataToSeries = (series, dataKey) => {
+                statdata.content.forEach(exam => {
+                    series.forEach(seriesData => {
+                        exam.scoreList.forEach(score => {
+                            if (seriesData.name === score.subject.subject) {
+                                seriesData.data.push(score[dataKey]);
+                            }
+                        });
+                    });
+                });
+            };
+
+            addDataToSeries(scoreSeries, 'scoreScore');
+            addDataToSeries(gradeSeries, 'scoreGrade');
+            addDataToSeries(stdSeries, 'scoreStdScore');
+
+            setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
+            setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
+            setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    const fetchExamTypeData = async () => {
+        console.log("fetch type data")
+        try {
+            const examTypeData = await fetch("/api/examtype/all").then(res => {
+                if (!res.ok) throw new Error('Failed to fetch exam types');
+                console.log("examTypeData",examTypeData)
+                return res.json();
+            });
+            setExamTypeList(prev => examTypeData? examTypeData : prev);
+        } catch (error) {
+            console.error('Error fetching exam types:', error);
+        }
+    };
 
     React.useEffect(() => {
         setIsOption(scoreOption || gradeOption || stdOption ? true : false);
@@ -33,67 +87,10 @@ function Stats() {
 
     React.useEffect(() => {
         console.log("in useEffect")
-        const fetchData = async () => {
-            console.log("fetchData")
-            try {
-                const statdata = await fetchTypeStats(examType, pageNo);
-                setPages(statdata.totalPages);
-                console.log("data", statdata)
-                const subjects = await fetch("/api/subject/").then(res => {
-                    if (!res.ok) throw new Error('Failed to fetch subjects');
-                    return res.json();
-                });
-
-
-
-                let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-                let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-                let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-
-                let xasisCat = statdata.content.map(exam => exam.examDate);
-
-                const addDataToSeries = (series, dataKey) => {
-                    statdata.content.forEach(exam => {
-                        series.forEach(seriesData => {
-                            exam.scoreList.forEach(score => {
-                                if (seriesData.name === score.subject.subject) {
-                                    seriesData.data.push(score[dataKey]);
-                                }
-                            });
-                        });
-                    });
-                };
-
-                addDataToSeries(scoreSeries, 'scoreScore');
-                addDataToSeries(gradeSeries, 'scoreGrade');
-                addDataToSeries(stdSeries, 'scoreStdScore');
-
-                setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
-                setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
-                setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         fetchData();
     }, [pageNo, examType]);
-
+    
     React.useEffect(() => {
-        const fetchExamTypeData = async () => {
-            console.log("fetch type data")
-            try {
-                const examTypeData = await fetch("/api/examtype/all").then(res => {
-                    if (!res.ok) throw new Error('Failed to fetch exam types');
-                    console.log("examTypeData",examTypeData)
-                    return res.json();
-                });
-                setExamTypeList(examTypeData);
-            } catch (error) {
-                console.error('Error fetching exam types:', error);
-            }
-        };
-
         fetchExamTypeData();
     }, []);
 
