@@ -27,8 +27,8 @@ public interface ExamService {
     public Page<Score> getScoresByMemId(Long memId, Pageable pageable);
     public List<Score> getScoreListByMemId(Long memId);
     public Optional<Score> getScoreById(Long scoreId, Long memId);
-    public void writeScore(Score score);
-    public Optional<Score> updateScore(Score score);
+    public Boolean writeScore(Score score, Long memId);
+    public Boolean updateScore(Score score, Long memId);
     public void deleteScore(Long memId, Long scoreId);
     public List<Score> getScoreListBySubjectCode(Long memId, String subjectCode);
     public List<Score> getGrades(Long memId);

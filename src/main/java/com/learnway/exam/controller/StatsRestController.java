@@ -53,10 +53,8 @@ public class StatsRestController {
         } else {
             Page<Exam> page;
             if(!examTypeName.equals("all")){
-//                page = examService.getScoreListByExamType(memId, examType,PageRequest.of(pageNo - 1, 30));
                 page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
             } else {
-//                page = examService.getScoresByMemId(memId, PageRequest.of(pageNo - 1, 8));
                 page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
             }
             return new ResponseEntity<>(page, HttpStatus.OK);
@@ -95,10 +93,8 @@ public class StatsRestController {
         } else {
             Page<Exam> page;
             if(!examTypeName.equals("all")){
-//                page = examService.getScoreListByExamType(memId, examType,PageRequest.of(pageNo - 1, 30));
                 page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
             } else {
-//                page = examService.getScoresByMemId(memId, PageRequest.of(pageNo - 1, 8));
                 page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
             }
             return new ResponseEntity<>(page, HttpStatus.OK);
