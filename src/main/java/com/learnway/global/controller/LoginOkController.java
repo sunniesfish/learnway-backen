@@ -23,6 +23,7 @@ import com.learnway.notice.domain.Notice;
 import com.learnway.notice.service.NoticeService;
 import com.learnway.schedule.dto.DailyAchieveDto;
 import com.learnway.schedule.dto.ScheduleDto;
+import com.learnway.schedule.service.ScheduleService;
 
 @Controller
 public class LoginOkController {
@@ -32,6 +33,9 @@ public class LoginOkController {
 	
 	@Autowired
 	private LoginOkService loginOkService;
+	
+	@Autowired
+	private ScheduleService scheduleService;
 	
 	// 시큐리티 로그인 성공 후 Redirect 경로 Get 매핑 -> 하기 메서드는 로그인 후 홈이 설정되면 삭제될 예정
     @GetMapping("/loginOk")
@@ -58,12 +62,10 @@ public class LoginOkController {
             member = user.getMember();
             
         }
-        System.out.println(month);
         LocalDate start = LocalDate.of(year, month, 1);
 	    LocalDate end = start.plusMonths(1);
 	    
 	    List<ScheduleDto> schedules = loginOkService.scheduleList(start,end,member);
-        
         return ResponseEntity.ok(schedules);
     }
 
