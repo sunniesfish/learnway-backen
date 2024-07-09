@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 
@@ -26,6 +27,10 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	  Page<Study> findByPostidIn(int[] detail, Pageable pageable);
 	  
 	  Study findByPostid(int postid);
+	  
+	  @Modifying
+	  @Query("DELETE FROM Study s WHERE s.postid = :postid")
+	  void deleteByPostid(@Param("postid") Integer postid);
 }
 
 
