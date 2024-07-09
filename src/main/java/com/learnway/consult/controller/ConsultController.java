@@ -8,13 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.learnway.consult.domain.Consultant;
 import com.learnway.consult.service.ConsultantDetails;
 import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
+import com.learnway.member.service.CustomUserDetails;
 
 @Controller
 //@RequestMapping("/consult")
@@ -77,9 +77,31 @@ public class ConsultController {
 		return "consult/consultant";
 	}
 	
-	@GetMapping("/signaling/video")
-	public String video() {
-		System.out.println("video들어와?");
+	//상담사예약페이지 입장하기클릭시 엔드포인트
+	@GetMapping("/consult/video")
+	public String consultVideo(Authentication authentication,Model model) {
+		System.out.println("상담사 화상상담들어옴");
+	  	String consultantId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+        	ConsultantDetails userDetails = (ConsultantDetails) authentication.getPrincipal();
+            consultantId = userDetails.getConsultant().getConsultantId();
+            System.out.println("getUsername : "+ consultantId);
+            model.addAttribute("connectId", consultantId);
+        }
+		return "/consult/video";
+	}
+	
+	//사이드바 예약리스트에서 입장하기 클릭시 엔드포인트
+	@GetMapping("/member/video")
+	public String memberVideo(Authentication authentication,Model model) {
+		System.out.println("멤버 화상상담들어옴");
+	  	String memberId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        	memberId = userDetails.getMember().getMemberId();
+            System.out.println("getUsername : "+ memberId);
+            model.addAttribute("connectId", memberId);
+        }
 		return "/consult/video";
 	}
 

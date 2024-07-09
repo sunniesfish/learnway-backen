@@ -1,6 +1,7 @@
 package com.learnway.study.dto;
 
 import java.sql.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -23,4 +24,8 @@ public class StudyDto {
 	private Date enddate;
 	
 	private byte isjoin;
+	
+	private String search;
+	private String detailSearch;
+	private int[] detailSearchArray;
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.learnway.global.domain.Material;
 import com.learnway.global.domain.Studyway;
 import com.learnway.global.domain.Subject;
+import com.learnway.member.domain.Member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class ScheduleDto {
 	private String subjectId;
 	private double scheduleAchieveRate;
 	private List<ProgressDto> progresses;
-	private String memberId; 
+	private Member member; 
 	@Override
 	public String toString() {
 		return "ScheduleDto [scheduleId=" + scheduleId + ", startTime=" + startTime + ", endTime=" + endTime

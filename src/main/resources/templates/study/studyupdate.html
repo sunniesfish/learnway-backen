@@ -1,186 +1,234 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>게시글 수정</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        .content {
-            width: 80%;
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: #f4f4f4;
-        }
-        
-        .form-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        input[type="text"], input[type="date"], textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        .date-inputs {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .date-inputs > div {
-            flex: 1;
-        }
-        
-        .hashtag-input {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .hashtags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        
-        .hashtag {
-            background-color: #f0f0f0;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        
-        .save-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            float: right;
-        }
-        
-        .problem-checkbox {
-            margin-right: 5px;
-        }
-        
-        h1 {
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-    </style>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <title>글 수정</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
+    <style>
+        .content-wrapper {
+            padding: 20px;
+        }
+        #form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            min-height: 700px;
+            position: relative;
+        }
+        .form-row {
+            display: flex;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+        .form-col-left {
+            flex: 0 0 70%;
+            max-width: 70%;
+            padding: 0 15px;
+        }
+        .form-col-right {
+            flex: 0 0 30%;
+            max-width: 30%;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .left-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .title-section {
+            flex: 0 0 10%;
+        }
+        .content-section {
+            flex: 0 0 70%;
+        }
+        .hashtag-section {
+            flex: 0 0 20%;
+        }
+        .date-section {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .date-input {
+            width: 48%;
+        }
+        #image-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .hashtag {
+		    display: inline-block;
+		    margin-right: 5px;
+		    margin-bottom: 5px;
+		    padding: 3px 8px;
+		    background-color: #f1f1f1;
+		    border-radius: 5px;
+		    font-size: 0.9em;
+}
+        .hashtag-section {
+            position: absolute;
+            bottom: 70px;
+            left: 15px;
+            width: calc(70% - 30px);
+        }
+       .remove-button {
+		    margin-left: 3px;
+		    color: red;
+		    cursor: pointer;
+		    border: none;
+		    background: none;
+		    font-size: 0.8em;
+		}
+        #problem-details {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        #problem-details.show {
+            display: block;
+        }
+        .submit-button {
+            position: absolute;
+            bottom: 20px;
+            right: 35px;
+        }
+        
+        .hashtag-input-container {
+		    position: sticky;
+		    top: 0;
+		    background-color: white;
+		    z-index: 1;
+		    padding-bottom: 10px;
+}
+		#hashtags-container {
+		    max-height: 150px;
+		    overflow-y: auto;
+		}
+
+
+    </style>
 </head>
 <body>
     <div th:replace="sidebar :: sidebar"></div>
-    
-    <div class="content">
-        <div class="form-container">
-            <h1>게시글 수정</h1>
+
+    <div class="container content-wrapper">
+        <div id="form-container">
+            <h1 class="mb-4">게시글 수정</h1>
             <form action="/studyupdate" method="post" enctype="multipart/form-data">
                 <input type="hidden" id="postid" name="postid" th:value="${postid}">
-                
-                <div class="form-group">
-                    <label for="title">제목:</label>
-                    <input type="text" id="title" name="title" th:value="${study.title}">
-                </div>
-                
-                <div class="form-group">
-                    <label for="content">내용:</label>
-                    <textarea id="content" name="content" rows="4" th:text="${study.content}"></textarea>
-                </div>
-                
-                <div class="form-group date-inputs">
-                    <div>
-                        <label for="startdate">시작일:</label>
-                        <input type="date" id="startdate" name="startdate" th:value="${study.startdate}">
+                <div class="form-row">
+                    <div class="form-col-left">
+                        <div class="left-content">
+                            <div class="title-section">
+                                <div class="form-group">
+                                    <label for="title">제목:</label>
+                                    <input type="text" id="title" name="title" class="form-control" th:value="${study.title}">
+                                </div>
+                            </div>
+                            
+                            <div class="content-section">
+                                <div class="form-group">
+                                    <label for="content">내용:</label>
+                                    <textarea id="content" name="content" class="form-control" rows="10" th:text="${study.content}"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="hashtag-section">
+					    <div class="form-group">
+					        <label for="hashtags">해시태그</label>
+					        <div class="hashtag-input-container">
+					            <input type="text" id="hashtags" class="form-control" placeholder="Enter로 추가해보세요.">
+					        </div>
+					        <div id="hashtags-container" class="mt-2"></div>
+					        <input type="hidden" id="tag" name="tag">
+					    </div>
+					</div>
+                        </div>
                     </div>
-                    <div>
-                        <label for="enddate">종료일:</label>
-                        <input type="date" id="enddate" name="enddate" th:value="${study.enddate}">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="hashtags">해시태그:</label>
-                    <div class="hashtag-input">
-                        <input type="text" id="hashtags" placeholder="Enter로 추가해보세요.">
-                    </div>
-                    <div id="hashtags-container" class="hashtags-container"></div>
-                    <input type="hidden" id="tag" name="tag">
-                </div>
-                
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" class="problem-checkbox" onclick="toggleProblemDetails()"> 문제출제
-                    </label>
-                </div>
-                
-                <div id="problem-details">
-                <input type="radio" name="problemtype" value="1"> 직접출제
-                <input type="radio" name="problemtype" value="2"> 랜덤
-                <br>
-                <!-- 추가 필드 -->
-                <div class="mb-3">
-                    <label for="imgpath">이미지 파일 업로드:</label>
-                    <input type="file" id="imgpath" name="imgpath" multiple accept="image/*" onchange="previewImages(event)">
-                    <div id="image-preview"></div>
-                </div>
-                
-                <div id="additional-fields">
-                    <label for="correct">정답:</label>
-                    <input type="text" id="correct" name="correct">
-                    <br/>
-                    <label for="subject">과목:</label>
-                    <select id="subject" name="subject">
-                        <option value="과목">과목</option>
-                        <option value="국어">국어</option>
-                        <option value="영어">영어</option>
-                        <option value="수학">수학</option>
-                        <option value="사탐">사탐</option>
-                        <option value="과탐">과탐</option>
-                        <option value="기타">기타</option>
-                    </select>
                     
-                    <label for="level">난이도:</label>
-                    <select id="level" name="level">
-                        <option value="난이도">난이도</option>
-                        <option value="상">상</option>
-                        <option value="중">중</option>
-                        <option value="하">하</option>
-                    </select>
+                    <div class="form-col-right">
+                        <div class="date-section">
+                            <div class="date-input">
+                                <label for="startdate">시작일:</label>
+                                <input type="date" id="startdate" name="startdate" class="form-control" th:value="${study.startdate}">
+                            </div>
+                            <div class="date-input">
+                                <label for="enddate">종료일:</label>
+                                <input type="date" id="enddate" name="enddate" class="form-control" th:value="${study.enddate}">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>문제출제:</label>
+                            <div class="form-check">
+                                <input type="checkbox" id="problem" name="problem" class="form-check-input" onclick="toggleProblemDetails()">
+                                <label class="form-check-label" for="problem">직접출제</label>
+                            </div>
+                        </div>
+                        
+                        <div id="problem-details">
+                            <div class="form-group">
+                                <label for="imgpath">이미지 파일 업로드:</label>
+                                <input type="file" id="imgpath" name="imgpath" class="form-control-file" multiple accept="image/*" onchange="previewImages(event)">
+                                <div id="image-preview"></div>
+                            </div>
+                            
+                            <div id="additional-fields">
+                                <div class="form-group">
+                                    <label for="correct">정답:</label>
+                                    <input type="text" id="correct" name="correct" class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="subject">과목:</label>
+                                    <select id="subject" name="subject" class="form-control">
+                                        <option value="과목">과목</option>
+                                        <option value="국어">국어</option>
+                                        <option value="영어">영어</option>
+                                        <option value="수학">수학</option>
+                                        <option value="사탐">사탐</option>
+                                        <option value="과탐">과탐</option>
+                                        <option value="기타">기타</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="level">난이도:</label>
+                                    <select id="level" name="level" class="form-control">
+                                        <option value="난이도">난이도</option>
+                                        <option value="상">상</option>
+                                        <option value="중">중</option>
+                                        <option value="하">하</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="submit-button">
+                            <button type="submit" class="btn btn-primary mt-3">수정</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-                <button type="submit" class="save-btn">수정</button>
             </form>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="/js/consult/consultationReservation.js"></script>
+    <script src="/js/consult/reservationList.js"></script>
     <script>
         function toggleProblemDetails() {
             var details = document.getElementById('problem-details');
@@ -335,7 +383,7 @@
         }
     </script>
     
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>

@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
 import com.learnway.global.exceptions.S3Exception;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +34,7 @@ public class S3ImageService {
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
-
+    
     // 업로드
     public String upload(MultipartFile image, String key) throws S3Exception {
         //입력 받은 파일이 비어있는지 검증
