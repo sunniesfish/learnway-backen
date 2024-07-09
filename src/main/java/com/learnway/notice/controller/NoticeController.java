@@ -105,7 +105,9 @@ public class NoticeController {
 		if(authentication != null && authentication.isAuthenticated()) {
 			CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
             member = user.getMember();
+            dto.setMemberId(member);
 		}
+		
 		//이미지 URI
 		String imgURI = null;
 		
@@ -136,7 +138,7 @@ public class NoticeController {
 			}
 		
 		}
-		noticeService.write(dto, member);
+		noticeService.write(dto);
 		return "redirect:/notice/noticeList";
 	}
 	

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.learnway.global.service.LoginOkService;
 import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.member.service.CustomUserDetails;
@@ -67,7 +68,6 @@ public class ScheduleRestController {
             CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
             member = user.getMember();
         }
-        
 	    LocalDate start = LocalDate.of(year, month, 1);
 	    LocalDate end = start.plusMonths(1);
 	    

@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
    	    nextDayThreshold: '06:00:00',
    	    slotDuration: '00:30:00', 
     	allDaySlot: false,
-        initialView: 'dayGridMonth',
+        initialView: 'timeGridWeek',
         initialDate: new Date(),
         themeSystem: 'bootstrap',
         headerToolbar: {
