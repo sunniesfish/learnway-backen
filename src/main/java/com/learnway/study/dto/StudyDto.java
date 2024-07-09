@@ -8,8 +8,10 @@ import lombok.Data;
 @Data
 public class StudyDto {
 	
+	
 	private Integer postid;
 	
+	private Integer id;
 	
 	private String title;
 	

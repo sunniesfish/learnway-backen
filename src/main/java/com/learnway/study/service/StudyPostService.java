@@ -148,28 +148,7 @@ public class StudyPostService {
 	
 	@Transactional
 	public void boardDelete(StudyDto dto, Principal principal) {
-	    // 게시글 ID를 사용하여 Study 엔티티 조회
-		Study study = Study.builder().postid(dto.getPostid()).
-				member(memberRepository.findByMemberId(principal.getName()).get())
-				.build();
-		System.out.println(study.getProblems());
-		
-	    if (study != null) {
-	        // 연결된 problems 데이터 수동 삭제
-	    	System.out.println("--1--");
-	        List<StudyProblem> problems = study.getProblems();
-	        if (problems != null) {
-	        	
-	        }
-	            for (StudyProblem problem : problems) {
-	            	System.out.println(problem.getProblemid() + " 문제아이디");
-	            	
-	                studyProblemRepository.delete(problem);
-	            }
-	        }
-	        // Study 엔티티 삭제
-	        studyRepository.delete(study);
-	    
+	    Study study = studyRepository.findByPostid(dto.getPostid());
+	    studyRepository.delete(study);
 	}
-
 }

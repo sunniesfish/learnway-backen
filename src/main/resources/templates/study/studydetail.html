@@ -134,9 +134,9 @@ function clickDelete() {
                 $.ajax({
                     type: "POST",
                     url: "/api/study/delete",
-                    data: JSON.stringify({ postid: postId }),
+                    data: JSON.stringify({ postid: postId}),
                     contentType: "application/json",
-                    success: function(response) {
+                    success: function(data) {
                         alert('게시글이 삭제되었습니다.');
                         window.location.href = "/studylist";
                         // 성공 시 추가로 실행할 코드가 있다면 여기에 작성
@@ -146,9 +146,7 @@ function clickDelete() {
                         alert('삭제 중 오류가 발생했습니다.');
                     }
                 });
-            } else {
-                alert('오답입니다.');
-            }
+            } 
         } else {
             return false;
         }

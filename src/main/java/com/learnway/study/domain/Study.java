@@ -11,6 +11,7 @@ import com.learnway.member.domain.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Table(name="study")
 public class Study {
 	
@@ -61,8 +62,8 @@ public class Study {
 	@Column(name="study_isjoin",nullable = false)
 	private byte isjoin;
 	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "id" ,nullable = false)
     private Member member;
 	
 	@OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)

@@ -41,9 +41,12 @@ public class ChatRoom {
     @JoinColumn(name = "id", nullable = false)
     private Member member;
 
-    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonManagedReference
     private List<ChatMessage> messages;
+    
+    @OneToMany(mappedBy = "chatroom", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ChatRoomMember> chatRoomMember;
 
     @Column(name="study_roomname", nullable = false)
     private String roomname;
