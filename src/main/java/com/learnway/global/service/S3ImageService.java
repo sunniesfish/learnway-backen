@@ -96,6 +96,7 @@ public class S3ImageService {
                             .withCannedAcl(CannedAccessControlList.PublicRead);
             s3.putObject(putObjectRequest); // put image to S3
         }catch (Exception e){
+            e.printStackTrace();
             throw new S3Exception("업로드 오류");
         }finally {
             byteArrayInputStream.close();
