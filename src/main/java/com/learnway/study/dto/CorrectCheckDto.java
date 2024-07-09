@@ -9,11 +9,11 @@ import lombok.Data;
 public class CorrectCheckDto {
 
 	
-	private Integer correctId;
+	private int correctId;
 	private String roomId;
-	private Integer postId;
+	private int postId;
 	
-	private Member member;
-	private Study study;
-	private Integer status;
+//	private Member member;
+//	private Study study;
+	private int status;
 }
