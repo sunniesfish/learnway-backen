@@ -88,7 +88,7 @@ public class ConsultController {
             System.out.println("getUsername : "+ consultantId);
             model.addAttribute("connectId", consultantId);
         }
-		return "/consult/video";
+		return "consult/video";
 	}
 	
 	//사이드바 예약리스트에서 입장하기 클릭시 엔드포인트
@@ -102,7 +102,7 @@ public class ConsultController {
             System.out.println("getUsername : "+ memberId);
             model.addAttribute("connectId", memberId);
         }
-		return "/consult/video";
+		return "consult/video";
 	}
 
 	//뷰화면 테스트
