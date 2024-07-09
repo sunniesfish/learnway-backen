@@ -37,19 +37,6 @@ public class ConsultController {
 		return "consult/reservation";
 	}
 	
-	//임시메인페이지 나중에 메인페이지가 마이페이지이기때문에 여기 추가되는 사이드바에 기생할예정
-	@GetMapping("/main")
-	public String main(Authentication authentication,Model model) {
-    	String memberId = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            memberId = userDetails.getUsername();
-            System.out.println(memberId);
-        }
-        model.addAttribute("memberId", memberId);
-		return "main";
-	}
-	
 	//모달창에서 상담사 예약하기누르면 처리하는 메소드
 	@GetMapping("/reservationBoard")
 	public String reservationBoard(@RequestParam("consultant") Long id,Model model) {
@@ -104,62 +91,4 @@ public class ConsultController {
         }
 		return "consult/video";
 	}
-
-	//뷰화면 테스트
-	@GetMapping("/test")
-	public String test(Authentication authentication,Model model) {
-//    	String memberId = null;
-//        if (authentication != null && authentication.isAuthenticated()) {
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            memberId = userDetails.getUsername();
-//            System.out.println(memberId);
-//        }
-//        model.addAttribute("memberId", memberId);
-		
-		return "/page";
-	}
-	
-	//로그인한 세션 정보 확인
-	   @GetMapping("/checkSession")
-	    public String checkSession(Authentication authentication) {
-		   ConsultantDetails consultant = (ConsultantDetails) authentication.getPrincipal();
-		   //Long consultantId = consultant.getId();
-		   System.out.println("이게머야?1 "+ consultant.getId());
-		   System.out.println("이게머야?2 "+ authentication.getName());
-		   System.out.println("이게머야?3 "+ authentication.getAuthorities());
-		   System.out.println("이게머야?4 "+ authentication.getDetails());
-		  // HttpSession session = request.getSession(false); // false로 설정하여 새로운 세션이 생성되지 않도록 함
-	        if (consultant != null) {
-	        	Long consultantId = consultant.getId();
-	            if (consultantId != null) {
-	                return "현재 로그인한 상담사 ID: " + consultantId;
-	            } else {
-	                return "상담사가 로그인하지 않은 상태입니다.";
-	            }
-	        } else {
-	            return "세션에 로그인 정보가 없습니다.";
-	        }
-	    }
-	   
-		//로그인한 세션 정보 확인
-	   @GetMapping("/loginCheck")
-	    public String loginCheck(Authentication authentication) {
-		   
-		  	String memberId = null;
-	        if (authentication != null && authentication.isAuthenticated()) {
-	        	Member userDetails = (Member) authentication.getPrincipal();
-	            memberId = userDetails.getMemberName();
-	            System.out.println("현재 로그인 아이디(멤버) : "+  memberId);
-	        }
-		   
-	        if (memberId != null) {
-	            if (memberId != null) {
-	                return "현재 로그인한 멤버 ID: " + memberId;
-	            } else {
-	                return "상담사가 로그인하지 않은 상태입니다.";
-	            }
-	        } else {
-	            return "세션에 로그인 정보가 없습니다.";
-	        }
-	    }
 }
