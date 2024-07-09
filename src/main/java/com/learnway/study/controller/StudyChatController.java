@@ -60,10 +60,11 @@ public class StudyChatController {
 		
 		model.addAttribute("name",principal.getName()); 
 		model.addAttribute("roomId",dto.getRoomId()); 
+		model.addAttribute("roomName",dto.getRoomname()); 
 		//채팅방 저장
 		
 		
-		return "/study/mychat";
+		return "study/mychat";
 	}
 	
 	// 입장되어있는 채팅방 입장
@@ -74,7 +75,7 @@ public class StudyChatController {
 		
 		model.addAttribute("name",studyChatService.MemberName(principal)); 
 		model.addAttribute("roomId",dto.getRoomId()); 
-		
+		model.addAttribute("roomName",dto.getRoomname()); 
 	    
 		//채팅방 멤버리스트 (방장,입잠멤버)
 		model.addAttribute("chatListHost",studyChatService.chatListHost(dto));
@@ -83,7 +84,7 @@ public class StudyChatController {
 		model.addAttribute("chatMessageList",studyChatService.chatMessageList(dto));
 		
 		
-		return "/study/mychat";
+		return "study/mychat";
 	}
 	
 	@GetMapping("/chatroom/{roomId}/messages")
@@ -109,7 +110,7 @@ public class StudyChatController {
 //		model.addAttribute("roomname","테스트");
 	
 
-		return "/study/mychat";
+		return "study/mychat";
 	}
 	
 	
