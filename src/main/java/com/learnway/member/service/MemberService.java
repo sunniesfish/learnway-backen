@@ -150,6 +150,7 @@ public class MemberService {
                 // 새로운 S3 삭제 로직 추가
                 s3ImageService.deleteImageFromS3(oldImagePath);
             } catch (S3Exception e) {
+                e.printStackTrace();
                 throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
             }
         }
