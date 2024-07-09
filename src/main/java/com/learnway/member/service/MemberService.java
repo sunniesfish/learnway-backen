@@ -32,8 +32,7 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화 저장
     private final S3ImageService s3ImageService; // 추가된 부분
 
-    //@Value("${upload.path}") // application.properties 에 경로 명시한 부분 가져옴
-    private String uploadPath="";
+
 
     // ID 중복 체크 (컨설턴트까지 같이 비교)
     public boolean isUsernameTaken(String username) {
