@@ -166,7 +166,7 @@ public class ScheduleService {
 	        while (current.isBefore(end)) {
 	        	LocalDateTime currentDateTime = current.atTime(6, 0); // 각 날짜의 6시로 설정
 	            DailyAchieve dailyAchieve = createDailyAchieve(currentDateTime,member.getId(),member);
-	            
+	             
 	            DailyAchieveDto dto = new DailyAchieveDto();
 	            dto.setDailyAchieveId(dailyAchieve.getDailyAchieveId());
 	            dto.setDate(dailyAchieve.getDate());
