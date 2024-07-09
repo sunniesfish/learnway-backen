@@ -181,7 +181,7 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
     }
     const fetchSubjectData = async (retryCount = 0) => {
         try{
-            const response = async () => fetch("/api/subject/").then(res => res.json());
+            const response = await fetch("/api/subject/");
             if(!response.ok){
                 throw new Error('Network response was not ok');
             }
