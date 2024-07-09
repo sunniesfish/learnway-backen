@@ -37,10 +37,8 @@ function Subjects({examId}){
     const [ detail, setDetail ] = React.useState();
     const [ data, setData ] = React.useState("");
     const [ list, setList ] = React.useState([]);
-    const fetchData = async (pageNo) => {
-        // const response = await fetch(`/api/score/${examId}/${pageNo}`).then(res => res.json());
-        // setData(response);
-        // setList(response.content)
+
+    const fetchData = async (pageNo, retryCount = 0) => {
         try {
             const response = await fetch(`/api/score/${examId}/${pageNo}`);
             if (!response.ok) {
@@ -51,8 +49,11 @@ function Subjects({examId}){
             setList(data.content);
         } catch (error) {
             console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchData(pageNo, retryCount + 1), 1000); // Retry after 1 second
+            }
         }
-    }
+    };
     React.useEffect(()=>{
         fetchData(pageNo);
     },[pageNo, showModal1 ]);
