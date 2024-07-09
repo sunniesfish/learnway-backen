@@ -19,7 +19,7 @@ public class ScoreController {
     @GetMapping("/")
     public String scorePage(Authentication authentication){
 //        if(authentication != null){
-            return "/exam/stats";
+            return "exam/stats";
 //        }else {
 //            return "/login";
 //        }

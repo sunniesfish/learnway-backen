@@ -14,7 +14,7 @@ public class ScheduleController {
 	@GetMapping("/weekSchedule")
 	public String weekSchedule() {
 		
-		return "/schedule/weekSchedule";
+		return "schedule/weekSchedule";
 	}
 		
 
