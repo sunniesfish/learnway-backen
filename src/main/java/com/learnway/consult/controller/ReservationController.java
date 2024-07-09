@@ -37,8 +37,6 @@ import com.learnway.consult.service.ReservationService;
 import com.learnway.member.domain.Member;
 import com.learnway.member.service.CustomUserDetails;
 
-
-
 @RestController
 @RequestMapping("/api")
 public class ReservationController {
