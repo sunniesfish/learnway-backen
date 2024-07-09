@@ -167,14 +167,24 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
         setGrade(response.scoreGrade);
         setMemo(response.scoreMemo? response.scoreMemo : "");
     }
-    const fetchSubjectData = async () => {
-        const response = async () => fetch("/api/subject/").then(res => res.json());
-        const subjectData = await response();
-        setSubjects(subjectData)
-        if(onModify) {
-            fetchData(scoreId);
-        } else {
-            setSubjectCode(subjectData[0].subjectCode);
+    const fetchSubjectData = async (retryCount = 0) => {
+        try{
+            const response = async () => fetch("/api/subject/").then(res => res.json());
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            const subjectData = await response();
+            setSubjects(subjectData)
+            if(onModify) {
+                fetchData(scoreId);
+            } else {
+                setSubjectCode(subjectData[0].subjectCode);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchData(pageNo, retryCount + 1), 1000); // Retry after 1 second
+            }
         }
     }
     const handleSubmit = async (event) => {

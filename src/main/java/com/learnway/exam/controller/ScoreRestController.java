@@ -38,11 +38,8 @@ public class ScoreRestController {
 
         Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo-1,10));
         page.get().forEach(System.out::println);
-        if (memId == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<Page<Score>>(page, HttpStatus.OK);
-        }
+
+        return new ResponseEntity<Page<Score>>(page, HttpStatus.OK);
     }
     
     /*

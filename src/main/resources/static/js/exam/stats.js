@@ -1,7 +1,15 @@
-async function fetchTypeStats(examType, pageNo) {
-    const response = await fetch(`/api/stats/${examType}/${pageNo}`);
-    if (!response.ok) throw new Error('Failed to fetch stats');
-    return response.json();
+async function fetchTypeStats(examType, pageNo, retryCount = 0) {
+    try {
+
+        const response = await fetch(`/api/stats/${examType}/${pageNo}`);
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        return response.json();
+    } catch (error){
+        console.error('Error fetching data:', error);
+        if (retryCount < 5) {
+            setTimeout(() => fetchData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+        }
+    }
 }
 
 const statsRoot = document.getElementById("stats-root");
@@ -26,7 +34,7 @@ function Stats() {
     const [stdOption, setStdOption] = React.useState();
     const [isOption, setIsOption] = React.useState(false);
 
-    const fetchData = async (retryCount = 0, maxRetries = 5) => {
+    const fetchData = async (retryCount = 0) => {
         try {
             const statdata = await fetchTypeStats(examType, pageNo);
             console.log("fetchData", statdata)
@@ -66,24 +74,23 @@ function Stats() {
             setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
         } catch (error) {
             console.error('Error fetching data:', error);
-            if (retryCount < maxRetries) {
+            if (retryCount < 5) {
                 setTimeout(() => fetchData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
             }
         }
     };
     
-    const fetchExamTypeData = async (retryCount = 0, maxRetries = 5) => {
+    const fetchExamTypeData = async (retryCount = 0) => {
         try {
-            const examTypeData = await fetch("/api/examtype/all").then(res => {
-                if (!res.ok) throw new Error('Failed to fetch exam types');
-                console.log("examTypeData", examTypeData)
-                return res.json();
-            });
+            const response = await fetch("/api/examtype/all");
+            if (!response.ok) throw new Error('Failed to fetch exam types');
+
+            const examTypeData = response.json();
             setExamTypeList(prev => examTypeData ? examTypeData : prev);
         } catch (error) {
             console.error('Error fetching exam types:', error);
-            if (retryCount < maxRetries) {
-                setTimeout(() => fetchExamTypeData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+            if (retryCount < 5) {
+                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000); // Retry after 1 second
             }
         }
     };
