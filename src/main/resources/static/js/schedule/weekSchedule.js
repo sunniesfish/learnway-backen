@@ -348,13 +348,24 @@ document.addEventListener('DOMContentLoaded', function() {
 						    }
 		                });
 		
-		                $("#updateModal").on("click", ".remove-progress", function() {
-		                    if (progressCount > 1) {
-		                        $(this).closest(".progress-entry").remove();
-		                        progressCount--;
-		                    }
-		                });
-		                
+		                let deletedProgressIds = []; // 삭제된 진도 ID를 추적하는 배열
+
+						// '-' 버튼 클릭 이벤트 핸들러 수정
+						$("#updateModal").on("click", ".remove-progress", function() {
+						    if (progressCount > 1) {
+						        let progressId = $(this).siblings('input[name="progressId[]"]').val();
+						        if (progressId) {
+						            deletedProgressIds.push(progressId); // 삭제된 ID 추가
+						        }
+						        $(this).closest(".progress-entry").remove();
+						        progressCount--;
+						        
+						        if (progressCount < 5) {
+						            $("#updateModal .add-progress").css("display", "inline-block");
+						        }
+						    }
+						});
+								                
                          // 모달창 열기
                          $("#updateModal").modal("show");
                          
@@ -460,7 +471,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	       	                    "endTime": endTime,
 	       	                    "studywayId": studyway,
 	       	                    "subjectId": subject,
-	       	                    "progresses": progresses
+	       	                    "progresses": progresses,
+	       	                    "deletedProgressIds": deletedProgressIds // 삭제된 ID 배열 추가
 	       	                  };
 	       	                  
                              $.ajax({
@@ -475,6 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                  console.log(response.message);
                                  refreshEvents();// 일정 업데이트 후 캘린더 다시 렌더링
                                  $("#updateModal").modal("hide"); // 모달 닫기
+                                 deletedProgressIds = []; // 성공 후 배열 초기화
                                },
                                error: function(xhr, status, error) {
                                  console.log(error);
@@ -1097,11 +1110,14 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
       const newRow = document.createElement('div');
       newRow.className = 'form-row align-items-center mb-2 progress-entry';
       newRow.innerHTML = `
-        <div class="col-4">
+        <div class="col-3">
           <select class="form-control" id="material${progressCount}" name="material[]"></select>
         </div>
-        <div class="col-7">
+        <div class="col-6">
           <input type="text" class="form-control" id="progress${progressCount}" name="progress[]" placeholder="진도 내역">
+        </div>
+        <div class="col-2">
+	      <input type="text" class="form-control" id="progress${progressCount}" name="achieveRate[]" placeholder="0">
         </div>
         <div class="col-auto">
           <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
