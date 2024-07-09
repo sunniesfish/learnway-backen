@@ -7,7 +7,7 @@ async function fetchTypeStats(examType, pageNo, retryCount = 0) {
     } catch (error){
         console.error('Error fetching data:', error);
         if (retryCount < 5) {
-            setTimeout(() => fetchData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+            setTimeout(() => fetchTypeStats(retryCount + 1, maxRetries), 1000); // Retry after 1 second
         }
     }
 }
@@ -15,7 +15,7 @@ async function fetchTypeStats(examType, pageNo, retryCount = 0) {
 const statsRoot = document.getElementById("stats-root");
 
 // window.addEventListener("onload", render);
-window.onload = () => render();
+render();
 
 function render() {
     console.log("render")
@@ -85,7 +85,7 @@ function Stats() {
             const response = await fetch("/api/examtype/all");
             if (!response.ok) throw new Error('Failed to fetch exam types');
 
-            const examTypeData = response.json();
+            const examTypeData = await response.json();
             setExamTypeList(prev => examTypeData ? examTypeData : prev);
         } catch (error) {
             console.error('Error fetching exam types:', error);
