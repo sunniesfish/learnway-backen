@@ -43,11 +43,8 @@ public class Notice {
 	private String category;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "memberPk", unique = false)
+	@JoinColumn(name = "member_id", unique = false)
 	private Member member; 
-	
-	@Column
-	private String memberId;
 	
 	@Transient
 	private Notice preNotice;

@@ -46,22 +46,20 @@ public class NoticeService {
 
 	
 	//글쓰기
-	public void write(NoticeDto dto, String memberId) {
+	public void write(NoticeDto dto) {
 		
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
 
-			
 			Notice notice = new Notice();
 			notice.setNoticeId(dto.getNoticeId());
 			notice.setNoticeTitle(dto.getNoticeTitle());
 			notice.setNoticeContent(formattedContent);
-
 			notice.setNoticeImgPath(dto.getNoticeImgPath());
 			notice.setNoticeImgUname(dto.getNoticeImgUname());
 			notice.setCreateDate(LocalDateTime.now());
 			notice.setPriority(dto.isPriority());
 			notice.setCategory(dto.getCategory());
-			notice.setMemberId(memberId);
+			notice.setMember(dto.getMemberId());
 			
 			noticeRepository.save(notice);
 		
@@ -91,6 +89,7 @@ public class NoticeService {
 		if(onotice.isPresent()) {
 			Notice notice = onotice.get();
 			NoticeDto dto = convertDto(notice);
+			System.out.println(dto.getMemberId().getMemberImage());
 			dto.setPreNotice(noticeRepository.findPreNotice(noticeId));
 			dto.setNextNotice(noticeRepository.findNextNotice(noticeId));
 			return dto;
@@ -130,6 +129,7 @@ public class NoticeService {
 		dto.setNoticeContent(notice.getNoticeContent());
 		dto.setNoticeImgPath(notice.getNoticeImgPath());
 		dto.setNoticeImgUname(notice.getNoticeImgUname());
+		dto.setMemberId(notice.getMember());
 		
 		return dto;
 	}
