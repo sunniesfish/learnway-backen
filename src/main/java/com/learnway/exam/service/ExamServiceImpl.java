@@ -14,9 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @AllArgsConstructor
@@ -169,8 +169,14 @@ public class ExamServiceImpl implements ExamService{
      * */
     @Override
     @Transactional
-    public void writeScore(Score score) {
-        scoreRepository.save(score);
+    public Boolean writeScore(Score score, Long memId) {
+        List<Score> optionalScore = scoreRepository.findAllByMemIdAndExam_ExamIdAndSubject_SubjectCode(memId, score.getExam().getExamId(), score.getSubject().getSubjectCode());
+        if (optionalScore.isEmpty()) {
+            scoreRepository.save(score);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /*
@@ -178,19 +184,29 @@ public class ExamServiceImpl implements ExamService{
      * */
     @Override
     @Transactional
-    public Optional<Score> updateScore(Score score) {
+    public Boolean updateScore(Score score, Long memId) {
+        AtomicReference<Boolean> isSucceed = new AtomicReference<>(false);
         Optional<Score> opScore = scoreRepository.findByMemIdAndScoreId(score.getMemId(), score.getScoreId());
         opScore.ifPresent(value -> {
             value.setScoreExScore(score.getScoreExScore());
             value.setScoreScore(score.getScoreScore());
             value.setScoreGrade(score.getScoreGrade());
-            value.setScoreExScore(score.getScoreExScore());
             value.setScoreStdScore(score.getScoreStdScore());
             value.setSubject(score.getSubject());
             value.setScoreMemo(score.getScoreMemo());
-            scoreRepository.save(value);
+
+            List<Score> scoreList = scoreRepository.findAllByMemIdAndExam_ExamIdAndSubject_SubjectCode(
+                    memId, score.getExam().getExamId(), score.getSubject().getSubjectCode()
+            );
+
+            // 과목이 중복되는 것을 방지
+            if (scoreList.size() < 2) {
+                scoreRepository.save(value);
+                isSucceed.set(true);
+            }
+
         });
-        return opScore;
+        return isSucceed.get();
     }
 
     /*

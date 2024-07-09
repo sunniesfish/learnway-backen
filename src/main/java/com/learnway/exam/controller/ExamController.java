@@ -42,6 +42,8 @@ public class ExamController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
             memId = member.getId();
+        } else {
+            return "redirect:/";
         }
         if(memId != null){
             examService.writeExam(
@@ -54,7 +56,6 @@ public class ExamController {
                             .examMemo(examMemo).build()
             );
         }
-
         return "redirect:/exam/list/1";
     }
 
@@ -71,6 +72,8 @@ public class ExamController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
             memId = member.getId();
+        } else {
+            return "redirect:/";
         }
         if(memId != null){
             System.out.println("getting exam list : "+memId);
@@ -101,6 +104,8 @@ public class ExamController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
             memId = member.getId();
+        } else {
+            return "redirect:/";
         }
 
         if(memId != null){
@@ -130,6 +135,8 @@ public class ExamController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
             memId = member.getId();
+        } else {
+            return "redirect:/";
         }
 
         if(memId != null) {
@@ -150,6 +157,8 @@ public class ExamController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             member = userDetails.getMember();
             memId = member.getId();
+        } else {
+            return "redirect:/";
         }
 
         ExamDetailDTO dto = null;
