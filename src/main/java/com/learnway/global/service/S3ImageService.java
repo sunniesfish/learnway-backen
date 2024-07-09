@@ -74,7 +74,7 @@ public class S3ImageService {
     // S3에 업로드
     private String uploadImageToS3(MultipartFile image, String key) throws IOException, S3Exception {
         String originalFilename = image.getOriginalFilename(); //원본 파일 명
-        String extention = originalFilename.substring(originalFilename.lastIndexOf(".")); //확장자 명
+        String extention = originalFilename.substring(originalFilename.lastIndexOf(".")+1); //확장자 명
 
         String s3FileName = key + UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
 
