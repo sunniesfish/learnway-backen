@@ -1,5 +1,7 @@
 package com.learnway.study.domain;
 
+import java.util.List;
+
 import com.learnway.member.domain.Member;
 
 import jakarta.persistence.CascadeType;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +43,10 @@ public class StudyProblem {
 	
 	@Column(name="study_correct")
 	private String correct;
+	
+	
+//	@OneToMany(mappedBy = "Problems_img", cascade = CascadeType.ALL, orphanRemoval = true)
+//	private List<StudyProblemImg> problemsImg;
 	
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "study_postid", nullable = false)
