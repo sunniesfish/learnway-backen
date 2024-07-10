@@ -69,6 +69,8 @@ public class StudyService {
 			System.out.println(chatRoomDto.getRoomname());
 			System.out.println("--채팅방생성--");
 		studyChatService.chatRoomCreate(chatRoomDto, study,principal);
+		
+		//studyChatService.joinChatRoom(chatRoomDto, principal);
 		}
 		//태그값 저장
 		studyTagService.createTag(studyTagDto, study);

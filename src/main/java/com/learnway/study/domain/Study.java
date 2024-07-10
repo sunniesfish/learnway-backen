@@ -45,7 +45,7 @@ public class Study {
 	@Column(name="study_title")
 	private String title;
 	
-	@Column(name="study_content")
+	@Column(name="study_content",length = 100000)
 	private String content;
 	
 	@Column(name="study_viewcount")
@@ -85,8 +85,6 @@ public class Study {
 	private List<CorrectCheck> correctCheck;
 	
 	
-	 @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
-	private List<StudyProblem> problems;
 
 	
 	 

@@ -2,10 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>글 수정</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+    <link rel="stylesheet" href="/css/study/studyList.css" type="text/css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
+    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
     <style>
         .content-wrapper {
             padding: 20px;
@@ -222,13 +225,6 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="/js/consult/consultationReservation.js"></script>
-    <script src="/js/consult/reservationList.js"></script>
     <script>
         function toggleProblemDetails() {
             var details = document.getElementById('problem-details');
@@ -386,8 +382,6 @@
     
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/consult/consultationReservation.js"></script>
 <script src="/js/consult/reservationList.js"></script>
 </body>

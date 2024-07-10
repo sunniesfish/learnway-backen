@@ -28,7 +28,7 @@ public class StudyProblemService {
 	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
 		
 		StudyProblem studyProblem = StudyProblem.builder().subject(dto.getSubject())
-									.level(dto.getLevel()).content(dto.getContent())
+									.level(dto.getLevel())
 									.correct(dto.getCorrect()).study(Study.builder().postid(postid).build())
 									.memid(member).build();
 		studyProblemRepository.save(studyProblem);
@@ -49,7 +49,7 @@ public class StudyProblemService {
 		
 		StudyProblem studyProblem = StudyProblem.builder().subject(dto.getSubject())
 				.problemid(problem.getProblemid())
-				.level(dto.getLevel()).content(dto.getContent())
+				.level(dto.getLevel())
 				.correct(dto.getCorrect()).study(Study.builder().postid(postid).build())
 				.memid(member).build();
 		studyProblemRepository.save(studyProblem);
