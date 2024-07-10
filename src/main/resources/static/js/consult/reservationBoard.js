@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var consultantId = new URLSearchParams(window.location.search).get('consultant');
     var calendar;
     var consultantData; // 상담사 정보를 저장할 변수
+    let loginUserId = document.getElementById("memberId").value;
+    let loginUserName = document.getElementById("memberName").value;
+    
     
     // 상담사 정보를 가져오는 함수
     function fetchConsultantInfo(consultantId) {
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headerToolbar: {
                 left: 'customButton',
                 center: 'title',
-                right: 'timeGridWeek,timeGridDay'
+                right: 'timeGridWeek'
             },
              customButtons: {
 	            customButton: {
@@ -85,6 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     failureCallback();
                 });
             },
+            //지난 날짜를 안보여주며 현재 날짜를기준으로 첫번째 슬롯에 놓고 7일뒤까지 보여주도록 설정
+            validRange: { // 현재 날짜부터 7일 후까지의 범위로 제한
+                start: new Date(),
+                end: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            },
+            firstDay: new Date().getDay(), // 현재 요일을 기준으로 첫 번째 슬롯에 표시될 요일 설정
             
             dateClick: function(info) {
                 var clickedDate = new Date(info.dateStr);
@@ -146,12 +155,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function transformEventData(data) {
         return data.map(event => {
+                console.log("예약데이터의 멤버아이디 : "+event.member.memberId);
+                console.log("로그인한  멤버아이디 : "+ loginUserId);
+                if(event.member.memberId === loginUserId){
+					var boxColor = '#C5E1A5';//본인 예약
+					var titleContents = loginUserName + '님 예약';
+            	}else{
+					var boxColor = 'gray'; // 다른사람예약
+					var titleContents = event.counselor.name + ' 상담사';
+				}
             return {
                 id: event.id,
-                title: event.counselor.name + ' 상담사',
+                title: titleContents,
                 start: event.bookingStart,
                 end: event.bookingEnd,
-                backgroundColor: '#C5E1A5',//은색
+                backgroundColor: boxColor,
                 textColor: 'black',
                 borderColor :'white'
             };

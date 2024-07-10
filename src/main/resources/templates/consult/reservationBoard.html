@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
 <link href='https://unpkg.com/@fullcalendar/core@5.11.0/main.min.css' rel='stylesheet' />
 <link href='https://unpkg.com/@fullcalendar/timegrid@5.11.0/main.min.css' rel='stylesheet' />
 
@@ -24,14 +24,16 @@
 
 <!-- 메인 컨텐츠 -->
 <div class="main__content">
-    <div class="main__content__title" name="titleHead">📅 상담예약</div>	
+    <!-- <div class="main__content__title" name="titleHead">📅 상담예약</div> -->	
+		<input type="hidden" th:value="${memberId}" id="memberId">
+		<input type="hidden" th:value="${memberName}" id="memberName">
             <!-- modal 추가 -->
         <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title text-center w-100 " id="exampleModalLabel">화상상담예약</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">화상상담예약</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -55,7 +57,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-success float-right insertBtn" id="addCalendar">예약</button>
-                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+                        <!-- <button type="button" class="btn btn-outline-danger" data-dismiss="modal" id="sprintSettingModalClose">취소</button> -->
                     </div>
                 </div>
             </div>
@@ -78,7 +80,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-danger" id="deleteEvent">예약 취소</button>
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+                        <!-- <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button> -->
                     </div>
                 </div>
             </div>
@@ -108,9 +110,11 @@
                             </div>
                         </div>
                     </div>
+                    <!--
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
                     </div>
+                    -->
                 </div>
             </div>
         </div>
@@ -119,6 +123,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="/js/icon.js"></script><!-- icon javascript -->
 <script src="/js/consult/reservationBoard.js"></script>
 <script src="/js/consult/consultationReservation.js"></script>
 <script src="/js/consult/reservationList.js"></script>
