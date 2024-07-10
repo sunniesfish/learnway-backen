@@ -1,28 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>채팅방 생성</title>
- <script>
-        function sendToParent() {
-            var roomname = document.getElementById('roomname').value;
-    //        var name = document.getElementById('name').value;
-//            var roomId = document.getElementById('roomId').value;
-
-            if (window.opener && !window.opener.closed) {
-                window.opener.document.getElementById('roomname').value = roomname;
-     //           window.opener.document.getElementById('name').value = name;
-//                window.opener.document.getElementById('roomId').value = roomId;
-            }
-            window.close();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅방 생성</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+    function sendToParent() {
+        var roomname = document.getElementById('roomname').value;
+        if (window.opener && !window.opener.closed) {
+            window.opener.document.getElementById('roomname').value = roomname;
+        }
+        window.close();
+    }
     </script>
 </head>
 <body>
-    <form action="javascript:sendToParent();" method="post">
-        <div>채팅방 이름: <input type="text" name="roomname" id="roomname" required></div>
-  <!--       <div>룸 ID: <input type="text" name="roomId" id="roomId" required></div> -->
-        <input type="submit" value="생성하기">
-    </form>
+    <div class="container">
+        <h2>채팅방 생성</h2>
+        <form onsubmit="sendToParent(); return false;">
+            <label for="roomname">채팅방 이름:</label>
+            <input type="text" id="roomname" name="roomname" required>
+            <input type="submit" value="생성하기">
+        </form>
+    </div>
 </body>
 </html>
