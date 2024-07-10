@@ -1,6 +1,5 @@
 package com.learnway.member.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
