@@ -54,7 +54,10 @@ public class StudyChatController {
 	@GetMapping(value="/joinRoom")
 	public String addRoomTest(ChatRoomDto dto,
 			Model model,Principal principal) {
+		
+		
 		studyChatService.joinChatRoom(dto, principal);
+		
 		//채팅방 입장
 		System.out.println("save");
 		
