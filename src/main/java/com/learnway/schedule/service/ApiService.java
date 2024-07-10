@@ -27,6 +27,7 @@ public class ApiService {
 
     @Value("${gpt.api.key}")
     private String openaiAccessKey;
+//    private String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
 	
 	
 	@GetMapping("/weeklySummary")
