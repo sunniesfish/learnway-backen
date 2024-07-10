@@ -4,6 +4,7 @@
 
 
 
+
 .exam__container{
     width: 100%;
     max-width: 800px;
@@ -17,6 +18,7 @@
     justify-content: space-between;
     margin-bottom: 15px;
 }
+/*
 .exam__container__btn-container>button{
     height: 35px;
     width: 60px;
@@ -120,7 +122,7 @@
 .pagination{
     margin: 30px;
 }
-
+*/
 .exam__modal-register{
     position: fixed;
     top: 0;
@@ -133,6 +135,7 @@
     height: 100%;
     background-color: rgba(0,0,0,0.5);
 }
+
 .exam__modal__form{
     position: fixed;
     width: 35vw;
@@ -149,6 +152,7 @@
     align-items: center;
     flex-direction: column;
 }
+
 .exam__modal__form>div{
     display: flex;
     justify-content: space-evenly;
@@ -185,3 +189,4 @@
     margin: 10px;
     text-align: center;
 }
+
