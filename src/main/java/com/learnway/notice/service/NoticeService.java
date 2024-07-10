@@ -21,6 +21,8 @@ import com.learnway.notice.domain.Notice;
 import com.learnway.notice.domain.NoticeRepository;
 import com.learnway.notice.dto.NoticeDto;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class NoticeService {
 
@@ -79,6 +81,7 @@ public class NoticeService {
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
 		notice.setPriority(dto.isPriority());
+		notice.setMember(dto.getMemberId());
 
 		noticeRepository.save(notice);
 
@@ -100,8 +103,11 @@ public class NoticeService {
 	}
 
 	//글 삭제
+	@Transactional
 	public void delete(NoticeDto dto) {
-		noticeRepository.deleteById(dto.getNoticeId());
+		Notice notice = noticeRepository.findById(dto.getNoticeId())
+		        .orElseThrow();
+		    noticeRepository.delete(notice);
 	}
 
 	//날짜 폴더 생성
