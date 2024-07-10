@@ -16,7 +16,6 @@
 <div class="main__content">
     <!-- 이곳에 작업합시다 -->
     <div class="container mt-5">
-        <h2>공지사항 수정</h2>
         <form th:action="@{/notice/rewrite/{id}(id=${notice.noticeId})}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="noticeId" th:value="${notice.noticeId}">
             <div class="form-group row">
