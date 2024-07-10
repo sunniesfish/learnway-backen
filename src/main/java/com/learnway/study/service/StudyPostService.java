@@ -119,7 +119,7 @@ public class StudyPostService {
 		if(dto.getStartdatetest()!=null ||!dto.getStartdatetest().isEmpty() &&
 				dto.getEnddatetest()!=null ||!dto.getEnddatetest().isEmpty()) {
 		Study study = Study.builder().title(dto.getTitle())
-									       .content(dto.getContent())
+									       .content(dto.getContent().replace("\n", "<br>"))
 									       .viewcount("0")
 									       .startdate(dto.getStartdate())
 									       .enddate(dto.getEnddate())
@@ -153,7 +153,7 @@ public class StudyPostService {
 	public Study boardUpdate(StudyDto dto,Principal principal) {
 		
 		Study study = Study.builder().postid(dto.getPostid()).title(dto.getTitle())
-				.content(dto.getContent())
+				.content(dto.getContent().replace("\n", "<br>"))
 				.viewcount(dto.getViewcount())
 				.startdate(dto.getStartdate())
 				.enddate(dto.getEnddate())
