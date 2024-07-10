@@ -245,4 +245,38 @@ public class ExamServiceImpl implements ExamService{
     public List<Integer> getAvgScores(Long memId) {
         return List.of();
     }
+
+    @Override
+    public List<Exam> findExamByExamTypeAndYear(Long memId, String examType, int year) {
+        List<Exam> list = examRepository.findExamsByYearMemberIdAndExamType(year, memId, examType);
+
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByYear(Long memId, int year) {
+        List<Exam> list = examRepository.findExamsByYearMemberId(year, memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findAllExam(Long memId) {
+        List<Exam> list = examRepository.findAllByMemId(memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
 }

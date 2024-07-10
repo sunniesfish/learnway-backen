@@ -30,7 +30,6 @@ public class ExamController {
     public String registerExam(
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
-            @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication
@@ -91,7 +90,6 @@ public class ExamController {
             @RequestParam(name = "examId") Long examId,
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
-            @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication

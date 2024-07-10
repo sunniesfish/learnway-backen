@@ -3,6 +3,8 @@ package com.learnway.exam.domain;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +17,14 @@ public interface ExamRepository extends JpaRepository<Exam, Long> {
     void deleteByMemIdAndExamId(Long memId, Long examId);
     Optional<Exam> findByMemIdAndExamId(Long memId, Long examId);
     List<Exam> findByMemIdAndExamType_ExamTypeName(Long memId, String examType);
+
+    List<Exam> findAllByMemId(Long memId);
+    @Query("SELECT e FROM Exam e WHERE YEAR(e.examDate) = :year AND e.memId = :memberId AND e.examType.examTypeName = :examTypeName")
+    List<Exam> findExamsByYearMemberIdAndExamType(@Param("year") int year,
+                                                  @Param("memberId") Long memberId,
+                                                  @Param("examTypeName") String examTypeName);
+
+    @Query("SELECT e FROM Exam e WHERE YEAR(e.examDate) = :year AND e.memId = :memberId")
+    List<Exam> findExamsByYearMemberId(@Param("year") int year,
+                                      @Param("memberId") Long memberId);
 }
