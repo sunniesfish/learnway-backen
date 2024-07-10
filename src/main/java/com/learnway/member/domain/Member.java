@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.learnway.notice.domain.Notice;
+import com.learnway.schedule.domain.Schedule;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,4 +73,5 @@ public class Member {
     public void addTargetUni(TargetUni targetUni) {
         targetUnis.add(targetUni);
     }
+
 }
