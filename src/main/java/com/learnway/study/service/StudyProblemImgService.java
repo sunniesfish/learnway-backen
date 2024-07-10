@@ -36,7 +36,7 @@ public class StudyProblemImgService {
 	}
 	
 	
-/*	@Autowired
+	@Autowired
     private S3ImageService s3ImageService;
 	
 	private static final String dir = "images/studyself/";
@@ -91,9 +91,9 @@ public class StudyProblemImgService {
                 }
             }
         }
-    }*/
+    }
 
-	// S3미적용 메서드
+/*	// S3미적용 메서드
 	//문제이미지 업로드 메서드
 	public void problemImgAdd(StudyProblemImgDto dto,MultipartFile[] files,int problemid) {
 		for(MultipartFile file : files) {
@@ -163,7 +163,7 @@ public class StudyProblemImgService {
 			
 		}
 		
-	}
+	}*/
 	
 	
 }
