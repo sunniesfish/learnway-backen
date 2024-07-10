@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
     <link rel="stylesheet" href="/css/study/studyDetail.css" type="text/css"/>
 
+
+
 </head>
 <body>
 <div th:replace="sidebar :: sidebar"></div>
@@ -18,7 +20,7 @@
         <div class="detail-row">
             <div class="detail-col-left">
                 <h2 th:text="${study.title}">제목</h2>
-                <p class="lead" th:text="${study.content}">내용</p>
+                <p class="lead" th:utext="${study.content}">내용</p>
             </div>
             <div class="detail-col-right">
                 <div class="author-section">
@@ -285,14 +287,14 @@ function updateReplyList(replyList) {
 
 	    var formattedDate = `${month}-${day} ${hours}:${minutes}`;
 	    
-	    var listItem = $('<li class="list-group-item"></li>');
+	    var listItem = $('<li class="list-group-item reply-item"></li>');
 	    var replyContent = `
-	      <div class="d-flex justify-content-between align-items-start">
-	        <div>
-	          <strong>${reply.memberName}</strong>
-	          <p>${reply.content}</p>
-	        </div>
-	        <small class="text-muted">${formattedDate}</small>
+	      <div class="reply-header">
+	        <strong class="reply-author">${reply.memberName}</strong>
+	        <small class="reply-date">${formattedDate}</small>
+	      </div>
+	      <div class="reply-content">
+	        <p>${reply.content}</p>
 	      </div>
 	    `;
 	    

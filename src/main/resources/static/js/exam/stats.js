@@ -1,14 +1,21 @@
-async function fetchTypeStats(examType, pageNo) {
-    const response = await fetch(`/api/stats/${examType}/${pageNo}`);
-    if (!response.ok) throw new Error('Failed to fetch stats');
-    return response.json();
+async function fetchTypeStats(examType, pageNo, retryCount = 0) {
+    try {
+
+        const response = await fetch(`/api/stats/${examType}/${pageNo}`);
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        return response.json();
+    } catch (error){
+        console.error('Error fetching data:', error);
+        if (retryCount < 5) {
+            setTimeout(() => fetchTypeStats(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+        }
+    }
 }
 
-console.log("stas page")
 const statsRoot = document.getElementById("stats-root");
 
 // window.addEventListener("onload", render);
-window.onload = () => render();
+render();
 
 function render() {
     console.log("render")
@@ -27,57 +34,64 @@ function Stats() {
     const [stdOption, setStdOption] = React.useState();
     const [isOption, setIsOption] = React.useState(false);
 
-    const fetchData = async () => {
-        console.log("fetchData")
+    const fetchData = async (retryCount = 0) => {
         try {
             const statdata = await fetchTypeStats(examType, pageNo);
+            console.log("fetchData", statdata)
             setPages(statdata.totalPages);
             console.log("data", statdata)
+            
             const subjects = await fetch("/api/subject/").then(res => {
                 if (!res.ok) throw new Error('Failed to fetch subjects');
                 return res.json();
             });
-
+    
             let scoreSeries = subjects.map(item => ({ name: item.subject, data: [] }));
             let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
             let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
-
+    
             let xasisCat = statdata.content.map(exam => exam.examDate);
-
+    
             const addDataToSeries = (series, dataKey) => {
                 statdata.content.forEach(exam => {
                     series.forEach(seriesData => {
                         exam.scoreList.forEach(score => {
                             if (seriesData.name === score.subject.subject) {
+                                console.log("seriesData.name subject.subject", dataKey, seriesData.name, score.subject.subject);
                                 seriesData.data.push(score[dataKey]);
                             }
                         });
                     });
                 });
             };
-
+    
             addDataToSeries(scoreSeries, 'scoreScore');
             addDataToSeries(gradeSeries, 'scoreGrade');
             addDataToSeries(stdSeries, 'scoreStdScore');
-
+    
             setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
             setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
         } catch (error) {
             console.error('Error fetching data:', error);
+            if (retryCount < 5) {
+                setTimeout(() => fetchData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+            }
         }
     };
-    const fetchExamTypeData = async () => {
-        console.log("fetch type data")
+    
+    const fetchExamTypeData = async (retryCount = 0) => {
         try {
-            const examTypeData = await fetch("/api/examtype/all").then(res => {
-                if (!res.ok) throw new Error('Failed to fetch exam types');
-                console.log("examTypeData",examTypeData)
-                return res.json();
-            });
-            setExamTypeList(prev => examTypeData? examTypeData : prev);
+            const response = await fetch("/api/examtype/all");
+            if (!response.ok) throw new Error('Failed to fetch exam types');
+
+            const examTypeData = await response.json();
+            setExamTypeList(prev => examTypeData ? examTypeData : prev);
         } catch (error) {
             console.error('Error fetching exam types:', error);
+            if (retryCount < 5) {
+                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000); // Retry after 1 second
+            }
         }
     };
 
@@ -86,7 +100,6 @@ function Stats() {
     }, [scoreOption, gradeOption, stdOption]);
 
     React.useEffect(() => {
-        console.log("in useEffect")
         fetchData();
     }, [pageNo, examType]);
     
@@ -153,6 +166,8 @@ function ChartType({ cat, option }) {
 }
 
 function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, reversed) {
+    console.log("series",series);
+    console.log("xaxis",xaxisCat);
     return {
         series: series,
         chart: {

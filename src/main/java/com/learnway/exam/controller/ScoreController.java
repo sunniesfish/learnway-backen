@@ -1,7 +1,6 @@
 package com.learnway.exam.controller;
 
 import com.learnway.exam.service.ExamService;
-import com.learnway.exam.service.ScoreService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -18,10 +17,9 @@ public class ScoreController {
 
     @GetMapping("/")
     public String scorePage(Authentication authentication){
-//        if(authentication != null){
+        if(authentication != null){
             return "exam/stats";
-//        }else {
-//            return "/login";
-//        }
+        }else {
+            return "redirect:/";      }
     }
 }

@@ -39,8 +39,6 @@ public class StudyProblem {
 	@Column(name="study_level" , nullable = false)
 	private String level;
 	
-	@Column(name="study_content")
-	private String content;
 	
 	@Column(name="study_correct")
 	private String correct;
