@@ -60,7 +60,6 @@ public class ExamServiceImpl implements ExamService{
         opExam.ifPresent(value -> {
             value.setExamName(exam.getExamName());
             value.setExamType(exam.getExamType());
-            value.setExamRange(exam.getExamRange());
             value.setExamDate(exam.getExamDate());
             value.setExamMemo(exam.getExamMemo());
             examRepository.save(value);
@@ -97,7 +96,6 @@ public class ExamServiceImpl implements ExamService{
                                 .examTypeName(exam.getExamType().getExamTypeName()).build()
                 );
                 dto.setExamDate(exam.getExamDate());
-                dto.setExamRange(exam.getExamRange());
                 dto.setExamMemo(exam.getExamMemo());
                 dto.setScoreList(scores);
                 return dto;

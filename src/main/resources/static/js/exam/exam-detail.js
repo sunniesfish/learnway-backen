@@ -1,184 +1,48 @@
-const examDetailBtn = document.querySelector(".exam-detail__detail-btn");
-const examGoBackBtn = document.querySelector(".exam-detail__goback-btn")
-const examDetailModal = document.querySelector(".exam-detail__modal__info");
-const examModalOverlay = document.querySelector(".exam-detail__modal__detail-overlay");
-examDetailBtn.addEventListener("click",handleRegBtnClick);
-examGoBackBtn.addEventListener("click",()=>{
-    location.href = "/exam/list/1"
-})
-
-function handleRegBtnClick(event){
-    event.preventDefault();
-    examDetailModal.classList.remove("hidden")
-    examModalOverlay.addEventListener("click",()=>{
-        examDetailModal.classList.add("hidden")
-    });
-}
-
-
 const detailRoot = document.getElementById("exam-detail-root");
 const path = window.location.pathname;
 const parts = path.split('/');
 const examId = parts[parts.length - 1];
 
+console.log("new exam-detail")
 render(examId);
 
 function render(examId){
-    console.log("render",examId)
-    ReactDOM.render(<Subjects examId={examId}/>,detailRoot);
+    ReactDOM.render(<SubjectList examId={examId}/>,detailRoot);
 }
 
-function Subjects({examId}){
-    const [ pageNo, setPageNo ] = React.useState(1);
-    const [ pages, setPages ] = React.useState(0);
-    const [ showModal1, setShowModal1 ] = React.useState(false);
-    const [ showModal2, setShowModal2 ] = React.useState(false);
+function SubjectList ({examId}) {
+    const [ subjects, setSubjects ] = React.useState([]);
+    const [ examData, setExamData ] = React.useState(null);
     const [ onModify, setOnModify ] = React.useState(false);
-    const [ detail, setDetail ] = React.useState();
-    const [ data, setData ] = React.useState("");
-    const [ list, setList ] = React.useState([]);
+    const [ onRegister, setOnRegister ] = React. useState(false);
+    const [ onView, setOnView ] = React.useState(true);
+    const [ data, setData ] = React.useState(null);
 
-    const fetchData = async (pageNo, retryCount = 0) => {
-        try {
-            const response = await fetch(`/api/score/${examId}/${pageNo}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            setData(data);
-            setList(data.content);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            if (retryCount < 5) { // Retry up to 3 times
-                setTimeout(() => fetchData(pageNo, retryCount + 1), 1000); // Retry after 1 second
-            }
-        }
-    };
-    React.useEffect(()=>{
-        fetchData(pageNo);
-    },[pageNo, showModal1 ]);
-    const handleDelete = async (scoreId) => {
-        fetch(`/api/score/${examId}/${scoreId}`,{method:"DELETE"});
-        fetchData(pageNo);
-    }
-    const handleAddSubject = () => setShowModal1(true);
-    const handleOnModify = () => {
-        setOnModify(true);
-        setShowModal2(false);
-        setShowModal1(true);
-        
-    }
-    const handleOverlayClick1 = () => {
+    const setViewTrue = () => {
         setOnModify(false);
-        setShowModal1(false);
+        setOnRegister(false);
     }
-    const handleOverlayClick2 = () => {
-        setShowModal2(false);
-        setOnModify(false);
-        setDetail("")
-    };
-    const handleGoPrev = () => {
-        pageNo > 1 && setPageNo(prev => prev - 1);
+    const onSubmit = () => {
+        fetchData();
     }
-    const handleGoNext = () => {
-        pageNo < data.totalPages && setPageNo(prev => prev + 1);
-    }
-    return(
-        <>
-        <div className="exam-detail__container">
-            {list.map((item, index) => 
-                <div key={index} className="exam-detail__item">
-                    <div 
-                        className="exam-detail__item-info" 
-                        onClick={() => {
-                            setDetail(item.scoreId);
-                            setShowModal2(true);
-                        }}
-                    >
-                        <div className="exam-detail__item__title">{item.subject?.subject}</div>
-                        <div className="exam-detail__item__score">
-                            <span>{item.scoreScore}</span>
-                            <span>/{item.scoreExScore}</span>
-                        </div>
-                        <div className="exam-detail__item__grade">{item.scoreGrade}등급</div>
-                    </div>
-                    <div className="exam-detail__item__delete-btn-controller">
-                        <button onClick={() => handleDelete(item.scoreId)}>
-                            <svg className="exam-detail__item__delete-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div> 
-            )}
-            <button onClick={handleAddSubject}>+</button>
-        </div>
-        <div className="pagination">
-            { data?
-            <>
-            <button onClick={handleGoPrev}>prev</button>
-                {Array.from(
-                    {length:data.totalPages > pages + 5? 5 : data.totalPages % 5},
-                    (_,i) => i
-                ).map(index => {
-                    return (
-                        <div 
-                            key={index} 
-                            className="clickable pagination__page-btn"
-                            style={{
-                                "backgroundColor": `${index+1+pages === pageNo ?  "#1565FF" : "#F5F8FF"}`,
-                                "color": `${index+1+pages === pageNo? "white" : "black"}`,
-                            }}
-                            onClick = {() => setPageNo(index + 1 + pages)}
-                        >
-                            {index + 1 + pages}
-                        </div>
-                    )
-                })}
-            <button onClick={handleGoNext}>next</button>
-            </>            
-            :
-            null
-            }
-        </div>
-        {showModal1 ? <SubjectFormModal handleOverlayClick={handleOverlayClick1} scoreId={detail} examId={examId} onModify={onModify}/> : null}
-        {showModal2 ? <SubjectDetailModal handleOverlayClick={handleOverlayClick2} scoreId={detail} handleOnModify={handleOnModify}/> : null}
-        </>
-    );
-}
-
-function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
-    console.log("modal rendered", examId)
-    const [ subjects, setSubjects ] = React.useState("");
-    
-    const [ subjectCode, setSubjectCode ] = React.useState("");
-    const [ score, setScore ] = React.useState(100);
-    const [ exScore, setExScore ] = React.useState(100);
-    const [ std, setStd ] = React.useState(100);
-    const [ grade, setGrade ] = React.useState(1);
-    const [ memo, setMemo ] = React.useState("");
-    
-    const fetchModalFormData = async(scoreId, retryCount = 0) => {
+    const fetchData = async (retryCount = 0) => {
         try {
-            const response = await fetch(`/api/score/exam/${scoreId}`);
+            const response = await fetch(`/api/score/${examId}/1`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             const jsonData = await response.json();
-            setSubjectCode(jsonData.subject.subjectCode);
-            setScore(jsonData.scoreScore);
-            setExScore(jsonData.scoreExScore);
-            setStd(jsonData.scoreStdScore);
-            setGrade(jsonData.scoreGrade);
-            setMemo(jsonData.scoreMemo? response.scoreMemo : "");
-            
+            if(!jsonData.content) {
+                setOnModify(false);
+            }
+            setData(jsonData.content);
         } catch (error) {
-            onsole.error('Error fetching data:', error);
-            if (retryCount < 5) { // Retry up to 5 times
-                setTimeout(() => fetchModalFormData(scoreId, retryCount + 1), 1000); // Retry after 1 second
+            console.error('Error fetching data:', error);
+            if (retryCount < 5) { // Retry up to 3 times
+                setTimeout(() => fetchData(retryCount + 1), 1000); // Retry after 1 second
             }
         }
-    }
+    };
     const fetchSubjectData = async (retryCount = 0) => {
         try{
             const response = await fetch("/api/subject/");
@@ -186,12 +50,8 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
                 throw new Error('Network response was not ok');
             }
             const subjectData = await response.json();
+            console.log("subjectData",subjectData)
             setSubjects(subjectData)
-            if(onModify) {
-                fetchData(scoreId);
-            } else {
-                setSubjectCode(subjectData[0].subjectCode);
-            }
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) { // Retry up to 3 times
@@ -199,128 +59,165 @@ function SubjectFormModal({handleOverlayClick, examId, onModify, scoreId}) {
             }
         }
     }
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const formData = new FormData();
-        formData.append("examId",examId);
-        formData.append("subjectCode",subjectCode);
-        formData.append("scoreExScore", exScore);
-        formData.append("scoreScore", score);
-        formData.append("scoreGrade", grade);
-        formData.append("scoreStdScore", std);
-        formData.append("scoreMemo", memo);
-        if (onModify) {
-            await fetch(`/api/score/${examId}/${scoreId}`,{
-                method:"PUT",
-                credentials: "include",
-                body: formData
-            }).then(res => console.log(res));
-        } else {
-            await fetch(`/api/score/${examId}`,{
-                method:"POST",
-                credentials: "include",
-                body:formData
-            }).then(res => console.log(res));
-        }
-        setSubjectCode(subjects? subjects[0].subjectCode : "");
-        setScore(100)
-        setExScore(100);
-        setStd(100);
-        setGrade(1)
-        setMemo("");
-        handleOverlayClick();
-    }
-    const handleOptionChange = (event) => {
-        console.log("option",event);
-        setSubjectCode(event.target.value)
-    }
-
-    React.useEffect(()=>{
-        fetchSubjectData()
-    },[])
-    return(
-        <>
-        <div className="exam-detail__modal__overlay" onClick={handleOverlayClick}></div>
-        <form className="exam-detail__modal__form" onSubmit={handleSubmit}>
-            <div>
-                <label for="exam-detail__modal__form-subject">과목</label>
-                <select 
-                    id="exam-detail__modal__form-subject" 
-                    name="subjectCode" 
-                    key={subjectCode} 
-                    defaultValue={subjectCode} 
-                    onChange={handleOptionChange}
-                >
-                    {subjects && subjects.map(subject => 
-                        <option key={subject.subjectCode} value={subject.subjectCode}>{subject.subject}</option>
-                    )}
-                </select>
-            </div>
-            <div>
-                <label for="exam-detail__modal__form-score">점수</label>
-                <input value={score} required onChange={(event) => setScore(event.target.value)} id="exam-detail__modal__form-score" type="text" name="scoreScore"/>
-            </div>
-            <div>
-                <label for="exam-detail__modal__form-exscore">만점</label>
-                <input value={exScore} required onChange={(event) => setExScore(event.target.value)} id="exam-detail__modal__form-exscore" type="text" name="scoreExScore"/>
-            </div>
-            <div>
-                <label for="exam-detail__modal__form-std">표준 점수</label>
-                <input value={std} required onChange={(event) => setStd(event.target.value)} id="exam-detail__modal__form-std" type="text" name="scoreStdScore"/>
-            </div>
-            <div>
-                <label for="exam-detail__modal__form-grade">등급</label>
-                <input value={grade} required onChange={(event) => setGrade(event.target.value)} id="exam-detail__modal__form-grade" type="text" name="scoreGrade"/>
-            </div>
-            <div>
-                <label for="exam-detail__modal__form-memo">메모</label>
-                <input value={memo} onChange={(event) => setMemo(event.target.value)} id="exam-detail__modal__form-memo" type="text" name="scoreMemo"/>
-            </div>
-            {onModify? <input value={scoreId? scoreId : null} type="hidden" name="scoreId"/> : null}
-            <button>Submit</button>
-        </form>
-        </>
-    );
-}
-
-function SubjectDetailModal({handleOverlayClick ,scoreId, handleOnModify}){
-    const [ data, setData ] = React.useState();
-    const fetchModalData = async(scoreId, retryCount = 0) => {
-        try {
-            const response = await fetch(`/api/score/exam/${scoreId}`)
-            if(!response.ok) {
+    const fetchExamData = async(retryCount = 0) => {
+        try{
+            const response = await fetch(`/api/exam/${examId}`);
+            if(!response.ok){
                 throw new Error('Network response was not ok');
             }
-            const jsonData = await response.json();
-            setData(jsonData);
+            const examTempData = await response.json();
+            console.log("exemData",examTempData)
+            setExamData(examTempData);
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) { // Retry up to 3 times
-                setTimeout(() => fetchModalData(retryCount + 1), 1000); // Retry after 1 second
+                setTimeout(() => fetchExamData(retryCount + 1), 1000); // Retry after 1 second
             }
         }
     }
+    
     React.useEffect(()=>{
-        fetchModalData(scoreId);
-    },[]);
-    console.log(data)
-    return(
+        console.log("in useEffect")
+        fetchExamData();
+        fetchSubjectData();
+        fetchData();
+    },[])
+
+    return (
         <>
-        <div className="exam-detail__modal__overlay" onClick={handleOverlayClick}></div>
-        <div className="exam-detail__modal__detail">
-            {data ?
-            <>
-            <div>{data.subject.subject}</div>
-            <div>{data.scoreGrade}등급</div>
-            <div>점수 {data.scoreScore}/{data.scoreExScore}</div>
-            <div>표준점수 {data.scoreStdScore}</div>
-            <div>{data.scoreMemo}</div>
-            </> 
-            :
-            null
-            }
-            <button onClick={handleOnModify}>수정</button>
+        <div className="d-flex mb-3">
+            <div>
+                <button onClick={()=>{
+                    location.href = "/exam/list/1"
+                }}>
+                    시험목록
+                </button>
+            </div>
+            <div>
+                <span>{examData?.examType.examTypeName}</span>
+                <span>{examData?.examName}</span>
+                <span>{examData?.examDate}</span>
+            </div>
+            <div>
+                <button>보기</button>
+                <button>수정</button>
+                <button>삭제</button>
+            </div>
         </div>
+        <table className="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>과목</th>
+                    <th>점수</th>
+                    <th>표준점수</th>
+                    <th>등급</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {data && subjects?.map( subject => 
+                    {
+                        console.log("1",subject);
+                        console.log("2",data)
+                        return <Subject 
+                            key={subject.subjectCode} 
+                            examId={examId} 
+                            subject={subject} 
+                            data={data} 
+                            onModify={onModify} 
+                            onRegister={onRegister} 
+                            onView={onView}
+                            onSubmit={onSubmit}
+                        />
+                    }
+                )}
+            </tbody>
+        </table>
         </>
-    );
+    )
+}
+
+function Subject({subject, data, onModify, onRegister, onView, examId, onSubmit}){
+    const [ scoreId, setScoreId] = React.useState(null);
+    const [score, setScore] = React.useState(100);
+    const [exScore, setExScore] = React.useState(100);
+    const [std, setStd] = React.useState(100);
+    const [grade, setGrade] = React.useState(1);
+
+    React.useEffect(()=>{
+        if(data){
+            data.map( item => {
+                if(subject.subjectCode === item.subject.subjectCode) {
+                    console.log("useEffect item",item)
+                    item.scoreId && setScoreId(item.scoreId);
+                    item.scoreScore && setScore(item.scoreScore);
+                    item.scoreExScore && setExScore(item.scoreExScore);
+                    item.scoreStdScore && setStd(item.scoreStdScore);
+                    item.scoreGrade && setGrade(item.scoreGrade);
+                }
+            })
+        }
+    },[]);
+
+    
+    const handleRegister = (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append("subjectCode", subject.subjectCode);
+        formData.append("scoreScore", score);
+        formData.append("scoreExScore", exScore);
+        formData.append("scoreStdScore", std);
+        formData.append("scoreGrade", grade);
+
+        fetch(`/api/score/${examId}`,{
+            method:"POST",
+            credentials: "include",
+            body:formData
+        }).then(res => console.log(res));
+        onSubmit();
+    };
+    const handleModify = (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        formData.append("subjectCode", subject.subjectCode);
+        formData.append("scoreId", scoreId);
+        formData.append("scoreScore", score);
+        formData.append("scoreExScore", exScore);
+        formData.append("scoreStdScore", std);
+        formData.append("scoreGrade", grade);
+
+        fetch(`/api/score/${examId}/${scoreId}`,{
+            method:"PUT",
+            credentials: "include",
+            body:formData
+        }).then(res => console.log(res));
+        onSubmit();
+    }
+    const handleDelete = (scoreId) => {
+        fetch(`/api/score/${examId}/${scoreId}`,{method:"DELETE"});
+    }
+    return (
+        <>
+        <tr>
+            <td>{subject.subject}</td>
+            <td>
+                <input value={score} required onChange={(event) => setScore(event.target.value)} type="text" name="scoreScore" readOnly={onView} />
+                <input value={exScore} required onChange={(event) => setExScore(event.target.value)} type="text" name="scoreExScore" readOnly={onView} />
+            </td>
+            <td>
+                <input value={std} required onChange={(event) => setStd(event.target.value)} type="text" name="scoreStdScore" readOnly={onView} />
+            </td>
+            <td>
+                <input value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" readOnly={onView} />
+            </td>
+            <td>
+                <input value={scoreId} className="hidden" name="scoreId"/>
+                <input value={subject.subjectCode} className="hidden" name="subjectCode"/>
+                {onRegister && <button onClick={handleRegister}>등록</button>}
+                {onModify && <button onClick={handleModify}>수정</button>}
+                {onView && scoreId && <button onClick={() => handleDelete(scoreId)}>삭제</button>}
+            </td>
+        </tr>
+        </>
+    )
 }

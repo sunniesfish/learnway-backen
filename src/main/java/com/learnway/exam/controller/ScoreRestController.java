@@ -89,6 +89,7 @@ public class ScoreRestController {
             @RequestParam("subjectCode") String subjectCode,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ){
+        System.out.println("updateScore");
         //get memId
         Long memId = userDetails.getMemberId();
         System.out.println("memId = " + memId);

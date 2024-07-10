@@ -17,42 +17,7 @@
     <div th:replace="sidebar :: sidebar"></div>
 
     <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
-    <div class="main__content">
-        <!-- 이곳에 작업합시다  -->
-        <div class="main__content__title">
-            <div class="exam-detail__title">
-                <div>
-                    <button class="exam-detail__goback-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                            <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/>
-                        </svg>
-                    </button>
-                </div>
-                <span th:text="${exam.getExamName()}"></span>
-                -
-                <span th:text="${exam.getExamType().examTypeName}"></span>
-                -
-                <span th:text="${exam.getExamDate()}"></span>
-                <button class="exam-detail__detail-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <div class="exam-detail__container">
-            <div class="exam-detail__label">
-                <div class="exam-detail__label-box">
-                    <div class="exam-detail__item__title">과목</div>
-                    <div class="exam-detail__item__score">점수</div>
-                    <div class="exam-detail__item__grade">등급</div>
-                </div>
-                <div class="exam-detail__label-space"></div>
-            </div>
-            <div  id="exam-detail-root">
-
-            </div>
-        </div>
+    <div class="container mt-5" id="exam-detail-root">
     </div>
 
 

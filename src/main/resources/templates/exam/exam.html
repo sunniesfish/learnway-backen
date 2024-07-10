@@ -15,24 +15,21 @@
 
 <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
 <div class="main__content">
-    <!-- 이곳에 작업합시다  -->
-    <div class="main__content__title">
-        <span>성적 입력</span>
-    </div>
-    <div class="exam__container" id="exam__container-root">
-        <div class="exam__container__btn-container">
-            <button class="exam__btn-delete learnway-btn clickable btn">삭제</button>
-            <button class="exam__btn-register learnway-btn clickable btn">등록</button>
+    <!-- 이곳에 작업합시다  -->wes
+    <div id="exam__container-root">
+        <div>
+            <button class="exam__btn-delete clickable">삭제</button>
+            <button class="exam__btn-register clickable">등록</button>
         </div>
-        <div class="exam__item__label bg-light p-2 rounded mb-3 ">
-            <div class="exam__item__label-box d-flex justify-content-between">
-                <div class="exam__item__type">
+        <div>
+            <div>
+                <div>
                     <span>시험 유형</span>
                 </div>
-                <div class="exam__item__name">
+                <div>
                     <span>시험 이름</span>
                 </div>
-                <div class="exam__item__date">
+                <div>
                     <span>시험 날짜</span>
                 </div>
             </div>
@@ -106,10 +103,6 @@
                                 <label for="examDate">날짜</label>
                                 <input type="date" class="form-control" id="examDate">
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="examScope">범위</label>
-                            <input type="text" class="form-control" id="examScope" placeholder="범위를 입력하세요">
                         </div>
                         <div class="form-group">
                             <label for="examMemo">메모</label>

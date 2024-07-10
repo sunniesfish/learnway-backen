@@ -35,6 +35,9 @@ public class Score {
     @Column(name = "score_score", nullable = false)
     private int scoreScore;
 
+    @Column(name = "score_range", nullable = true)
+    private String scoreRange;
+
     @Column(name = "score_grade", nullable = true)
     private int scoreGrade;
 
@@ -45,12 +48,13 @@ public class Score {
     private String scoreMemo;
 
     @Builder
-    public Score(Long scoreId, Exam exam, Subject subject, int scoreExScore, int scoreScore, int scoreGrade, int scoreStdScore, String scoreMemo) {
+    public Score(Long scoreId, Exam exam, Subject subject, int scoreExScore, int scoreScore, String scoreRange,int scoreGrade, int scoreStdScore, String scoreMemo) {
         this.scoreId = scoreId;
         this.exam = exam;
         this.subject = subject;
         this.scoreExScore = scoreExScore;
         this.scoreScore = scoreScore;
+        this.scoreRange = scoreRange;
         this.scoreGrade = scoreGrade;
         this.scoreStdScore = scoreStdScore;
         this.scoreMemo = scoreMemo;

@@ -51,7 +51,6 @@ public class ExamController {
                             .memId(memId)
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
-                            .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
             );
@@ -115,7 +114,6 @@ public class ExamController {
                             .examId(examId)
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
-                            .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
             );
