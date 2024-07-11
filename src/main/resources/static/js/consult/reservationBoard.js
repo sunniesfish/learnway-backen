@@ -111,8 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 				
-                if (hour >= 12 && hour < 14) {
-                    alert('12:00 ~ 14:00 까지 점심시간 입니다.');
+                if (hour >= 12 && hour < 13) {
+                    alert('12:00 ~ 01:00 까지 점심시간 입니다.');
                     return;
                 }
 
@@ -272,20 +272,23 @@ function transformEventData(data) {
 
     resetModalState();
     
-    // 상담사 정보 모달 표시 함수
-    function showConsultantInfoModal() {
-        if (consultantData) {
-            $("#consultantPhoto").attr("src", consultantData.imageUrl); // 사진 URL 설정
-            console.log("이미지경로 : "+consultantData.imageUrl);
-            $("#consultantName").text(consultantData.name + " 상담사");
-            $("#consultantEmail").text(consultantData.subject);
-            $("#consultantPhone").text(consultantData.description);
-        } else {
-            $("#consultantPhoto").attr("src", ""); // 사진 URL 초기화
-            $("#consultantName").text("상담사 정보를 가져올 수 없습니다.");
-            $("#consultantEmail").text("");
-            $("#consultantPhone").text("");
-        }
-        $("#consultantInfoModal").modal("show");
-    }
+	// 상담사 정보 모달 표시 함수
+	function showConsultantInfoModal() {
+	    if (consultantData) {
+	        $("#consultantPhoto").attr("src", consultantData.imageUrl); // 사진 URL 설정
+	        console.log("이미지경로 : " + consultantData.imageUrl);
+	        $("#consultantName").text(consultantData.name + " 상담사");
+	        $("#consultantSubject").text(consultantData.subject);
+
+	        // description을 <br> 태그로 줄 바꿈
+	        let formattedDescription = consultantData.description.replace(/\n/g, "<br>");
+	        $("#consultantDescription").html(formattedDescription);
+	    } else {
+	        $("#consultantPhoto").attr("src", ""); // 사진 URL 초기화
+	        $("#consultantName").text("상담사 정보를 가져올 수 없습니다.");
+	        $("#consultantSubject").text("");
+	        $("#consultantDescription").text("");
+	    }
+	    $("#consultantInfoModal").modal("show");
+	}
 });
