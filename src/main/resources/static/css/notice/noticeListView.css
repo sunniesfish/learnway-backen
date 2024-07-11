@@ -5,3 +5,10 @@
 .notice-priority {
       background-color: #f8f9fa;
     }
+
+.notice-list {
+  width: 100%;
+  max-width: 1300px;
+  margin-top: 7vh;
+  height: 85vh;
+}
