@@ -30,35 +30,42 @@
             </div>
         </div>
          <!-- Priority 공지사항 -->
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>제목</th>
-                        <th>작성일</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="priNotice : ${priNotice}" class="notice-priority">
-                        <td>
-                            <span>[공지]</span>
-                            <a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" th:text="${priNotice.noticeTitle}"></a>
-                        </td>
-                        <td th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Priority 공지사항 끝 -->
-            <!-- 일반 공지사항 -->
-            <table class="table table-hover mt-4" id="noticeTable">
-                <tbody>
-                    <tr th:each="notice : ${notice}">
-                        <td>
-                            <a th:href="@{/notice/detail/{id}(id=${notice.noticeId})}" th:text="${notice.noticeTitle}"></a>
-                        </td>
-                        <td th:text="${#temporals.format(notice.createDate, 'yyyy.MM.dd')}"></td>
-                    </tr>
-                </tbody>
-            </table>
+		<table class="table table-hover">
+		    <thead>
+		        <tr>
+		            <th class="border-top border-bottom border-dark">제목</th>
+		            <th class="border-top border-bottom border-dark">작성일</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr th:each="priNotice : ${priNotice}" class="notice-priority">
+		            <td>
+		                <span>[공지]</span>
+		                <a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" th:text="${priNotice.noticeTitle}"></a>
+		            </td>
+		            <td th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></td>
+		        </tr>
+		    </tbody>
+		</table>
+		<!-- Priority 공지사항 끝 -->
+		
+		<!-- 일반 공지사항 -->
+		<table class="table table-hover mt-4" id="noticeTable">
+		    <thead>
+		        <tr>
+		            <th class="border-top border-bottom border-dark">제목</th>
+		            <th class="border-top border-bottom border-dark">작성일</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr th:each="notice : ${notice}">
+		            <td>
+		                <a th:href="@{/notice/detail/{id}(id=${notice.noticeId})}" th:text="${notice.noticeTitle}"></a>
+		            </td>
+		            <td th:text="${#temporals.format(notice.createDate, 'yyyy.MM.dd')}"></td>
+		        </tr>
+		    </tbody>
+		</table>
             <div class="text-right" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <a href="/notice/writeView" class="btn btn-outline-info">글쓰기</a>
             </div>    
