@@ -1,9 +1,6 @@
 package com.learnway.consult.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +20,7 @@ public class Consultant {
     private String password;            // 비밀번호
     private String name;                // 컨설턴트 이름
     private String subject;             // 컨설턴트가 담당하는 과목
+    @Column(length = 1000)
     private String description;         // 컨설턴트 설명
     private String imageUrl;            // 컨설턴트 프로필 이미지
     private String role;                // 컨설턴트 권한 : COUNSELOR 고정
