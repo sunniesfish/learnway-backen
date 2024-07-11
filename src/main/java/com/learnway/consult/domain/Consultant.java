@@ -23,7 +23,7 @@ public class Consultant {
     @Column(length = 1000)
     private String description;         // 컨설턴트 설명
     private String imageUrl;            // 컨설턴트 프로필 이미지
-    private String role;                // 컨설턴트 권한 : COUNSELOR 고정
+    private String role;                // 컨설턴트 권한 : COUNSELOR 고정g
 
 
     public Consultant() {
