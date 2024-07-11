@@ -124,7 +124,10 @@ public class ReservationController {
         String dbMemberId = deleteList.get().getMember().getMemberId();
         String dbMemberPw = deleteList.get().getMember().getMemberPw();
         
-        if(loginMemberId.equals(dbMemberId) || loginMemberPw.equals(dbMemberPw)) {
+        System.out.println("로그인 아이디 :"+loginMemberId);
+        System.out.println("예약자 아이디 :"+dbMemberId);
+        
+        if(loginMemberId.equals(dbMemberId) && loginMemberPw.equals(dbMemberPw)) {
             
         	reservationService.deleteById(deleteId);
             

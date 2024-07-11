@@ -27,13 +27,14 @@ public class ApiService {
 
     @Value("${gpt.api.key}")
     private String openaiAccessKey;
+//  private String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
 	
 	
 	@GetMapping("/weeklySummary")
     public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
-
+    	String openaiAccessKey = "000";
         OpenAiService service = new OpenAiService(openaiAccessKey, Duration.ofSeconds(30));
         
         List<Schedule> weeklySchedules = scheduleRepository.findByMemberIdAndStartTimeBetween(

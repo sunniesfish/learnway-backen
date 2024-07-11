@@ -45,7 +45,7 @@
                     <label for="email" class="col-sm-4 col-form-label required-label">Email</label>
                     <div class="col-sm-8">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="email" name="email" readonly>
+                            <input type="text" class="form-control" id="email" name="email" th:value="*{email}" readonly>
                             <input type="hidden" id="emailVerified" value="false"> <!-- 이메일 인증 여부 확인  -->
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-info" onclick="openEmailVerificationPopup()">메일 인증</button>

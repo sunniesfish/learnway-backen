@@ -15,7 +15,10 @@
 }
 
 
-
+.modal-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 
 /* 공통 스타일*/
 .nanum-gothic-regular {
@@ -47,25 +50,11 @@
   justify-content: flex-start; /* 상단 정렬 */
   align-items: center; /* 수평 중앙 정렬 */
 }
-.main__content__title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 40px; /* 제목과 내용 사이의 간격 */
-  border-bottom: 1px solid #ccc; /* 밑줄 스타일 */
-  padding-top: 15px;
-  padding-bottom: 15px; /* 밑줄 아래 여백 */
-}
-.main__content__title>span{
-  text-align: center;
-  font-size: 2em; /* 제목 글꼴 크기 */
-  width: 100%;
-  max-width: 1200px;
-  margin-left: 15px;
-}
 
-
+.modal-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 
 
 /* 스타일 리셋*/

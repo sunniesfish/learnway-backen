@@ -8,6 +8,7 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js'></script><!-- 풀캘린더 js -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
         <link rel="stylesheet" href="/css/schedule/schedule.css" type="text/css"/>
         <link rel="stylesheet" type="text/css" th:href="@{/css/schedule/weekSchedule.css}"><!-- 스케쥴러 css파일 -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -18,16 +19,16 @@
     <!-- SideBar 불러오는부분 -->
     <div th:replace="sidebar :: sidebar"></div>
 
-    <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
+    <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 ->
+        <!- 이곳에 작업합시다 -->
     <div class="main__content">
-        <!-- 이곳에 작업합시다  -->
         <div class="calendar-container">
 	        <!-- modal 추가 -->
 			<div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	            <div class="modal-dialog" role="document">
 	              <div class="modal-content">
 	                <div class="modal-header">
-	                  <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+	                  <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요</h5>
 	                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	                    <span aria-hidden="true">&times;</span>
 	                  </button>
@@ -55,17 +56,16 @@
 	                      </div>
 	                      <div class="col-2">
 	                        <label for="achieveRate" class="sr-only">달성율</label>
-	                        <input type="text" class="form-control" id="achieveRate0" name="achieveRate[]" placeholder="0">
+	                        <input type="text" class="form-control achieve-rate-input" id="achieveRate0" name="achieveRate[]" placeholder="0">
 	                      </div>
 	                      <div class="col-auto">
-	                        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
+	                        <button type="button" class="btn btn-outline-success btn-sm add-progress">+</button>
 	                      </div>
 	                    </div>
 	                  </div>
 	                </div>
 	                <div class="modal-footer">
 	                  <button type="button" class="btn btn-outline-success float-right insertBtn" id="addCalendar">추가</button>
-	                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
 	                </div>
 	              </div>
 	            </div>
@@ -75,7 +75,7 @@
 	            <div class="modal-dialog" role="document">
 	              <div class="modal-content">
 	                <div class="modal-header">
-	                  <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+	                  <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요</h5>
 	                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	                    <span aria-hidden="true">&times;</span>
 	                  </button>
@@ -103,11 +103,11 @@
 	                      </div>
 	                      <div class="col-2">
 	                        <label for="achieveRate" class="sr-only">달성율</label>
-	                        <input type="text" class="form-control" id="achieveRate" name="achieveRate[]" placeholder="0">
+	                        <input type="text" class="form-control achieve-rate-input" id="achieveRate" name="achieveRate[]" placeholder="0">
 	                      </div>
 	                      <div class="col-auto">
 	                        <input type="hidden" name="progressId[]">
-	                        <button type="button" class="btn btn-success btn-sm add-progress">+</button>
+	                        <button type="button" class="btn btn-outline-success btn-sm add-progress">+</button>
 	                      </div>
 	                    </div>
 	                  </div>
@@ -115,7 +115,6 @@
 	                <div class="modal-footer">
 	                  <button type="button" class="btn btn-outline-success float-right insertBtn" id="updateCalendar">수정</button>
 	                  <button type="button" class="btn btn-outline-danger float-right insertBtn" id="deleteCalendar">삭제</button>
-	                  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
 	                </div>
 	              </div>
 	            </div>
@@ -149,6 +148,9 @@
 	                    </table>
 	                  </div>
 	                </div>
+	                <div class="modal-footer">
+					  <button type="button" class="btn btn-outline-success" id="moveToWeeklyView">주간 보기</button>
+					</div>
 	              </div>
 	            </div>
 	          </div>
@@ -192,4 +194,5 @@
 <script src="/js/consult/consultationReservation.js"></script><!-- 상담예약 javascript -->
 <script src="/js/consult/reservationList.js"></script><!-- 예약리스트 javascript -->
 <script src="/js/schedule/weekSchedule.js"></script><!-- 스케쥴러 javascript -->
+<script src="/js/icon.js"></script><!-- icon javascript -->
 </html>

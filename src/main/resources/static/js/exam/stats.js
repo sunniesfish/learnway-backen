@@ -1,20 +1,21 @@
-async function fetchTypeStats(examType, pageNo, retryCount = 0) {
+async function fetchTypeStats(examType, year, retryCount = 0, maxRetries = 2) {
     try {
 
-        const response = await fetch(`/api/stats/${examType}/${pageNo}`);
+        const response = await fetch(`/api/stats/${examType}/${year}`);
         if (!response.ok) throw new Error('Failed to fetch stats');
         return response.json();
     } catch (error){
         console.error('Error fetching data:', error);
-        if (retryCount < 5) {
-            setTimeout(() => fetchTypeStats(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+        if (retryCount < maxRetries) {
+            setTimeout(() => fetchTypeStats(examType, year, retryCount + 1, maxRetries), 300); // Retry after 1 second
+        } else {
+            // location.href = "/"                
         }
     }
 }
 
 const statsRoot = document.getElementById("stats-root");
 
-// window.addEventListener("onload", render);
 render();
 
 function render() {
@@ -27,8 +28,7 @@ function Stats() {
     const [cat, setCat] = React.useState("score");
     const [examType, setExamType] = React.useState("all");
     const [examTypeList, setExamTypeList] = React.useState(["all"]);
-    const [pageNo, setPageNo] = React.useState(1);
-    const [pages, setPages] = React.useState(0);
+    const [year, setYear] = React.useState(2024);
     const [scoreOption, setScoreOption] = React.useState();
     const [gradeOption, setGradeOption] = React.useState();
     const [stdOption, setStdOption] = React.useState();
@@ -36,10 +36,8 @@ function Stats() {
 
     const fetchData = async (retryCount = 0) => {
         try {
-            const statdata = await fetchTypeStats(examType, pageNo);
+            const statdata = await fetchTypeStats(examType, year);
             console.log("fetchData", statdata)
-            setPages(statdata.totalPages);
-            console.log("data", statdata)
             
             const subjects = await fetch("/api/subject/").then(res => {
                 if (!res.ok) throw new Error('Failed to fetch subjects');
@@ -50,12 +48,15 @@ function Stats() {
             let gradeSeries = subjects.map(item => ({ name: item.subject, data: [] }));
             let stdSeries = subjects.map(item => ({ name: item.subject, data: [] }));
     
-            let xasisCat = statdata.content.map(exam => exam.examDate);
+            let xasisCat = statdata.map(exam => exam.examDate);
     
             const addDataToSeries = (series, dataKey) => {
-                statdata.content.forEach(exam => {
-                    series.forEach(seriesData => {
-                        exam.scoreList.forEach(score => {
+                console.log("series",series)
+                console.log("dataKey",dataKey)
+                statdata.forEach(exam => {
+                    console.log("in forEach exam",exam)
+                    series?.forEach(seriesData => {
+                        exam.scoreList?.forEach(score => {
                             if (seriesData.name === score.subject.subject) {
                                 console.log("seriesData.name subject.subject", dataKey, seriesData.name, score.subject.subject);
                                 seriesData.data.push(score[dataKey]);
@@ -72,14 +73,19 @@ function Stats() {
             setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
             setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+
+            console.log("scoreSeries",scoreSeries);
+            console.log("gradeSeries",gradeSeries);
+            console.log("stdSeries",stdSeries);
+
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) {
-                setTimeout(() => fetchData(retryCount + 1, maxRetries), 1000); // Retry after 1 second
+                setTimeout(() => fetchData(retryCount + 1), 1000); // Retry after 1 second
             }
         }
     };
-    
+
     const fetchExamTypeData = async (retryCount = 0) => {
         try {
             const response = await fetch("/api/examtype/all");
@@ -101,42 +107,42 @@ function Stats() {
 
     React.useEffect(() => {
         fetchData();
-    }, [pageNo, examType]);
+    }, [examType, year]);
     
     React.useEffect(() => {
         fetchExamTypeData();
     }, []);
 
-    const handlePrevClick = () => {
-        if (pageNo > 1) {
-            setPageNo(prev => prev - 1);
-        }
-    }
-    const handleNextClick = () => {
-        if (pageNo < pages) {
-            setPageNo(prev => prev + 1);
-        }
-    }
+
     const handleExamTypeChange = (event) => {
-        setPageNo(1);
         setExamType(event.target.value);
     }
-
+    const handleYearChange = (event) => {
+        setYear(event.target.value);
+    }
+    
     return (
         <>
-            <select onChange={handleExamTypeChange} defaultValue={"all"}>
-                <option value="all">All</option>
-                {examTypeList?.map(item =>
-                    <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
-                )}
-            </select>
-
-            <button onClick={() => setCat("score")}>score</button>
-            <button onClick={() => setCat("grade")}>grade</button>
-            <button onClick={() => setCat("std")}>std</button>
+            <div className="d-flex">
+                <select className="form-control mr-2" onChange={handleExamTypeChange} defaultValue={"all"}>
+                    <option value="all">All</option>
+                    {examTypeList?.map(item =>
+                        <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+                    )}
+                </select>
+                <select className="form-control mr-2" onChange={handleYearChange} defaultValue={2024}>
+                    {[...Array(15)].map((_, index) => (
+                    <option key={2010 + index} value={2010 + index}>
+                        {2010 + index}년
+                    </option>
+                    ))}
+                </select>
+                <button className="btn btn-primary mr-2" onClick={() => setCat("score")}>점수</button>
+                <button className="btn btn-primary mr-2" onClick={() => setCat("std")}>표준점수</button>
+                <button className="btn btn-primary mr-2" onClick={() => setCat("grade")}>등급</button>
+            </div>
+            
             <div className="chart-container">
-                <button onClick={handlePrevClick}>Prev</button>
-                <button onClick={handleNextClick}>Next</button>
                 {isOption ?
                     <ChartType cat={cat} option={
                         cat === "score" ? scoreOption :
@@ -150,9 +156,25 @@ function Stats() {
 }
 
 function ChartType({ cat, option }) {
+    const [subjectList, setSubjectList] = React.useState([]);
+    const [subject, setSubject] = React.useState("전체")
+   // const [checkedSubjects, setCheckedSubjects] = React.useState(subjects.map(subject => subject.subjectCode));
+
+    const handleCheckBoxChange = (event) => {
+        const subjectCode = event.target.id;
+        setCheckedSubjects(prevState => 
+            prevState.includes(subjectCode)
+                ? prevState.filter(code => code !== subjectCode)
+                : [...prevState, subjectCode]
+        );
+    };
+
+
+
     const chartRef = React.useRef(null);
 
     React.useEffect(() => {
+        fetchSubjectData();
         const chart = new ApexCharts(chartRef.current, option);
         chart.render();
         return () => {
@@ -160,8 +182,52 @@ function ChartType({ cat, option }) {
         };
     }, [cat, option]);
 
+    const fetchSubjectData = async (retryCount = 0) => {
+        try{
+            const response = await fetch("/api/subject/");
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            const subjectData = await response.json();
+            setSubjectList(subjectData)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (retryCount < 3) { // Retry up to 3 times
+                setTimeout(() => fetchSubjectData(retryCount + 1), 300); // Retry after 1 second
+            } else {
+                // location.href = "/"                
+            }
+        }
+    }
+
+    const handleCheckBox = (event) => {
+        console.log("checked",event);
+        if(chartRef.current){
+            console.log("handle check chartRef",chartRef.current);
+        }
+    }
+
+
     return (
+        <>
+        <div className="col-md-4">
+            {subjectList.map(subject => 
+                <div className="form-check" key={subject.subject}>
+                    <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        value={subject.subject} 
+                        id={subject.subjectCode} 
+                        checked
+                    />
+                    <label className="form-check-label" for={subject.subjectCode} onChange={handleCheckBox}>
+                        {subject.subject}
+                    </label>
+                </div>
+            )}
+        </div>
         <div className="chart" ref={chartRef}></div>
+        </>
     )
 }
 
@@ -171,7 +237,7 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, revers
     return {
         series: series,
         chart: {
-            height: 700,
+            height: "100%",
             width: "100%",
             type: 'line',
             dropShadow: {
@@ -213,6 +279,9 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, revers
             categories: [...xaxisCat],
             title: {
                 text: xaxisTitle
+            },
+            labels: {
+                rotate: -45
             }
         },
         yaxis: {

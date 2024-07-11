@@ -22,7 +22,7 @@ public class ExamController {
 
     private final ExamService examService;
     private final ExamTypeService examTypeService;
-
+    
     /*
     * 시험등록 모달에서 시험 종류 및 이름 등록 하고 시험 리스트 페이지로 리다이렉트
     */
@@ -30,7 +30,6 @@ public class ExamController {
     public String registerExam(
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
-            @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication
@@ -51,7 +50,6 @@ public class ExamController {
                             .memId(memId)
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
-                            .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
             );
@@ -78,7 +76,7 @@ public class ExamController {
         if(memId != null){
             System.out.println("getting exam list : "+memId);
             pageNo = pageNo == null ? pageNo = 1 : pageNo;
-            model.addAttribute("examList", examService.readExam(memId,pageNo,8));
+            model.addAttribute("examList", examService.readExam(memId,pageNo,15));
             model.addAttribute("examTypes", examTypeService.findAll());
         }
         return "exam/exam";
@@ -92,7 +90,6 @@ public class ExamController {
             @RequestParam(name = "examId") Long examId,
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
-            @RequestParam(name = "examRange") String examRange,
             @RequestParam(name = "examDate") Date examDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication
@@ -115,7 +112,6 @@ public class ExamController {
                             .examId(examId)
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
-                            .examRange(examRange)
                             .examDate(examDate)
                             .examMemo(examMemo).build()
             );

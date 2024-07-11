@@ -256,3 +256,95 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+  
+  /*주간 일정 모달*/
+  .modal-body {
+  overflow-y: auto;
+  max-height: 400px; /* 원하는 최대 높이로 조정 */
+}
+
+.modal-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.achieve-rate-input {
+    text-align: right;
+}
+
+.add-progress, .remove-progress {
+    width: 28px;
+    height: 30px;
+    padding: 0;
+    line-height: 1;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 모든 버튼에 대한 공통 스타일 -----------------btn */
+.fc-button-primary,
+.fc-dayGridMonth-button,
+.fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary {
+    outline: none !important;
+}
+
+/* 버튼 아웃라인 스타일 */
+.fc-button-primary {
+    color: var(--learnwayBlack) !important;
+    background-color: transparent !important;
+    border-color: var(--learnwayBlack) !important;
+}
+
+.fc-button-primary:hover {
+    color: #fff !important;
+    background-color: var(--learnwayBlack) !important;
+    border-color: var(--learnwayBlack) !important;
+}
+
+/* 월 버튼 스타일 */
+.fc-dayGridMonth-button {
+    color: #fff !important;
+    background-color: var(--learnwayBlack) !important;
+    border-color: var(--learnwayBlack) !important;
+}
+
+.fc-dayGridMonth-button:hover {
+    color: var(--learnwayBlack) !important;
+    background-color: #fff !important;
+    border-color: var(--learnwayBlack) !important;
+}
+
+.fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary {
+    color: #fff !important;
+    background-color: #343a40 !important;
+    border-color: var(--learnwayBlack) !important;
+    cursor: pointer !important;
+}
+
+.fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary:hover {
+    color: #343a40 !important;
+    background-color: #fff !important;
+    border-color: #343a40 !important;
+}
+
+/* Today 버튼 비활성화 스타일 (현재 날짜가 표시된 범위 내에 있을 때) */
+.fc .fc-toolbar .fc-today-button.fc-button.fc-button-primary:disabled {
+    color: #fff !important;
+    background-color: var(--learnwayBlack) !important;
+    border-color: var(--learnwayBlack) !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+}
+
+/* 포커스 시 스타일 제거 */
+.fc-button-primary:focus,
+.fc-dayGridMonth-button:focus,
+.fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
