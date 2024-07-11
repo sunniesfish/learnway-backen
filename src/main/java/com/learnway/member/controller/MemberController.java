@@ -44,6 +44,7 @@ public class MemberController {
             for (FieldError error : bindingResult.getFieldErrors()) {
                 model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
             }
+            model.addAttribute("joinDTO", joinDTO);
             return "member/join";
         }
         // Password / ConfirmPassword 일치 여부 확인

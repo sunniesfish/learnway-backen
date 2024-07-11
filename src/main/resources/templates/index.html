@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LearnWay</title>
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/globalstyle.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -45,7 +46,7 @@
 
 <!-- 로그인 실패 시 모달 창 -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="errorModalLabel">로그인 오류</h5>
@@ -54,10 +55,8 @@
                 </button>
             </div>
             <div class="modal-body text-center">
-                아이디 혹은 비밀번호가 잘못되었습니다.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+                <p>아이디 혹은 비밀번호를</p>
+                <p>정확하게 입력해 주세요.</p>
             </div>
         </div>
     </div>
@@ -65,7 +64,7 @@
 
 <!-- 비밀번호 변경 후 성공 메시지 모달 -->
 <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="successModalLabel">알림</h5>
@@ -76,15 +75,12 @@
             <div class="modal-body">
                 <p th:text="${message}"></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">닫기</button>
-            </div>
         </div>
     </div>
 </div>
 <!-- ID 찾기 결과 모달 -->
 <div class="modal fade" id="idFindModal" tabindex="-1" role="dialog" aria-labelledby="idFindModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="idFindModalLabel">ID 찾기 결과</h5>
@@ -96,9 +92,6 @@
                 <p>입력해주신 정보로 가입된 아이디는 다음과 같습니다.</p>
                 <ul id="foundIds"></ul>
                 <p>로그인 혹은 비밀번호 찾기를 진행해 주세요.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-success" data-dismiss="modal">확인</button>
             </div>
         </div>
     </div>

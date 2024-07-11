@@ -16,7 +16,7 @@
             </div>
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <div class="text-center mt-2">
-                    <a href="/admin/" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
+                    <a href="/admin/main" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
                 </div>
             </div>
        </div>

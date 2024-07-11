@@ -1,0 +1,6 @@
+/* 사이드바 클릭 시 호버 유지 */
+.sidebar-menu .list-group-item.active {
+    background-color: #f8f9fa; /* 활성 메뉴 배경색 */
+    color: #343a40; /* 활성 메뉴 텍스트 색상 */
+    font-weight: bold; /* 활성 메뉴 텍스트 굵기 */
+}
