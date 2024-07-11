@@ -106,8 +106,9 @@
 }
 
 .content-wrapper {
-    padding-top: 45px;
-    padding-bottom: 20px;
+    max-width: 1300px;
+    height: 85vh;
+    margin-top: 7vh;
 }
 
 .list-group-item {
@@ -164,14 +165,17 @@
     transform: translateX(-50%); /* 가운데 정렬을 위해 왼쪽으로 50% 이동 */
     width: 100%; /* 너비 100% */
     text-align: center;
-    padding: 20px;
+    padding: 50px;
 }
 
 .pagination {
     margin-top: 0; /* 불필요한 여백 제거 */
 }
 
-
+.page-item.active .page-link {
+    color: #fff;
+    background-color: #17a2b8;
+}
 .card {
     transition: transform 0.3s;
     cursor: pointer;
