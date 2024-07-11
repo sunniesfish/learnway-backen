@@ -33,7 +33,6 @@ public class MemberService {
     private final S3ImageService s3ImageService; // 추가된 부분
 
 
-
     // ID 중복 체크 (컨설턴트까지 같이 비교)
     public boolean isUsernameTaken(String username) {
         return memberRepository.findByMemberId(username).isPresent()
