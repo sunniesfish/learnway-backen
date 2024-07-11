@@ -1,4 +1,8 @@
-@charset "UTF-8";
+#calendar{
+	height:720px;
+
+    }
+    
 .fc-event-main {
     color: #2C3E50 !important;
   }

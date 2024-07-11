@@ -3,13 +3,25 @@
 @import "../consult/sidebarReservationList.css";
 
 .notice-priority {
-      background-color: #F4FFFF;
+      background-color: #EBFBFF;
     }
-    
-.title {
+
+.notice-list {
+  width: 100%;
+  max-width: 1300px;
+  margin-top: 7vh;
+  height: 85vh;
+}
+
+.list-group-item {
     transition: background-color 0.3s;
     padding: 15px; /* 리스트 아이템의 공간을 넓힘 */
     position: relative;
     border-left: none;
     border-right: none;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: #17a2b8;
 }
