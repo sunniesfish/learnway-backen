@@ -42,3 +42,4 @@ $(document).ready(function() {
         $(item).siblings().find('.arrow-icon').removeClass('fa-chevron-down').addClass('fa-chevron-right');
     }
  
+ 

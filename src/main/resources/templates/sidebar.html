@@ -22,7 +22,7 @@
        </div>
         <hr>
         <div class="sidebar-items-container">
-            <div class="sidebar-item" data-value="/schedule/weekSchedule">
+            <div class="sidebar-item" data-value="/schedule/weekSchedule" onclick="window.location.href=this.getAttribute('data-value')">
                 <a href="/schedule/weekSchedule"><i class="fas fa-chevron-right arrow-icon"></i> &nbsp;일정관리</a>
             </div>
             <div class="sidebar-item" onclick="toggleSubMenu(this)" data-value="/exam">
@@ -46,7 +46,7 @@
                     <a href="#" class="reservationList-link">예약리스트</a>
                 </div>
             </div>
-            <div class="sidebar-item" data-value="/notice/noticeList">
+            <div class="sidebar-item" data-value="/notice/noticeList" onclick="window.location.href=this.getAttribute('data-value')">
                 <a href="/notice/noticeList"><i class="fas fa-chevron-right arrow-icon"></i> &nbsp;공지사항</a>
             </div>
         </div>

@@ -24,9 +24,9 @@ body {
 
 /* 사이드바 항목 스타일 설정 */
 #sidebar .sidebar-item {
-    padding: 10px 15px; /* 내부 패딩 설정 */
+    padding: 25px 30px; /* 내부 패딩 설정 */
     cursor: pointer; /* 커서 모양 변경 */
-    margin-top:15px;
+    /* ma1rgin-top:15px; 서브메뉴들의 사이 갭조절*/
     padding-left: 60px;
     font-size: 1.1rem;
 }
@@ -41,7 +41,7 @@ body {
 #sidebar .submenu {
     display: none; /* 기본적으로 숨김 */
     padding-left: 40px; /* 왼쪽 패딩 설정 */
-    padding-top: 10px; /* 왼쪽 패딩 설정 */
+    padding-top: 10px; /* 위쪽 패딩 설정 */
     font-size: 0.8rem;
 }
 

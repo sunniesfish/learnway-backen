@@ -153,28 +153,35 @@ document.addEventListener('DOMContentLoaded', function() {
         calendar.render();
     }
 
-    function transformEventData(data) {
-        return data.map(event => {
-                console.log("예약데이터의 멤버아이디 : "+event.member.memberId);
-                console.log("로그인한  멤버아이디 : "+ loginUserId);
-                if(event.member.memberId === loginUserId){
-					var boxColor = '#C5E1A5';//본인 예약
-					var titleContents = loginUserName + '님 예약';
-            	}else{
-					var boxColor = 'gray'; // 다른사람예약
-					var titleContents = event.counselor.name + ' 상담사';
-				}
-            return {
-                id: event.id,
-                title: titleContents,
-                start: event.bookingStart,
-                end: event.bookingEnd,
-                backgroundColor: boxColor,
-                textColor: 'black',
-                borderColor :'white'
-            };
-        });
-    }
+function transformEventData(data) {
+    return data.map(event => {
+        console.log("예약데이터의 멤버아이디 : " + event.member.memberId);
+        console.log("로그인한 멤버아이디 : " + loginUserId);
+        let boxColor;
+        let titleContents;
+        let isDisabled = false;
+
+        if (event.member.memberId === loginUserId) {
+            boxColor = '#C5E1A5'; // 본인 예약
+            titleContents = loginUserName + '님 예약';
+        } else {
+            boxColor = 'gray'; // 다른 사람 예약
+            titleContents = event.counselor.name + ' 상담사';
+            isDisabled = true;
+        }
+
+        return {
+            id: event.id,
+            title: titleContents,
+            start: event.bookingStart,
+            end: event.bookingEnd,
+            backgroundColor: boxColor,
+            textColor: 'black',
+            borderColor: 'white',
+            className: `event ${isDisabled ? 'disabled-event' : ''}`
+        };
+    });
+}
 
     // 상담사 정보를 가져와서 달력을 초기화
     fetchConsultantInfo(consultantId).done(function(data) {
@@ -241,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             error: function(xhr, status, error) {
                 console.log("삭제 실패: ", error);
+                $("#deleteEventModal").modal("hide");
                 alert("삭제에 실패했습니다. 다시 시도해주세요.");
             }
         });

@@ -221,6 +221,19 @@ body {
 #consultantInfoModal .card-body {
     text-align: center;
 }
+/*슬롯 안쪽 위치조정*/
+.event {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 15px;
+}
+/*자기예약아닐떄 디스에이블효과 주기*/
+.disabled-event {
+    opacity: 0.6;
+    pointer-events: none; /* 클릭을 비활성화 */
+}
 
 /* 미디어 쿼리: 작은 화면에 맞춘 스타일 */
 @media (max-width: 768px) {
