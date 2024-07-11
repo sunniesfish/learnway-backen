@@ -26,7 +26,7 @@
                 <input type="hidden" id="isUsernameChecked" value="true">
 
                 <div class="text-center mb-4">
-                    <img id="imagePreview" th:src="@{{image}(image=${consultantUpdateDTO.imageUrl})}" alt="Image Preview" class="img-preview mb-3" />
+                    <img id="imagePreview" th:src="${consultantUpdateDTO.imageUrl != null ? consultantUpdateDTO.imageUrl : '/img/member/member-default.png'}" alt="Image Preview" class="img-preview mb-3" />
                     <input type="file" class="form-control-file" id="imageUpload" name="image" accept="image/*" onchange="validateImage(this)" style="display: none;">
                     <button type="button" class="btn btn-outline-info" onclick="document.getElementById('imageUpload').click();">이미지 선택</button>
                 </div>

@@ -28,6 +28,7 @@ public class ConsultantMemberService {
     private final S3ImageService s3ImageService;
 
     private final String imgDir = "images/consultant";
+    private static final String DEFAULT_IMAGE_PATH = "/img/member/member-default.png";
 
     public void joinConsultant(ConsultantJoinDTO consultantJoinDTO) {
         // member / consultant 테이블에서 동일한 ID 조회
@@ -47,7 +48,7 @@ public class ConsultantMemberService {
                 imagePath = s3ImageService.upload(consultantJoinDTO.getImage(),imgDir);
             } else {
                 // 이미지가 없을 경우 기본 이미지 경로 설정
-                imagePath = "/img/member/member-default.png";
+                imagePath = DEFAULT_IMAGE_PATH;
             }
         } catch (S3Exception e) {
             throw new IllegalStateException("이미지 저장에 실패했습니다.",e);
@@ -84,21 +85,27 @@ public class ConsultantMemberService {
 
         Consultant consultant = consultantRepository.findByConsultantId(consultantUpdateDTO.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컨설턴트입니다."));
-
+        //패스워드 컨펌과 패스워드 비교
         if (consultantUpdateDTO.getPassword() != null && !consultantUpdateDTO.getPassword().isEmpty()) {
             consultant.setPassword(bCryptPasswordEncoder.encode(consultantUpdateDTO.getPassword()));
         }
 
-        String imagePath;
+        String imagePath = consultant.getImageUrl(); // 기존 이미지 경로 저장
         try {
-            if(consultantUpdateDTO.getImage() != null&& !consultantUpdateDTO.getImage().isEmpty()){
-                imagePath = s3ImageService.upload(consultantUpdateDTO.getImage(),imgDir);
-            } else {
+            if (consultantUpdateDTO.getImage() != null && !consultantUpdateDTO.getImage().isEmpty()) {
+                // 새로운 이미지 업로드
+                String newImagePath = s3ImageService.upload(consultantUpdateDTO.getImage(), imgDir);
+                // 기본 이미지가 아닌 경우에만 기존 이미지 삭제
+                if (!DEFAULT_IMAGE_PATH.equals(imagePath)) {
+                    s3ImageService.deleteImageFromS3(imagePath);
+                }
+                imagePath = newImagePath; // 새 이미지 경로 설정
+            } else if (imagePath == null || imagePath.isEmpty()) {
                 // 이미지가 없을 경우 기본 이미지 경로 설정
-                imagePath = "/img/member/member-default.png";
+                imagePath = DEFAULT_IMAGE_PATH;
             }
         } catch (S3Exception e) {
-            throw new IllegalStateException("이미지 저장에 실패했습니다.",e);
+            throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
         }
 
         consultant.setName(consultantUpdateDTO.getName());
