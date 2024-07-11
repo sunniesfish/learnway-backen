@@ -257,6 +257,7 @@ public class ScheduleService {
 				totalProgresses++;
 			}
 			scheduleAchieveRate = totalAchieveRate / progresses.size();
+			scheduleAchieveRate = Math.round(scheduleAchieveRate * 10.0) / 10.0;
 			
 			ScheduleDto dto = new ScheduleDto();
 			dto.setScheduleId(id);
