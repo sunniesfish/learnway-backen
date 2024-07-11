@@ -7,9 +7,9 @@
 
 .exam__container{
     width: 100%;
-    max-width: 1200px;
-    height: 80vh;
-    margin: 0 5px 0 5px;
+    max-width: 1300px;
+    height: 85vh;
+    margin-top: 7vh;
 }
 
 .exam__item__delete-btn{
