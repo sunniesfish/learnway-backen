@@ -18,9 +18,10 @@
 <!-- SideBar 불러오는 부분 -->
 <div id="sidebar" th:replace="sidebar :: sidebar"></div>
 
-<!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
-<div class="main__content">
-    <div class="container mt-5" style="overflow-y: auto">
+<!-- 메인 컨텐츠 이 div 안을 body 라고 생각하고 쓰면 됩니다 -->
+<div class="main__content" style="height: 100vh; overflow-y: auto">
+    <div class="container mt-5">
+        <div class="mx-auto" style="width:900px;">
         <form th:action="@{/member/update}" method="post" th:object="${memberUpdateDTO}" onsubmit="return validateForm(event)" enctype="multipart/form-data">
             <!-- 중복체크 없을 경우 submit X -->
             <input type="hidden" id="isUsernameChecked" value="true"> <!-- 수정 시 ID 중복 체크는 필요 없으므로 true -->
@@ -195,6 +196,7 @@
                 </div>
             </div>
         </form>
+        </div>
     </div>
 </div>
 <!-- Bootstrap, 각종 JS -->

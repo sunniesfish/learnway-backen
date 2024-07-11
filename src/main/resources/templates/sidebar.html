@@ -1,7 +1,7 @@
 <div th:fragment="sidebar">
     <div id="sidebar">
         <a href="/" class="sidebar-header d-flex justify-content-center">
-            <img src="/img/mainLogo.png" alt="이미지 설명" style="max-width: 150px; height: auto;">
+            <img src="/img/mainLogo.png" alt="이미지 설명" style="max-width: 200px; height: auto;">
         </a>
         <hr>
         <div class="sidebar-item">
@@ -15,7 +15,7 @@
             </div>
             <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <div class="text-center mt-2">
-                    <a href="/admin/" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
+                    <a href="/admin/main" class="text-danger"><i class="fas fa-user-shield"></i> 관리자 Page</a>
                 </div>
             </div>
             <div th:if="${#authorization.expression('hasRole(''USER'')')}">
