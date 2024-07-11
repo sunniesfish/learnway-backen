@@ -10,6 +10,8 @@ function render(examId){
 }
 
 
+
+
 function SubjectList({ examId }) {
     const [subjects, setSubjects] = React.useState([]);
     const [examData, setExamData] = React.useState(null);
@@ -223,19 +225,19 @@ const Subject = ({ subject, data, examId, onSubmit, setRef }) => {
     };
 
     return (
-        <form>
-            <div>{subject.subject}</div>
-            <div>
+        <tr>
+            <td>{subject.subject}</td>
+            <td>
                 <input className="exam-detail__row-input ed-score" value={score} required onChange={(event) => setScore(event.target.value)} type="text" name="scoreScore" />
                 <input className="exam-detail__row-input ed-exscore" value={exScore} required onChange={(event) => setExScore(event.target.value)} type="text" name="scoreExScore" />
-            </div>
-            <div>
+            </td>
+            <td>
                 <input className="exam-detail__row-input ed-std" value={std} required onChange={(event) => setStd(event.target.value)} type="text" name="scoreStdScore" />
-            </div>
-            <div>
+            </td>
+            <td>
                 <input className="exam-detail__row-input ed-grade" value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" />
-            </div>
-            <div></div>
-        </form>
+            </td>
+            <td></td>
+        </tr>
     );
 };
