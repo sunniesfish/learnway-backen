@@ -31,7 +31,7 @@ public class MemberService {
     private final TargetUniRepository targetUniRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화 저장
     private final S3ImageService s3ImageService; // 추가된 부분
-
+    private static final String DEFAULT_IMAGE_PATH = "/img/member/member-default.png"; // 기본 이미지 상수
 
     // ID 중복 체크 (컨설턴트까지 같이 비교)
     public boolean isUsernameTaken(String username) {
@@ -144,10 +144,12 @@ public class MemberService {
         if (memberUpdateDTO.getNewMemberImage() != null && !memberUpdateDTO.getNewMemberImage().isEmpty()) {
             try {
                 String oldImagePath = imagePath; // 이전 이미지 경로 저장
-                // 새로운 S3 업로드 로직 추가
+                // 새로운 S3 업로드 로직
                 imagePath = s3ImageService.upload(memberUpdateDTO.getNewMemberImage(), "images/member/");
-                // 새로운 S3 삭제 로직 추가
+                // 새로운 S3 삭제 로직 (기본 이미지 아닐 경우 삭제
+                if(!DEFAULT_IMAGE_PATH.equals(oldImagePath)){
                 s3ImageService.deleteImageFromS3(oldImagePath);
+                }
             } catch (S3Exception e) {
                 e.printStackTrace();
                 throw new IllegalStateException("이미지 저장에 실패했습니다.", e);
