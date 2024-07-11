@@ -106,8 +106,9 @@
 }
 
 .content-wrapper {
-    padding-top: 45px;
-    padding-bottom: 20px;
+    max-width: 1300px;
+    height: 85vh;
+    margin-top: 7vh;
 }
 
 .list-group-item {
