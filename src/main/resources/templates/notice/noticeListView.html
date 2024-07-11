@@ -24,7 +24,7 @@
             <div>
                 <form action="/notice/noticeList" class="form-inline" method="get">
                     <input class="form-control mr-sm-2" type="search" id="keyword" name="keyword" placeholder="공지사항 검색" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
+                    <button class="btn btn-outline-info my-2 my-sm-0" type="submit">검색</button>
                 </form>
             </div>
         </div>
@@ -59,7 +59,7 @@
                 </tbody>
             </table>
             <div class="text-right" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-                <a href="/notice/writeView" class="btn btn-primary">글쓰기</a>
+                <a href="/notice/writeView" class="btn btn-outline-info">글쓰기</a>
             </div>    
             <!-- 페이징 처리 코드 추가 -->
             <nav aria-label="Page navigation" th:if="${notice.totalPages > 0}">   
@@ -76,7 +76,7 @@
                     <li class="page-item" 
                     th:each="pageNum : ${#numbers.sequence(0, notice.totalPages - 1)}"
                     th:classappend="${pageNum == notice.number} ? 'active'">
-                    <a class="page-link" 
+                    <a class="page-link btn btn-info" 
                        th:href="@{/notice/noticeList(page=${pageNum})}" 
                        th:text="${pageNum + 1}"></a>
                     </li>
