@@ -2,6 +2,9 @@
 @import "/css/consult/sidebarConsultantList.css";
 @import "/css/consult/sidebarReservationList.css";
 
+
+
+
 #main-content {
     flex: 1;
     display: flex;
