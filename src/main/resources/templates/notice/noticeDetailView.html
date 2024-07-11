@@ -58,10 +58,10 @@
 						<hr class="my-2">
 						<div class="text-right mt-3">
 						    <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-						        <a th:href="@{/notice/rewriteView/{id}(id=${notice.noticeId})}" class="btn btn-primary">수정</a>
-						        <a th:href="@{/notice/delete/{id}(id=${notice.noticeId})}" class="btn btn-danger">삭제</a>
+						        <a th:href="@{/notice/rewriteView/{id}(id=${notice.noticeId})}" class="btn btn-outline-success">수정</a>
+						        <a th:href="@{/notice/delete/{id}(id=${notice.noticeId})}" class="btn btn-outline-danger">삭제</a>
 						    </span>
-						    <a th:href="@{/notice/noticeList}" class="btn btn-secondary">목록</a>
+						    <a th:href="@{/notice/noticeList}" class="btn btn-outline-secondary">목록</a>
 						</div>
 	                </div>
 	            </div>

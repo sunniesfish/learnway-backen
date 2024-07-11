@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var monthlyEvents = []; // 월간 뷰 이벤트 저장
       let progressCount = 1;
       let scheduleOptions;
+      var clickedDate;
     
       //과목명과 색상 매핑 객체
       var subjectColors = {
@@ -14,6 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
         '과탐': '#C1E3D6',//
         '사탐': '#C5E1A5'//
       };
+      
+      function updateTitle(view) {
+  var start = view.currentStart;
+  var end = view.currentEnd.clone().subtract(1, 'day');
+  var titleFormat = 'YYYY.MM.DD';
+  var formattedTitle = start.format(titleFormat) + ' - ' + end.format(titleFormat);
+  var titleElement = document.querySelector('.fc-header-toolbar .fc-center');
+  titleElement.innerText = formattedTitle;
+}
 
       // 과목명에 따라 색상을 반환하는 함수
       function getSubjectColor(subject) {
@@ -96,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
       var calendar = new FullCalendar.Calendar(calendarEl, {
     	
     	events: [],
-   	    height: 'auto',
    	    slotMinTime: '06:00:00',
    	    slotMaxTime: '29:59:59', // 다음날 오전 6시를 의미합니다
    	    nextDayThreshold: '06:00:00',
@@ -104,39 +113,43 @@ document.addEventListener('DOMContentLoaded', function() {
     	allDaySlot: false,
         initialView: 'timeGridWeek',
         initialDate: new Date(),
-        themeSystem: 'bootstrap',
         headerToolbar: {
-          left: 'prev,next today weeklySummary',
-          center: 'title',
-          right: 'addEventButton dayGridMonth,timeGridWeek'
-        },
+            left: 'prev,next today weeklySummary',
+            center: 'title',
+            right: 'addEventButton dayGridMonth,timeGridWeek'
+          },
         customButtons: {
 		 weeklySummary: {
-	        text: '주간 요약',
-	        click: function() {
-				
-        	  var currentDate = calendar.getDate();
-  			  var formattedDate = currentDate.toISOString().slice(0, 10);
-        	  
-        	  showLoadingSpinner(); // 로딩 스피너 표시
-        	  
-	          $.ajax({
-				url:"/api/weeklySummary",
-				type:"get",
-				data: {currentDate: formattedDate},
-                contentType: 'application/json',
-			    success: function(response) {
-				  console.log(response); // 응답 객체 출력
-				  hideLoadingSpinner(); // 로딩 스피너 숨김
-			      displayWeeklySummary(response);
-			    },
-			    error: function(xhr, status, error) {
-			      console.error("주간 요약을 가져오는데 실패했습니다:", error);
-			      alert("주간 요약을 가져오는데 실패했습니다. 나중에 다시 시도해주세요.");
-			    }
-			  });
-	        }
-	      },
+		      text: '주간 요약',
+		      click: function() {
+		        var view = calendar.view.type;
+		        var currentDate = calendar.getDate();
+		        var formattedDate = currentDate.toISOString().slice(0, 10);
+		
+		        if(view === 'timeGridWeek') {
+		          showLoadingSpinner(); // 로딩 스피너 표시
+		
+		          $.ajax({
+		            url:"/api/weeklySummary",
+		            type:"get",
+		            data: {currentDate: formattedDate},
+		            contentType: 'application/json',
+		            success: function(response) {
+		              console.log(response); // 응답 객체 출력
+		              hideLoadingSpinner(); // 로딩 스피너 숨김
+		              displayWeeklySummary(response);
+		            },
+		            error: function(xhr, status, error) {
+		              console.error("주간 요약을 가져오는데 실패했습니다:", error);
+		              hideLoadingSpinner(); // 로딩 스피너 숨김
+		              alert("주간 요약을 가져오는데 실패했습니다. 나중에 다시 시도해주세요.");
+		            }
+		          });
+		        } else {
+		          alert('주간 요약은 주간 뷰에서만 사용 가능합니다.');
+		        }
+		      }
+		    },
           addEventButton: {
             text: "일정 +",
             click: function() {
@@ -239,6 +252,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
         },
+        viewDidMount: function(arg) {
+		    var weeklySummaryButton = document.querySelector('.fc-weeklySummary-button');
+		    if (weeklySummaryButton) {
+		      if (arg.view.type === 'timeGridWeek') {
+		        weeklySummaryButton.style.display = 'inline-block';
+		      } else {
+		        weeklySummaryButton.style.display = 'none';
+		      }
+		    }
+		  },
         eventClick:function(info){ // 주간에서는 수정 월간에서는 일일 상세페이지 부분 (날짜 & 시간 클릭 이벤트)
         	
         	var view = info.view.type;
@@ -299,11 +322,11 @@ document.addEventListener('DOMContentLoaded', function() {
 						            </div>
 						            <div class="col-2">
 						                <label for="achieveRate${i}" class="sr-only">달성율</label>
-						                <input type="text" class="form-control" id="achieveRate${i}" name="achieveRate[]" placeholder="0" value="${progress.achieveRate}">
+						                <input type="text" class="form-control achieve-rate-input" id="achieveRate${i}" name="achieveRate[]" placeholder="0" value="${progress.achieveRate}">
 						            </div>
 						            <div class="col-auto">
 						                <input type="hidden" name="progressId[]" value="${progress.progressId}">
-						                <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+						                <button type="button" class="btn btn-outline-danger btn-sm remove-progress">-</button>
 						            </div>
 						        </div>
 						    `;
@@ -315,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						// +/- 버튼 작동하도록 이벤트 핸들러 등록
 		                let progressCount = $("#updateModal #progressEntries .progress-entry").length;
 		
-		                $("#updateModal").on("click", ".add-progress", function() {
+		                $("#updateModal").off("click").on("click", ".add-progress", function() {
 		                    if (progressCount < 5) {
 		                        var newRow = `
 		                            <div class="form-row align-items-center mb-2 progress-entry">
@@ -329,10 +352,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		                                </div>
 		                                <div class="col-2">
 		                                    <label for="achieveRate${progressCount}" class="sr-only">달성율</label>
-		                                    <input type="text" class="form-control" id="achieveRate${progressCount}" name="achieveRate[]" placeholder="0">
+		                                    <input type="text" class="form-control achieve-rate-input" id="achieveRate${progressCount}" name="achieveRate[]" placeholder="0">
 		                                </div>
 		                                <div class="col-auto">
-		                                    <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+		                                    <button type="button" class="btn btn-outline-danger btn-sm remove-progress">-</button>
 		                                </div>
 		                            </div>
 		                        `;
@@ -503,68 +526,11 @@ document.addEventListener('DOMContentLoaded', function() {
                          console.log(error);
                      }
                  });
-	        } else if (view === 'dayGridMonth') {
-	        	var date = new Date(info.event.start);
-	            date.setDate(date.getDate() + 1);
-	            date = date.toISOString().slice(0, 10);
-	        	console.log(date);
-
-	            $.ajax({
-	                url: "/api/schedule/findByDate",
-	                method: "GET",
-	                dataType: "json",
-	                data: { date: date },
-	                success: function(response) {
-	                    // 응답 데이터 처리
-	                    var schedules = response;
-
-	                    // 모달 제목 설정
-	                    $('#monthlyScheduleModalLabel').text(date);
-
-	                 // 일일평균달성율 설정
-	                    var avgAchieveRate = null;
-
-	                    // 일정 데이터 설정
-	                    var tableBody = $('.schedule-table tbody');
-	                    tableBody.empty();
-
-	                    schedules.forEach(function(schedule) {
-	                        if (schedule.hasOwnProperty('avgAchieveRate')) {
-	                            avgAchieveRate = schedule.avgAchieveRate;
-	                        } else {
-	                            var row = '<tr>' +
-	                                        '<td>' + schedule.studyway + '</td>' +
-	                                        '<td>' + schedule.subject + '</td>' +
-	                                        '<td>' + schedule.progress + '</td>' +
-	                                        '<td>' + schedule.achieveRate + '%</td>' +
-	                                      '</tr>';
-	                            tableBody.append(row);
-	                        }
-	                    });
-
-	                    if (avgAchieveRate !== null) {
-	                        $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
-	                    } else {
-	                        $('.average-achieve-rate').text('일일평균달성율: 0%');
-	                    }
-
-	                    // 모달 띄우기
-	                    $('#monthlyScheduleModal').modal({
-						    backdrop: false,
-						    keyboard: true,
-						    show: true
-						});
-
-	                },
-	                error: function(xhr, status, error) {
-	                    console.log(error);
-	                }
-	            });
-	        }
+	        } 
         },
         dateClick: function(info) {
-            var clickedDate = info.dateStr;
-
+            clickedDate = info.dateStr;
+			console.log(clickedDate);
             $.ajax({
                 url: "/api/schedule/findByDate",
                 method: "GET",
@@ -1087,21 +1053,25 @@ document.addEventListener('DOMContentLoaded', function() {
 	  // 추가 버튼 표시
 	  document.querySelector('.add-progress').style.display = 'inline-block';
  });
+ 
+ 
 });
 
 
 
-  $("#updateModal").on("hidden.bs.modal", function() {
-    // 수정 모달 창이 닫힌 후 실행되는 코드
-    // 입력 필드 값 리셋
-    $("#startTime").val("");
-    $("#endTime").val("");
-    $("#studyway").val("");
-    $("#subject").val("");
-    $("#material").val("");
-    $("#progress").val("");
-    $("#achieveRate").val("");
-  });
+$("#updateModal").on("hidden.bs.modal", function() {
+  // 수정 모달 창이 닫힌 후 실행되는 코드
+  // 입력 필드 값 리셋
+  $("#startTime").val("");
+  $("#endTime").val("");
+  $("#studyway").val("");
+  $("#subject").val("");
+  
+  // 동적으로 생성된 진도 내역 입력 필드 제거
+  $("#progressEntries .progress-entry:not(:first)").remove();
+  
+  progressCount = 1; // progressCount 초기화
+});
   
 
 document.getElementById('progressEntries').addEventListener('click', function(e) {
@@ -1117,10 +1087,10 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
           <input type="text" class="form-control" id="progress${progressCount}" name="progress[]" placeholder="진도 내역">
         </div>
         <div class="col-2">
-	      <input type="text" class="form-control" id="progress${progressCount}" name="achieveRate[]" placeholder="0">
+	      <input type="text" class="form-control achieve-rate-input" id="progress${progressCount}" name="achieveRate[]" placeholder="0">
         </div>
         <div class="col-auto">
-          <button type="button" class="btn btn-danger btn-sm remove-progress">-</button>
+          <button type="button" class="btn btn-outline-danger btn-sm remove-progress">-</button>
         </div>
       `;
       document.getElementById('progressEntries').appendChild(newRow);
@@ -1141,6 +1111,38 @@ document.getElementById('progressEntries').addEventListener('click', function(e)
     }
   }
 });
+
+
+    // 주간 이동 버튼 클릭 이벤트 처리
+  $("#moveToWeeklyView").off("click").on("click", function() {
+	console.log("wndfadf");
+	  if (clickedDate) {
+    // 선택된 날짜를 기준으로 해당 주의 시작 날짜 계산
+    var startOfWeek = new Date(clickedDate);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // 일요일로 이동
+
+    // 유효한 날짜인지 확인
+    if (!isNaN(startOfWeek.getTime())) {
+      var formattedStartOfWeek = startOfWeek.toISOString().slice(0, 10);
+
+      // FullCalendar의 주간 뷰로 이동
+      calendar.changeView("timeGridWeek", formattedStartOfWeek);
+
+      // 모달 닫기
+      $("#monthlyScheduleModal").modal("hide");
+    } else {
+      console.error("유효하지 않은 날짜입니다.");
+    }
+  } else {
+    console.error("선택된 날짜가 없습니다.");
+  }
+  });
+  
+  // 모달이 닫힐 때 selectedDate 초기화
+$('#monthlyScheduleModal').on('hidden.bs.modal', function () {
+  selectedDate = null;
+});
+				      
 
 //주간 요약 보여주는 모달 띄우기 
 function displayWeeklySummary(response) {
