@@ -172,28 +172,6 @@ public class StudyPostService {
 		return studyRepository.findByTitle(dto.getTitle());
 	}
 	
-	//게시글 삭제 메서드
-//	public void boardDelete(StudyDto dto,Principal principal) {
-//	System.out.println(dto.getPostid() + "게시글id");
-//	Study study = Study.builder().postid(dto.getPostid()).member(memberRepository.findByMemberId(principal.getName()).get())
-//			.build();
-//	studyRepository.delete(study);
-//}
-	
-//	@Transactional
-//	public void boardDelete(StudyDto dto, Principal principal) {
-//	    Study study = studyRepository.findByPostid(dto.getPostid());
-//	    if (study != null) {
-//	        study.getReplies().clear();
-//	        study.getChatroom().clear();
-//	        study.getTags().clear();
-//	        study.getCorrectCheck().clear();
-//	        study.getProblems().clear();
-//	        study.toBuilder().member(null);
-//	        studyRepository.save(study);
-//	        studyRepository.delete(study);
-//	    }
-//	}
 	
 	@Transactional
 	public void boardDelete(StudyDto dto, Principal principal) {
