@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     var consultantId = new URLSearchParams(window.location.search).get('consultant');
     var calendar;
     var consultantData; // 상담사 정보를 저장할 변수
+    let loginUserId = document.getElementById("memberId").value;
+    let loginUserName = document.getElementById("memberName").value;
+    
     
     // 상담사 정보를 가져오는 함수
     function fetchConsultantInfo(consultantId) {
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             headerToolbar: {
                 left: 'customButton',
                 center: 'title',
-                right: 'timeGridWeek,timeGridDay'
+                right: 'timeGridWeek'
             },
              customButtons: {
 	            customButton: {
@@ -85,6 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     failureCallback();
                 });
             },
+            //지난 날짜를 안보여주며 현재 날짜를기준으로 첫번째 슬롯에 놓고 7일뒤까지 보여주도록 설정
+            validRange: { // 현재 날짜부터 7일 후까지의 범위로 제한
+                start: new Date(),
+                end: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+            },
+            firstDay: new Date().getDay(), // 현재 요일을 기준으로 첫 번째 슬롯에 표시될 요일 설정
             
             dateClick: function(info) {
                 var clickedDate = new Date(info.dateStr);
@@ -102,8 +111,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 				
-                if (hour >= 12 && hour < 14) {
-                    alert('12:00 ~ 14:00 까지 점심시간 입니다.');
+                if (hour >= 12 && hour < 13) {
+                    alert('12:00 ~ 01:00 까지 점심시간 입니다.');
                     return;
                 }
 
@@ -144,19 +153,35 @@ document.addEventListener('DOMContentLoaded', function() {
         calendar.render();
     }
 
-    function transformEventData(data) {
-        return data.map(event => {
-            return {
-                id: event.id,
-                title: event.counselor.name + ' 상담사',
-                start: event.bookingStart,
-                end: event.bookingEnd,
-                backgroundColor: '#C5E1A5',//은색
-                textColor: 'black',
-                borderColor :'white'
-            };
-        });
-    }
+function transformEventData(data) {
+    return data.map(event => {
+        console.log("예약데이터의 멤버아이디 : " + event.member.memberId);
+        console.log("로그인한 멤버아이디 : " + loginUserId);
+        let boxColor;
+        let titleContents;
+        let isDisabled = false;
+
+        if (event.member.memberId === loginUserId) {
+            boxColor = '#C5E1A5'; // 본인 예약
+            titleContents = loginUserName + '님 예약';
+        } else {
+            boxColor = 'gray'; // 다른 사람 예약
+            titleContents = event.counselor.name + ' 상담사';
+            isDisabled = true;
+        }
+
+        return {
+            id: event.id,
+            title: titleContents,
+            start: event.bookingStart,
+            end: event.bookingEnd,
+            backgroundColor: boxColor,
+            textColor: 'black',
+            borderColor: 'white',
+            className: `event ${isDisabled ? 'disabled-event' : ''}`
+        };
+    });
+}
 
     // 상담사 정보를 가져와서 달력을 초기화
     fetchConsultantInfo(consultantId).done(function(data) {
@@ -223,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             error: function(xhr, status, error) {
                 console.log("삭제 실패: ", error);
+                $("#deleteEventModal").modal("hide");
                 alert("삭제에 실패했습니다. 다시 시도해주세요.");
             }
         });
@@ -246,20 +272,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     resetModalState();
     
-    // 상담사 정보 모달 표시 함수
-    function showConsultantInfoModal() {
-        if (consultantData) {
-            $("#consultantPhoto").attr("src", consultantData.imageUrl); // 사진 URL 설정
-            console.log("이미지경로 : "+consultantData.imageUrl);
-            $("#consultantName").text(consultantData.name + " 상담사");
-            $("#consultantEmail").text(consultantData.subject);
-            $("#consultantPhone").text(consultantData.description);
-        } else {
-            $("#consultantPhoto").attr("src", ""); // 사진 URL 초기화
-            $("#consultantName").text("상담사 정보를 가져올 수 없습니다.");
-            $("#consultantEmail").text("");
-            $("#consultantPhone").text("");
-        }
-        $("#consultantInfoModal").modal("show");
-    }
+	// 상담사 정보 모달 표시 함수
+	function showConsultantInfoModal() {
+	    if (consultantData) {
+	        $("#consultantPhoto").attr("src", consultantData.imageUrl); // 사진 URL 설정
+	        console.log("이미지경로 : " + consultantData.imageUrl);
+	        $("#consultantName").text(consultantData.name + " 상담사");
+	        $("#consultantSubject").text(consultantData.subject);
+
+	        // description을 <br> 태그로 줄 바꿈
+	        let formattedDescription = consultantData.description.replace(/\n/g, "<br>");
+	        $("#consultantDescription").html(formattedDescription);
+	    } else {
+	        $("#consultantPhoto").attr("src", ""); // 사진 URL 초기화
+	        $("#consultantName").text("상담사 정보를 가져올 수 없습니다.");
+	        $("#consultantSubject").text("");
+	        $("#consultantDescription").text("");
+	    }
+	    $("#consultantInfoModal").modal("show");
+	}
 });
