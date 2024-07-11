@@ -5,7 +5,8 @@ import com.learnway.global.domain.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
