@@ -84,7 +84,7 @@
         <input type="hidden" th:value="${chatRoom.chatroomid}" name="chatroomid" id="chatroomid">
     </div>
     <div th:each="image : ${imgList}">
-        <input type="hidden" id="imgpath" th:value="@{|/comFile/${image.imgpath}|}">
+        <input type="hidden" id="imgpath" th:value="@{${image.imgpath}}">
     </div>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

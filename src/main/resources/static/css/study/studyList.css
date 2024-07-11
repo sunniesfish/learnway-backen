@@ -2,10 +2,79 @@
 @import url("../consult/sidebarConsultantList.css");
 @import url("../consult/sidebarReservationList.css");
 
+.search-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-input {
+    width: 300px;
+    height : 50px;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px; 
+    font-size: 16px;
+}
+
+.search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+
+
+#advancedSearchButton {
+    background: none;
+    border: none;
+    color: #000000;
+    font-size: 0.9em;
+    margin: 0 10px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+#advancedSearchButton i {
+    margin-left: 5px; /* 아이콘과 텍스트 사이의 간격 조절 */
+}
+
+#advancedSearchButton:hover {
+    color: #c0c0c0; /* 호버 시 텍스트 색상 변경 */
+}
+
+#advancedSearchButton:focus {
+    outline: none; /* 포커스 시 외곽선 제거 */
+}
+.search-button i {
+    color: #666;
+    font-size: 16px;
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+.write-button {
+    padding: 6px 12px;
+}
+
 .hashtag-container {
     display: flex;
     flex-wrap: wrap;
-    border: 1px solid 	#ccc;
+    border: 1px solid #ccc;
     padding: 10px;
     width: 300px;
     min-height: 50px;
@@ -29,15 +98,16 @@
 }
 
 .content-wrapper {
-    padding-top: 20px;
+    padding-top: 45px;
     padding-bottom: 20px;
 }
 
 .list-group-item {
     transition: background-color 0.3s;
-    padding: 20px;  /* 리스트 아이템의 공간을 넓힘 */
-    margin-bottom: 10px;  /* 각 아이템 사이의 간격을 넓힘 */
+    padding: 15px; /* 리스트 아이템의 공간을 넓힘 */
     position: relative;
+    border-left: none;
+    border-right: none;
 }
 
 .list-group-item:hover {
@@ -51,12 +121,13 @@
 }
 
 .list-group-item .study-title {
-    font-size: 1.25rem;  /* 제목 글자 크기를 키움 */
+    font-size: 1rem; /* 제목 글자 크기를 키움 */
     color: #343a40;
+    font-weight: bolder;
 }
 
 .list-group-item .author {
-    font-size: 0.9rem;  /* 작성자 글자 크기를 줄임 */
+    font-size: 0.7rem; /* 작성자 글자 크기를 줄임 */
     color: #495057;
 }
 
@@ -69,10 +140,27 @@
     bottom: 10px;
     right: 10px;
     text-align: right;
+    font-size: 12px;
+}
+
+.main__content {
+    position: relative; /* 상대 위치 설정 */
+    min-height: 100vh; /* 최소 높이를 화면 전체 높이로 설정 */
+    padding-bottom: 0px; /* footer-container의 높이 만큼 padding-bottom 설정 */
+}
+
+.footer-container {
+    position: absolute; /* 절대 위치 설정 */
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%); /* 가운데 정렬을 위해 왼쪽으로 50% 이동 */
+    width: 100%; /* 너비 100% */
+    text-align: center;
+    padding: 20px;
 }
 
 .pagination {
-    margin-top: 20px;
+    margin-top: 0; /* 불필요한 여백 제거 */
 }
 
 .page-link {
@@ -96,45 +184,80 @@
     border-color: #dee2e6;
 }
 
- .card {
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .card-body {
-            display: flex;
-            flex-direction: column;
-        }
-        .card-title {
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-        .card-text {
-            margin-bottom: 0.25rem;
-        }
-        .badge {
-            font-size: 0.8em;
-        }
-        .card-footer {
-		    background-color: rgba(0,0,0,.03);
-		    border-top: 1px solid rgba(0,0,0,.125);
-		    padding: 0.5rem;
-		}
-		
-		.card-footer .study-info {
-    position: absolute;
-    bottom: 5px;
-    right: 10px;
+.card {
+    transition: transform 0.3s;
+    cursor: pointer;
+    height: calc(100vh - 250px); /* 뷰포트 높이에서 상단 여백과 하단 페이지네이션 공간을 뺀 높이 */
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 1.5rem;
+}
+
+.card-title {
+    margin-bottom: 1rem;
+    /* font-weight: bold; */
+    font-size: 1.4rem;
+}
+
+.card-text {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.badge {
+    font-size: 0.8em;
+    padding: 0.4em 0.6em;
+}
+
+.card-footer {
+    background-color: rgba(0,0,0,.03);
+    border-top: 1px solid rgba(0,0,0,.125);
+    padding: 1rem;
+    margin-top: auto;
+}
+
+.card-footer .study-info {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .card-footer .study-info .ml-2 {
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
 .card-footer .study-info .ml-2 i {
     vertical-align: middle;
     margin-right: 5px;
+    font-size: 1.0rem;
+}
+
+
+
+.view-toggle {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.view-toggle i {
+    font-size: 1.5em;
+    margin-right: 10px;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.view-toggle i.active {
+    color: #007bff;
 }
