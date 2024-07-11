@@ -61,37 +61,6 @@ public class ScoreRestController {
     /*
     * 점수 등록
     * */
-//    @PostMapping(value = "/{examId}")
-//    @Transactional
-//    public ResponseEntity<Score> createScore(
-//            @PathVariable("examId") Long examId,
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @RequestParam("subjectCode") String subjectCode,
-//            @RequestParam("scoreScore") int scoreScore,
-//            @RequestParam("scoreExScore") int scoreExScore,
-//            @RequestParam("scoreStdScore") int scoreStdScore,
-//            @RequestParam("scoreGrade") int scoreGrade
-//    ) {
-//        Score score = Score.builder()
-//                .scoreScore(scoreScore)
-//                .scoreExScore(scoreExScore)
-//                .scoreStdScore(scoreStdScore)
-//                .scoreGrade(scoreGrade).build();
-//        System.out.println("subjectCode = " + subjectCode);
-//        System.out.println(score.toString());
-//        //get memId
-//        Long memId = userDetails.getMemberId();
-//        new Exam();
-//        score.setExam(Exam.builder().examId(examId).build());
-//        score.setSubject(Subject.builder().subjectCode(subjectCode).build());
-//        score.setMemId(memId);
-//        if(examService.writeScore(score, memId)){
-//            return new ResponseEntity<>(HttpStatus.CREATED);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-//        }
-//    }
-
     @PostMapping("/{examId}")
     @Transactional
     public ResponseEntity<String> submitScores(
@@ -116,7 +85,6 @@ public class ScoreRestController {
             });
             return ResponseEntity.ok("Scores submitted successfully");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -125,28 +93,35 @@ public class ScoreRestController {
     /*
     * 점수 수정
     * */
-    @PutMapping("/{examId}/{scoreId}")
-    public ResponseEntity<Score> updateScore(
-            @PathVariable("examId") Long examId,
-            @PathVariable("scoreId") Integer scoreId,
-            @ModelAttribute Score score,
-            @RequestParam("subjectCode") String subjectCode,
+    @Transactional
+    @PutMapping("/{examId}")
+    public ResponseEntity<String> updateScores(
+            @RequestBody List<ScoreRequestDTO> scoreRequestList,
             @AuthenticationPrincipal CustomUserDetails userDetails
-    ){
-        System.out.println("updateScore");
-        //get memId
-        Long memId = userDetails.getMemberId();
-        System.out.println("memId = " + memId);
-        System.out.println("subjectCode = " + subjectCode);
-        score.setExam(Exam.builder().examId(examId).build());
-        score.setSubject(Subject.builder().subjectCode(subjectCode).build());
-        score.setMemId(memId);
-        if(examService.updateScore(score, memId)){
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+    ) {
+        long memId = userDetails.getMemberId();
+        // 점수 처리 로직 (예: 데이터베이스에 저장)
+        try {
+            scoreRequestList.forEach(x -> {
+                Score score = Score.builder()
+                        .scoreId(x.getScoreId())
+                        .scoreScore(x.getScoreScore())
+                        .scoreExScore(x.getScoreExScore())
+                        .scoreStdScore(x.getScoreStdScore())
+                        .scoreGrade(x.getScoreGrade())
+                        .exam(Exam.builder().examId(x.getExamId()).build())
+                        .subject(Subject.builder().subjectCode(x.getSubjectCode()).build()).build();
+                score.setMemId(memId);
+                if(!examService.updateScore(score,memId)) {
+                    System.out.println("실패 scoreId = " + score.getScoreId());
+                }
+            });
+            return ResponseEntity.ok("Scores submitted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
 
 
     /*

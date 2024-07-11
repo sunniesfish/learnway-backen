@@ -74,7 +74,7 @@ function SubjectList({ examId }) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-              },
+            },
             credentials: "include",
             body: JSON.stringify(data)
         });
@@ -85,11 +85,14 @@ function SubjectList({ examId }) {
         }
         return response;
     };
-    const fetchModify = async (examId, scoreId, data) => {
-        const response = await fetch(`/api/score/${examId}/${scoreId}`, {
+    const fetchModify = async (examId, data) => {
+        const response = await fetch(`/api/score/${examId}`, {
             method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
             credentials: "include",
-            body: data
+            body: JSON.stringify(data)
         });
         if (response.ok) {
             console.log("성공");
@@ -114,12 +117,18 @@ function SubjectList({ examId }) {
     }
 
     const handleSubmitAll = () => {
-        console.log(childData);
         const submitData = [];
         childData.forEach(data => {
             submitData.push(data.scoreData)
         });
         fetchSubmit(examId,submitData);
+    }
+    const handleModifyAll = () => {
+        const submitData = [];
+        childData.forEach(data => {
+            submitData.push(data.scoreData)
+        });
+        fetchModify(examId,submitData);
     }
 
 
@@ -141,7 +150,11 @@ function SubjectList({ examId }) {
                         <span className="d-block">{examData?.examDate}</span>
                     </div>
                     <div>
+                        {data?
+                        <button className="btn btn-success" onClick={handleModifyAll}>수정</button>
+                        :
                         <button className="btn btn-success" onClick={handleSubmitAll}>등록</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -152,11 +165,10 @@ function SubjectList({ examId }) {
                         <th>점수</th>
                         <th>표준점수</th>
                         <th>등급</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data && subjects?.map((subject, index) => 
+                    {data && subjects?.map((subject) => 
                         <Subject
                             key={subject.subjectCode}
                             examId={examId}
@@ -171,13 +183,17 @@ function SubjectList({ examId }) {
     );
 }
 
-const Subject = ({examId, subject, data, onDataChange }) => {
+const Subject = ({examId, subject, data, onDataChange}) => {
     const [scoreId, setScoreId] = React.useState(null);
     const [score, setScore] = React.useState(0);
     const [exScore, setExScore] = React.useState(100);
     const [std, setStd] = React.useState(0);
     const [grade, setGrade] = React.useState(1);
     const [isModify, setIsModify] = React.useState(false);
+
+    React.useEffect(()=>{
+        data? setIsModify(true) : setIsModify(false);
+    },[data]);
 
     React.useEffect(() => {
         const item = data.find(item => item.subject.subjectCode === subject.subjectCode);
@@ -198,6 +214,7 @@ const Subject = ({examId, subject, data, onDataChange }) => {
         onDataChange({
             id:subject,
             scoreData:{
+                scoreId:scoreId,
                 examId:examId,
                 subjectCode:subject.subjectCode,
                 scoreScore:score,
@@ -220,8 +237,6 @@ const Subject = ({examId, subject, data, onDataChange }) => {
             </td>
             <td>
                 <input className="exam-detail__row-input ed-grade" value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" />
-            </td>
-            <td>
             </td>
         </tr>
     );

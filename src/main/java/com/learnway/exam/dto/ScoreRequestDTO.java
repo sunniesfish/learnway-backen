@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ScoreRequestDTO {
     long examId;
     String subjectCode;
+    long scoreId;
     int scoreScore;
     int scoreExScore;
     int scoreStdScore;
