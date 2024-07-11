@@ -95,12 +95,13 @@ function validateForm(event) {
     // 프로필 이미지 파일 크기 검사
     const file = document.getElementById('imageUpload').files[0];
     if (file && file.size > 10 * 1024 * 1024) { // 10MB 크기 제한
-        alert('이미지 파일 크기는 2MB를 초과할 수 없습니다.');
+        alert('이미지 파일 크기는 10MB를 초과할 수 없습니다.');
         event.preventDefault();
         return false;
     }
     return true;
 }
+
 
 // 연락처 : 전화번호 자동 하이픈 추가
 function formatPhoneNumber(input) {
@@ -143,6 +144,9 @@ var themeObj = {
 
 // 주소 : 주소 검색 후 추출
 function kakaoMap() {
+    var width = 500; //팝업의 너비
+    var height = 600; //팝업의 높이
+
     new daum.Postcode({
         theme: themeObj,  // 테마 적용
         oncomplete: function(data) {
@@ -165,7 +169,10 @@ function kakaoMap() {
             var fullAddress = '(' + data.zonecode + ') ' + roadAddr + extraRoadAddr;
             document.getElementById("address").value = fullAddress;
         }
-    }).open();
+    }).open({
+        left: (window.screen.width / 2) - (width / 2),
+        top: (window.screen.height / 2) - (height / 2)
+    });
 }
 
 // 생년월일 : 현재 날짜를 기준으로 초등학생 입학 연도 계산하여 기본값 설정
@@ -179,6 +186,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // 이메일 : 인증 팝업 열기
 function openEmailVerificationPopup() {
+    // 팝업 창 크기
+    var popupWidth = 500;
+    var popupHeight = 550;
+    // 화면 중앙에 위치시키기 위한 위치 계산
+    var screenWidth = window.screen.width;
+    var screenHeight = window.screen.height;
+    var left = (screenWidth - popupWidth) / 2;
+    var top = (screenHeight - popupHeight) / 2;
     // 팝업 창 열기
-    window.open('/member/emailVerification', 'emailVerification', 'width=500,height=550');
+    var popup = window.open('/member/emailVerification', 'emailVerification', 'width=' + popupWidth + ', height=' + popupHeight + ', left=' + left + ', top=' + top);
+    // 팝업 창이 차단되었는지 확인하기 위한 코드
+    if (popup) {
+        popup.focus();
+    } else {
+        alert('팝업 차단이 감지되었습니다. 팝업 창을 허용해주세요.');
+    }
 }

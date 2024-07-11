@@ -2,22 +2,29 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>기준 정보 조회</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnWay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/admin/masterdata.js"></script>
-    <link rel="stylesheet" href="/css/admin/admin.css">
+    <script src="/js/admin/sidebar.js"></script>
+    <link rel="stylesheet" href="/css/member/admin.css">
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
+        <!-- 사이드바 2 -->
         <div class="col-md-2">
             <div th:replace="admin/admin-sidebar :: sidebar"></div>
         </div>
-        <div class="col-md-10 mt-5">
+        <!-- 빈공간 1 -->
+        <div class="col-md-1"></div>
+        <!-- 메인컨텐츠 8 -->
+        <div class="col-md-8 mt-5">
             <h2>기준 정보 조회</h2>
+            <hr>
             <div class="form-group">
-                <label for="viewCategory">카테고리 선택</label>
+                <label for="viewCategory"></label>
                 <select id="viewCategory" class="form-control" onchange="ViewMasterData()">
                     <option value="">카테고리를 선택하세요</option>
                     <option value="materials">학습 종류</option>
@@ -26,7 +33,7 @@
                     <option value="exams">시험 유형</option>
                 </select>
             </div>
-            <table class="table table-bordered mt-3">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>코드</th>
@@ -40,8 +47,10 @@
                 <!-- 기준정보 불러오는 곳  -->
                 </tbody>
             </table>
-            <a href="/admin/addMasterData" class="btn btn-primary mt-3">기준 정보 추가</a>
+            <a href="/admin/addMasterData" class="btn btn-info mt-3">기준 정보 추가</a>
         </div>
+        <!-- 빈 공간 1 -->
+        <div class="col-md-1"></div>
     </div>
 </div>
 </body>
