@@ -1,28 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>회원 조회</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnWay</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+    <script src="/js/admin/sidebar.js"></script>
+    <link rel="stylesheet" href="/css/member/admin.css">
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
+        <!-- 사이드바 2 -->
         <div class="col-md-2">
             <div th:replace="admin/admin-sidebar :: sidebar"></div>
         </div>
+        <!-- 빈공간 1 -->
+        <div class="col-md-1"></div>
+        <!-- 메인컨텐츠 8 -->
         <div class="col-md-8 mt-5">
             <h2>회원 조회</h2>
+            <hr>
             <div class="form-group">
-                <label for="searchName">이름 검색</label>
+                <label for="searchName"></label>
                 <div class="input-group">
-                    <input type="text" id="searchName" class="form-control" placeholder="이름을 입력하세요" onkeyup="searchMembers()">
+                    <input type="text" id="searchName" class="form-control" placeholder="이름을 검색하세요" onkeyup="searchMembers()">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" onclick="resetSearch()">전체 보기</button>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -42,11 +52,13 @@
                     <td th:text="${member.memberSchool}"></td>
                     <td th:text="${member.memberGrade}"></td>
                     <td><input type="text" th:value="${member.memberNote}" class="form-control" id="note-[[${member.id}]]"></td>
-                    <td><button class="btn btn-primary" th:onclick="'updateMemberNote(' + ${member.id} + ')'">저장</button></td>
+                    <td><button class="btn btn-outline-success btn-block" th:onclick="'updateMemberNote(' + ${member.id} + ')'">저장</button></td>
                 </tr>
                 </tbody>
             </table>
         </div>
+        <!-- 빈공간 1 -->
+        <div class="col-md-1"></div>
     </div>
 </div>
 <script>
@@ -125,6 +137,5 @@
         }
     }
 </script>
-
 </body>
 </html>

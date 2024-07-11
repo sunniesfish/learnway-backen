@@ -68,7 +68,10 @@
   margin-left: 15px;
 }
 
-
+.modal-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 
 
 /* 스타일 리셋*/

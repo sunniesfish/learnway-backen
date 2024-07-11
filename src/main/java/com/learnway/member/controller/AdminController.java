@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminController {
 
     // 어드민 페이지로 이동
-    @GetMapping("/")
+    @GetMapping("/main")
     public String adminMain() {
         return "admin/admin-main";
     }
