@@ -43,9 +43,14 @@ public class ConsultantMemberService {
         // 이미지 저장
         String imagePath;
         try {
-            imagePath = s3ImageService.upload(consultantJoinDTO.getImage(),imgDir);
+            if(consultantJoinDTO.getImage() != null&& !consultantJoinDTO.getImage().isEmpty()){
+                imagePath = s3ImageService.upload(consultantJoinDTO.getImage(),imgDir);
+            } else {
+                // 이미지가 없을 경우 기본 이미지 경로 설정
+                imagePath = "/img/member/member-default.png";
+            }
         } catch (S3Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("이미지 저장에 실패했습니다.",e);
         }
 
         Consultant consultant = Consultant.builder()
@@ -61,6 +66,7 @@ public class ConsultantMemberService {
         consultantRepository.save(consultant);
     }
 
+    // 컨설턴트 정보 조회
     public ConsultantUpdateDTO getConsultantById(Long id) {
         Consultant consultant = consultantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컨설턴트입니다."));
@@ -73,24 +79,33 @@ public class ConsultantMemberService {
         return consultantUpdateDTO;
     }
 
+    // 컨설턴트 정보 수정
     public void updateConsultant(ConsultantUpdateDTO consultantUpdateDTO) {
+
         Consultant consultant = consultantRepository.findByConsultantId(consultantUpdateDTO.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컨설턴트입니다."));
+
         if (consultantUpdateDTO.getPassword() != null && !consultantUpdateDTO.getPassword().isEmpty()) {
             consultant.setPassword(bCryptPasswordEncoder.encode(consultantUpdateDTO.getPassword()));
         }
+
+        String imagePath;
+        try {
+            if(consultantUpdateDTO.getImage() != null&& !consultantUpdateDTO.getImage().isEmpty()){
+                imagePath = s3ImageService.upload(consultantUpdateDTO.getImage(),imgDir);
+            } else {
+                // 이미지가 없을 경우 기본 이미지 경로 설정
+                imagePath = "/img/member/member-default.png";
+            }
+        } catch (S3Exception e) {
+            throw new IllegalStateException("이미지 저장에 실패했습니다.",e);
+        }
+
         consultant.setName(consultantUpdateDTO.getName());
         consultant.setSubject(consultantUpdateDTO.getSubject());
         consultant.setDescription(consultantUpdateDTO.getDescription());
-        if (consultantUpdateDTO.getImage() != null && !consultantUpdateDTO.getImage().isEmpty()) {
-            try {
-                String imagePath = s3ImageService.upload(consultantUpdateDTO.getImage(),imgDir);
-                s3ImageService.deleteImageFromS3(consultant.getImageUrl());
-                consultant.setImageUrl(imagePath);
-            } catch (S3Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        consultant.setImageUrl(imagePath);
+
         consultantRepository.save(consultant);
     }
 

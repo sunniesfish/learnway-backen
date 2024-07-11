@@ -40,8 +40,9 @@ public class ConsultantMemberController {
             model.addAttribute("error", e.getMessage());
             return "member/consultJoin";
         }
-        return "redirect:/";
+        return "redirect:/admin/main?registered=true";
     }
+
     // GET 시 컨설턴트 수정 폼
     @GetMapping("/consult/update/{id}")
     public String updateForm(@PathVariable("id") Long id, Model model) {
