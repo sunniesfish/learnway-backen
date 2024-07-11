@@ -72,7 +72,7 @@ function Stats() {
     
             setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
-            setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+            setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "표준점수", false));
 
             console.log("scoreSeries",scoreSeries);
             console.log("gradeSeries",gradeSeries);
@@ -123,23 +123,27 @@ function Stats() {
     
     return (
         <>
-            <div className="d-flex">
-                <select className="form-control mr-2" onChange={handleExamTypeChange} defaultValue={"all"}>
-                    <option value="all">All</option>
-                    {examTypeList?.map(item =>
-                        <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
-                    )}
-                </select>
-                <select className="form-control mr-2" onChange={handleYearChange} defaultValue={2024}>
-                    {[...Array(15)].map((_, index) => (
-                    <option key={2010 + index} value={2010 + index}>
-                        {2010 + index}년
-                    </option>
-                    ))}
-                </select>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("score")}>점수</button>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("std")}>표준점수</button>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("grade")}>등급</button>
+            <div className="stats__btn-box">
+                <div className="stats__btn-box__col">
+                    <select className="form-control" onChange={handleExamTypeChange} defaultValue={"all"}>
+                        <option value="all">All</option>
+                        {examTypeList?.map(item =>
+                            <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+                        )}
+                    </select>
+                    <select className="form-control" onChange={handleYearChange} defaultValue={2024}>
+                        {[...Array(15)].map((_, index) => (
+                            <option key={2010 + index} value={2010 + index}>
+                            {2010 + index}년
+                        </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="stats__btn-box__col">
+                    <button className={cat ==="score" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("score")}>점수</button>
+                    <button className={cat ==="std" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("std")}>표준점수</button>
+                    <button className={cat ==="grade" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("grade")}>등급</button>
+                </div>
             </div>
             
             <div className="chart-container">
@@ -196,7 +200,7 @@ function ChartType({ cat, option }) {
 
     return (
         <>
-        <div className="col-md-4">
+        {/* <div className="col-md-4">
             {subjectList.map((subject, index) => 
                 <div className="form-check" key={subject.subject}>
                     <input 
@@ -212,7 +216,7 @@ function ChartType({ cat, option }) {
                     </label>
                 </div>
             )}
-        </div>
+        </div> */}
         <div className="chart" ref={chartRef}></div>
         </>
     )

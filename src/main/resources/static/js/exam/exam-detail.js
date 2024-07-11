@@ -134,11 +134,11 @@ function SubjectList({ examId }) {
 
     return (
         <>
-            <div className="container">
+            <div className="exam-detail__btn-container">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <button
-                            className="btn btn-primary"
+                            className="btn exam-detail__go-list-btn"
                             onClick={() => { location.href = "/exam/list/1" }}
                         >
                             시험목록
@@ -151,14 +151,14 @@ function SubjectList({ examId }) {
                     </div>
                     <div>
                         {data?
-                        <button className="btn btn-success" onClick={handleModifyAll}>수정</button>
+                        <button className="btn exam-detail__reg-btn" onClick={handleModifyAll}>수정</button>
                         :
-                        <button className="btn btn-success" onClick={handleSubmitAll}>등록</button>
+                        <button className="btn exam-detail__reg-btn" onClick={handleSubmitAll}>등록</button>
                         }
                     </div>
                 </div>
             </div>
-            <table className="table table-striped mt-4">
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>과목</th>
@@ -229,14 +229,71 @@ const Subject = ({examId, subject, data, onDataChange}) => {
         <tr>
           <td>{subject.subject}</td>
             <td>
-                <input className="exam-detail__row-input ed-score" value={score} required onChange={(event) => setScore(event.target.value)} type="text" name="scoreScore" />
-                <input className="exam-detail__row-input ed-exscore" value={exScore} required onChange={(event) => setExScore(event.target.value)} type="text" name="scoreExScore" />
+                <input 
+                    className="exam-detail__row-input ed-score" 
+                    value={score} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setScore(input);
+                    }} 
+                    type="text" 
+                    name="scoreScore" 
+                />
+                /
+                <input 
+                    className="exam-detail__row-input ed-exscore" 
+                    value={exScore} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setExScore(input);
+                    }} 
+                    type="text" 
+                    name="scoreExScore" 
+                />
             </td>
             <td>
-                <input className="exam-detail__row-input ed-std" value={std} required onChange={(event) => setStd(event.target.value)} type="text" name="scoreStdScore" />
+                <input 
+                    className="exam-detail__row-input ed-std" 
+                    value={std} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setStd(input);
+                    }} 
+                    type="text" 
+                    name="scoreStdScore" 
+                />
             </td>
             <td>
-                <input className="exam-detail__row-input ed-grade" value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" />
+                <input 
+                    className="exam-detail__row-input ed-grade" 
+                    value={grade} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setGrade(input);
+                    }} 
+                    type="text" 
+                    name="scoreGrade" 
+                />
             </td>
         </tr>
     );
