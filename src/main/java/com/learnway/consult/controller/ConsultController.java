@@ -39,7 +39,19 @@ public class ConsultController {
 	
 	//모달창에서 상담사 예약하기누르면 처리하는 메소드
 	@GetMapping("/reservationBoard")
-	public String reservationBoard(@RequestParam("consultant") Long id,Model model) {
+	public String reservationBoard(@RequestParam("consultant") Long id,Model model,Authentication authentication) {
+		
+    	String memberId = null;
+    	String memberName = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+        	CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            memberId = userDetails.getMember().getMemberId();
+            memberName = userDetails.getMember().getMemberName();
+            System.out.println(memberId);
+            System.out.println(memberName);
+        }
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("memberName", memberName);
 		
 		System.out.println("메인상담사리스트모달로 예약하기로 클릭시 상담사에 관한 정보를 모달창에 전달하기위한 메소드 : 상담사PK값 " + id);
 		Optional<Consultant> consultantInfo = reservationService.findByConsultants(id);
