@@ -72,7 +72,7 @@ function Stats() {
     
             setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
-            setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+            setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "표준점수", false));
 
             console.log("scoreSeries",scoreSeries);
             console.log("gradeSeries",gradeSeries);
@@ -123,23 +123,27 @@ function Stats() {
     
     return (
         <>
-            <div className="d-flex">
-                <select className="form-control mr-2" onChange={handleExamTypeChange} defaultValue={"all"}>
-                    <option value="all">All</option>
-                    {examTypeList?.map(item =>
-                        <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
-                    )}
-                </select>
-                <select className="form-control mr-2" onChange={handleYearChange} defaultValue={2024}>
-                    {[...Array(15)].map((_, index) => (
-                    <option key={2010 + index} value={2010 + index}>
-                        {2010 + index}년
-                    </option>
-                    ))}
-                </select>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("score")}>점수</button>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("std")}>표준점수</button>
-                <button className="btn btn-primary mr-2" onClick={() => setCat("grade")}>등급</button>
+            <div className="stats__btn-box">
+                <div className="stats__btn-box__col">
+                    <select className="form-control" onChange={handleExamTypeChange} defaultValue={"all"}>
+                        <option value="all">All</option>
+                        {examTypeList?.map(item =>
+                            <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
+                        )}
+                    </select>
+                    <select className="form-control" onChange={handleYearChange} defaultValue={2024}>
+                        {[...Array(15)].map((_, index) => (
+                            <option key={2010 + index} value={2010 + index}>
+                            {2010 + index}년
+                        </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="stats__btn-box__col">
+                    <button className={cat ==="score" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("score")}>점수</button>
+                    <button className={cat ==="std" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("std")}>표준점수</button>
+                    <button className={cat ==="grade" ? "btn btn-outline-secondary selected" : "btn btn-outline-secondary"} onClick={() => setCat("grade")}>등급</button>
+                </div>
             </div>
             
             <div className="chart-container">
@@ -156,22 +160,9 @@ function Stats() {
 }
 
 function ChartType({ cat, option }) {
-    const [subjectList, setSubjectList] = React.useState([]);
-    const [subject, setSubject] = React.useState("전체")
-   // const [checkedSubjects, setCheckedSubjects] = React.useState(subjects.map(subject => subject.subjectCode));
-
-    const handleCheckBoxChange = (event) => {
-        const subjectCode = event.target.id;
-        setCheckedSubjects(prevState => 
-            prevState.includes(subjectCode)
-                ? prevState.filter(code => code !== subjectCode)
-                : [...prevState, subjectCode]
-        );
-    };
-
-
-
     const chartRef = React.useRef(null);
+    const [subjectList, setSubjectList] = React.useState([]);
+    const [checkedList, setCheckedList] = React.useState([]);
 
     React.useEffect(() => {
         fetchSubjectData();
@@ -190,6 +181,7 @@ function ChartType({ cat, option }) {
             }
             const subjectData = await response.json();
             setSubjectList(subjectData)
+            setCheckedList(subjectData.map(item => true));
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 3) { // Retry up to 3 times
@@ -200,32 +192,31 @@ function ChartType({ cat, option }) {
         }
     }
 
-    const handleCheckBox = (event) => {
-        console.log("checked",event);
-        if(chartRef.current){
-            console.log("handle check chartRef",chartRef.current);
-        }
+    const handleCheckBox = (index) => {
+        const newCheckedList = [...checkedList];
+        newCheckedList[index] = !newCheckedList
+        setCheckedList(prev => [])
     }
-
 
     return (
         <>
-        <div className="col-md-4">
-            {subjectList.map(subject => 
+        {/* <div className="col-md-4">
+            {subjectList.map((subject, index) => 
                 <div className="form-check" key={subject.subject}>
                     <input 
                         className="form-check-input" 
                         type="checkbox" 
                         value={subject.subject} 
                         id={subject.subjectCode} 
-                        checked
+                        checked={checkedList[index]}
+                        onChange={() => handleCheckBox(index)}
                     />
-                    <label className="form-check-label" for={subject.subjectCode} onChange={handleCheckBox}>
+                    <label className="form-check-label" for={subject.subjectCode}>
                         {subject.subject}
                     </label>
                 </div>
             )}
-        </div>
+        </div> */}
         <div className="chart" ref={chartRef}></div>
         </>
     )
