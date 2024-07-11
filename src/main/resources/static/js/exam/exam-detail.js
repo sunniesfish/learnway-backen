@@ -223,19 +223,19 @@ const Subject = ({ subject, data, examId, onSubmit, setRef }) => {
     };
 
     return (
-        <tr>
-            <td>{subject.subject}</td>
-            <td>
+        <form>
+            <div>{subject.subject}</div>
+            <div>
                 <input className="exam-detail__row-input ed-score" value={score} required onChange={(event) => setScore(event.target.value)} type="text" name="scoreScore" />
                 <input className="exam-detail__row-input ed-exscore" value={exScore} required onChange={(event) => setExScore(event.target.value)} type="text" name="scoreExScore" />
-            </td>
-            <td>
+            </div>
+            <div>
                 <input className="exam-detail__row-input ed-std" value={std} required onChange={(event) => setStd(event.target.value)} type="text" name="scoreStdScore" />
-            </td>
-            <td>
+            </div>
+            <div>
                 <input className="exam-detail__row-input ed-grade" value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" />
-            </td>
-            <td></td>
-        </tr>
+            </div>
+            <div></div>
+        </form>
     );
 };
