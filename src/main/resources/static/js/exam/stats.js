@@ -156,22 +156,9 @@ function Stats() {
 }
 
 function ChartType({ cat, option }) {
-    const [subjectList, setSubjectList] = React.useState([]);
-    const [subject, setSubject] = React.useState("전체")
-   // const [checkedSubjects, setCheckedSubjects] = React.useState(subjects.map(subject => subject.subjectCode));
-
-    const handleCheckBoxChange = (event) => {
-        const subjectCode = event.target.id;
-        setCheckedSubjects(prevState => 
-            prevState.includes(subjectCode)
-                ? prevState.filter(code => code !== subjectCode)
-                : [...prevState, subjectCode]
-        );
-    };
-
-
-
     const chartRef = React.useRef(null);
+    const [subjectList, setSubjectList] = React.useState([]);
+    const [checkedList, setCheckedList] = React.useState([]);
 
     React.useEffect(() => {
         fetchSubjectData();
@@ -190,6 +177,7 @@ function ChartType({ cat, option }) {
             }
             const subjectData = await response.json();
             setSubjectList(subjectData)
+            setCheckedList(subjectData.map(item => true));
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 3) { // Retry up to 3 times
@@ -200,27 +188,26 @@ function ChartType({ cat, option }) {
         }
     }
 
-    const handleCheckBox = (event) => {
-        console.log("checked",event);
-        if(chartRef.current){
-            console.log("handle check chartRef",chartRef.current);
-        }
+    const handleCheckBox = (index) => {
+        const newCheckedList = [...checkedList];
+        newCheckedList[index] = !newCheckedList
+        setCheckedList(prev => [])
     }
-
 
     return (
         <>
         <div className="col-md-4">
-            {subjectList.map(subject => 
+            {subjectList.map((subject, index) => 
                 <div className="form-check" key={subject.subject}>
                     <input 
                         className="form-check-input" 
                         type="checkbox" 
                         value={subject.subject} 
                         id={subject.subjectCode} 
-                        checked
+                        checked={checkedList[index]}
+                        onChange={() => handleCheckBox(index)}
                     />
-                    <label className="form-check-label" for={subject.subjectCode} onChange={handleCheckBox}>
+                    <label className="form-check-label" for={subject.subjectCode}>
                         {subject.subject}
                     </label>
                 </div>
