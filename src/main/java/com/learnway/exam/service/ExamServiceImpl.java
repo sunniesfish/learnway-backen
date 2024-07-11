@@ -70,6 +70,7 @@ public class ExamServiceImpl implements ExamService{
     @Transactional
     @Override
     public void deleteExam(Long examId, Long memId) {
+        scoreRepository.deleteAllByMemIdAndExam_ExamId(memId, examId);
         examRepository.deleteByMemIdAndExamId(memId, examId);
     }
 

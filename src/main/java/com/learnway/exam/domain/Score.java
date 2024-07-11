@@ -59,4 +59,20 @@ public class Score {
         this.scoreStdScore = scoreStdScore;
         this.scoreMemo = scoreMemo;
     }
+
+    @Override
+    public String toString() {
+        return "Score{" +
+                "scoreId=" + scoreId +
+                ", memId=" + memId +
+                ", exam=" + exam +
+                ", subject=" + subject +
+                ", scoreExScore=" + scoreExScore +
+                ", scoreScore=" + scoreScore +
+                ", scoreRange='" + scoreRange + '\'' +
+                ", scoreGrade=" + scoreGrade +
+                ", scoreStdScore=" + scoreStdScore +
+                ", scoreMemo='" + scoreMemo + '\'' +
+                '}';
+    }
 }

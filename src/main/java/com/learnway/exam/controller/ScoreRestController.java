@@ -65,6 +65,7 @@ public class ScoreRestController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         System.out.println("subjectCode = " + subjectCode);
+        System.out.println(score.toString());
         //get memId
         Long memId = userDetails.getMemberId();
         new Exam();

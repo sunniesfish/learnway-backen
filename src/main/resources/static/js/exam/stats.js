@@ -73,6 +73,11 @@ function Stats() {
             setScoreOption(createOption(scoreSeries, xasisCat, 0, 100, "시험 일자", "점수", false));
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
             setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "점수", false));
+
+            console.log("scoreSeries",scoreSeries);
+            console.log("gradeSeries",gradeSeries);
+            console.log("stdSeries",stdSeries);
+
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) {
@@ -80,7 +85,7 @@ function Stats() {
             }
         }
     };
-    
+
     const fetchExamTypeData = async (retryCount = 0) => {
         try {
             const response = await fetch("/api/examtype/all");
@@ -115,6 +120,7 @@ function Stats() {
     const handleYearChange = (event) => {
         setYear(event.target.value);
     }
+    
     return (
         <>
             <div className="d-flex">
@@ -135,7 +141,7 @@ function Stats() {
                 <button className="btn btn-primary mr-2" onClick={() => setCat("std")}>표준점수</button>
                 <button className="btn btn-primary mr-2" onClick={() => setCat("grade")}>등급</button>
             </div>
-
+            
             <div className="chart-container">
                 {isOption ?
                     <ChartType cat={cat} option={
@@ -150,9 +156,25 @@ function Stats() {
 }
 
 function ChartType({ cat, option }) {
+    const [subjectList, setSubjectList] = React.useState([]);
+    const [subject, setSubject] = React.useState("전체")
+   // const [checkedSubjects, setCheckedSubjects] = React.useState(subjects.map(subject => subject.subjectCode));
+
+    const handleCheckBoxChange = (event) => {
+        const subjectCode = event.target.id;
+        setCheckedSubjects(prevState => 
+            prevState.includes(subjectCode)
+                ? prevState.filter(code => code !== subjectCode)
+                : [...prevState, subjectCode]
+        );
+    };
+
+
+
     const chartRef = React.useRef(null);
 
     React.useEffect(() => {
+        fetchSubjectData();
         const chart = new ApexCharts(chartRef.current, option);
         chart.render();
         return () => {
@@ -160,8 +182,52 @@ function ChartType({ cat, option }) {
         };
     }, [cat, option]);
 
+    const fetchSubjectData = async (retryCount = 0) => {
+        try{
+            const response = await fetch("/api/subject/");
+            if(!response.ok){
+                throw new Error('Network response was not ok');
+            }
+            const subjectData = await response.json();
+            setSubjectList(subjectData)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (retryCount < 3) { // Retry up to 3 times
+                setTimeout(() => fetchSubjectData(retryCount + 1), 300); // Retry after 1 second
+            } else {
+                // location.href = "/"                
+            }
+        }
+    }
+
+    const handleCheckBox = (event) => {
+        console.log("checked",event);
+        if(chartRef.current){
+            console.log("handle check chartRef",chartRef.current);
+        }
+    }
+
+
     return (
+        <>
+        <div className="col-md-4">
+            {subjectList.map(subject => 
+                <div className="form-check" key={subject.subject}>
+                    <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        value={subject.subject} 
+                        id={subject.subjectCode} 
+                        checked
+                    />
+                    <label className="form-check-label" for={subject.subjectCode} onChange={handleCheckBox}>
+                        {subject.subject}
+                    </label>
+                </div>
+            )}
+        </div>
         <div className="chart" ref={chartRef}></div>
+        </>
     )
 }
 
@@ -213,6 +279,9 @@ function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, revers
             categories: [...xaxisCat],
             title: {
                 text: xaxisTitle
+            },
+            labels: {
+                rotate: -45
             }
         },
         yaxis: {
