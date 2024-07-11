@@ -60,7 +60,6 @@ public class ExamServiceImpl implements ExamService{
         opExam.ifPresent(value -> {
             value.setExamName(exam.getExamName());
             value.setExamType(exam.getExamType());
-            value.setExamRange(exam.getExamRange());
             value.setExamDate(exam.getExamDate());
             value.setExamMemo(exam.getExamMemo());
             examRepository.save(value);
@@ -71,6 +70,7 @@ public class ExamServiceImpl implements ExamService{
     @Transactional
     @Override
     public void deleteExam(Long examId, Long memId) {
+        scoreRepository.deleteAllByMemIdAndExam_ExamId(memId, examId);
         examRepository.deleteByMemIdAndExamId(memId, examId);
     }
 
@@ -97,7 +97,6 @@ public class ExamServiceImpl implements ExamService{
                                 .examTypeName(exam.getExamType().getExamTypeName()).build()
                 );
                 dto.setExamDate(exam.getExamDate());
-                dto.setExamRange(exam.getExamRange());
                 dto.setExamMemo(exam.getExamMemo());
                 dto.setScoreList(scores);
                 return dto;
@@ -246,5 +245,39 @@ public class ExamServiceImpl implements ExamService{
     @Override
     public List<Integer> getAvgScores(Long memId) {
         return List.of();
+    }
+
+    @Override
+    public List<Exam> findExamByExamTypeAndYear(Long memId, String examType, int year) {
+        List<Exam> list = examRepository.findExamsByYearMemberIdAndExamType(year, memId, examType);
+
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByYear(Long memId, int year) {
+        List<Exam> list = examRepository.findExamsByYearMemberId(year, memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findAllExam(Long memId) {
+        List<Exam> list = examRepository.findAllByMemId(memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
     }
 }

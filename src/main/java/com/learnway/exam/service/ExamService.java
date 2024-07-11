@@ -34,4 +34,8 @@ public interface ExamService {
     public List<Score> getGrades(Long memId);
     public Page<Score> getScoreListByExamType(Long memId, String examType,Pageable pageable);
     public List<Integer> getAvgScores(Long memId);
+
+    public List<Exam> findExamByExamTypeAndYear(Long memId, String examType, int year);
+    public List<Exam> findExamByYear(Long memId, int year);
+    public List<Exam> findAllExam(Long memId);
 }

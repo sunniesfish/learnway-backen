@@ -33,9 +33,6 @@ public class Exam {
     @JoinColumn(name = "exam_type_name")
     private ExamType examType;
 
-    @Column(name = "exam_range", nullable = true)
-    private String examRange;
-
     @Column(name = "exam_date", nullable = false)
     private Date examDate;
 
@@ -47,12 +44,11 @@ public class Exam {
     private List<Score> scoreList;
 
     @Builder
-    public Exam(Long examId, Long memId, String examName, ExamType examType, String examRange, Date examDate, String examMemo, List<Score> scoreList) {
+    public Exam(Long examId, Long memId, String examName, ExamType examType, Date examDate, String examMemo, List<Score> scoreList) {
         this.examId = examId;
         this.memId = memId;
         this.examName = examName;
         this.examType = examType;
-        this.examRange = examRange;
         this.examDate = examDate;
         this.examMemo = examMemo;
         this.scoreList = scoreList;
