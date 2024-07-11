@@ -35,8 +35,8 @@
 			    <a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" class="list-group-item list-group-item-action notice-priority" th:each="priNotice : ${priNotice}">
 			        <div class="d-flex justify-content-between align-items-center">
 			            <div>
-			                <span><img src="/img/notice/notice.png" alt="공지" style="width: 20px; height: 20px; margin-right: 5px;"></span>
-			                <span th:text="${priNotice.noticeTitle}"></span>
+			                <span><img src="/img/notice/notice.png" alt="공지" style="width: 20px; height: 20px; margin-right: 5px; vertical-align:middle; "></span>
+			                <span th:text="${priNotice.noticeTitle}" style="font-weight: bold;"></span>
 			            </div>
 			            <div class="text-right" th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></div>
 			        </div>
