@@ -80,7 +80,7 @@
                        th:href="@{/notice/noticeList(page=${pageNum})}" 
                        th:text="${pageNum + 1}"></a>
                     </li>
-                    <!-- 다음 페이지 처리 -->
+                    <!-- 다음 페이지 처리 --> 
                     <li class="page-item" th:classappend="${notice.last} ? 'disabled'">
                         <a class="page-link" 
                            th:href="@{/notice/noticeList(page=${notice.number + 1})}" 
