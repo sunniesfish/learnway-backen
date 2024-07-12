@@ -7,23 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // 링크의 기본 동작을 막음
         openModal();
     });
+
+    // Close the modal when the close button or outside the modal is clicked
+    $('#myModal .close, #myModal').click(function(event) {
+        if (event.target == this) {
+            $('#myModal').modal('hide');
+        }
+    });
 });
 
-var modal = document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
-
-span.onclick = function() {
-    modal.style.display = "none";
-}
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
 function openModal() {
-    modal.style.display = "block";
+    $('#myModal').modal('show');
     loadConsultants();
 }
 
@@ -46,7 +40,7 @@ function loadConsultants() {
                 consultantHeader.className = 'modal-consultant-header';
 
                 const name = document.createElement('h3');
-                name.textContent = consultant.name + ' 상담사';
+                name.textContent = `${consultant.name} 상담사`;
 
                 consultantHeader.appendChild(name);
 
@@ -54,10 +48,11 @@ function loadConsultants() {
                 consultantBody.className = 'modal-consultant-body';
 
                 const subject = document.createElement('p');
-                subject.textContent = `상담과목: ${consultant.subject}`;
+                subject.innerHTML = `<strong>상담과목:</strong> ${consultant.subject}`; // 상담과목을 진하게 표현
 
                 const description = document.createElement('p');
-                description.textContent = `소개: ${consultant.description}`;
+                description.textContent = `${consultant.description}`;
+                description.style.marginTop = '10px'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
 
                 consultantBody.appendChild(subject);
                 consultantBody.appendChild(description);

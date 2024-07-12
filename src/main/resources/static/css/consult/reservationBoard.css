@@ -40,7 +40,7 @@ body {
 }
 
 .fc-timegrid-slot {
-    height: 80.5px !important;
+    height: 76.8px !important;
 }
 
 /* 마지막 시간 슬롯의 높이를 다른 슬롯과 동일하게 설정 */
@@ -115,7 +115,6 @@ body {
 
 /* 전체 캘린더 테두리 스타일 */
 .fc-scrollgrid {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border: 1px solid #666;
     border-radius: 10px;
     overflow: hidden;

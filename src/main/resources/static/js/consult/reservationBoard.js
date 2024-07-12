@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 {
                     daysOfWeek: [1, 2, 3, 4, 5],
-                    startTime: '14:00',
+                    startTime: '13:00',
                     endTime: '18:00'
                 }
             ],
