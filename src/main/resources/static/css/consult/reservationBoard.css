@@ -205,7 +205,7 @@ body {
 
 /* 모달 스타일 */
 #consultantInfoModal .modal-dialog {
-    max-width: 600px;
+    max-width: 450px;
 }
 
 #consultantInfoModal .card-img-top {
@@ -214,12 +214,30 @@ body {
     display: block;
     margin: 0 auto;
     border: 2px solid #ddd;
-    border-radius: 8px;
+    margin-top: 20px;
+    border-radius: 50%;
 }
 
 #consultantInfoModal .card-body {
     text-align: center;
 }
+
+#consultantName {
+	margin-top: 20px;
+    font-size: 1.5em; 
+    font-weight: bold; 
+}
+
+#consultantSubject {
+	margin-top: 15px;
+    font-size: 1.2em; /* consultantName보다 작은 글씨 */
+    font-weight: bold; /* 기본 글씨 굵기 */
+}
+#consultantDescription {
+	margin-top: 30px;
+	font-weight: bolder; /* 기본 글씨 굵기 */
+}
+
 /*슬롯 안쪽 위치조정*/
 .event {
     display: flex;

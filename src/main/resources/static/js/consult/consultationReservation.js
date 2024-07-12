@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
         openModal();
     });
 
-    // Close the modal when the close button or outside the modal is clicked
-    $('#myModal .close, #myModal').click(function(event) {
+    
+    $('#myModal .close span, #myModal').click(function(event) {
         if (event.target == this) {
             $('#myModal').modal('hide');
         }
@@ -48,12 +48,15 @@ function loadConsultants() {
                 consultantBody.className = 'modal-consultant-body';
 
                 const subject = document.createElement('p');
-                subject.innerHTML = `<strong>상담과목:</strong> ${consultant.subject}`; // 상담과목을 진하게 표현
+                subject.textContent = `상담과목: ${consultant.subject}`; // 상담과목을 진하게 표현
+                subject.style.marginTop = '10px'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
+                subject.style.fontWeight = 'bold'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
+                
 
                 const description = document.createElement('p');
                 description.textContent = `${consultant.description}`;
-                description.style.marginTop = '10px'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
-
+                description.style.marginTop = '50px'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
+ 				description.style.fontWeight = 'bolder'; // 상담과목과 소개 내용 사이에 한 줄 띄우기
                 consultantBody.appendChild(subject);
                 consultantBody.appendChild(description);
 
