@@ -18,52 +18,28 @@
     <div id="sidebar" th:replace="sidebar :: sidebar"></div>
 
     <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
-    <div id="main-content">
+    <div class="main__content">
         <div class="grid-container">
             <div class="grid-item">
-                <!-- 로고 -->
-                <img src="/path/to/logo.png" alt="LearnWay Logo" class="img-fluid">
-                <span>0709-05-39 1.0.0</span>
+                <!-- 공지사항 게시판 -->
+                <h3 class="mb-3">공지사항</h3>
+				<ul class="list-group">
+					<a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" class="list-group-item list-group-item-action notice-priority" th:each="priNotice : ${priNotice}">
+			        <div class="d-flex justify-content-between align-items-center">
+			            <div>
+			                <span><img src="/img/notice/notice.png" alt="공지" style="width: 20px; height: 20px; margin-right: 5px; vertical-align:middle; "></span>
+			                <span th:text="${priNotice.noticeTitle}" style="font-weight: bold;"></span>
+			            </div>
+			            <div class="text-right" th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></div>
+			        </div>
+			    </a>
+				</ul>
             </div>
             <div class="grid-item">
                 <!-- 달력 -->
                 <div id="calendar"></div>
-            </div>
-            
-            <div class="grid-item full-width">
-			<!-- 공지사항 게시판 -->
-			<h2>공지사항</h2>
-				<table class="table table-hover">
-					<tbody>
-						<tr th:each="priNotice : ${priNotice}" class="notice-priority">
-							<td>
-								<span>[공지]</span>
-								<a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" th:text="${priNotice.noticeTitle}"></a>
-							</td>
-							<td th:text="${#temporals.format(priNotice.createDate, 'yyyy.MM.dd')}"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>           
+            </div>           
         </div>
-        <!--
-        <div>
-            <h2>로그인 정보</h2>
-            <p>Username(ID): <span sec:authentication="name"></span></p>
-            <p>User ID(PK): <span th:text="${#authentication.principal.memberId}"></span></p>
-            <p>
-                <img th:src="@{${#authentication.principal.image}}" alt="User Image" class="img-fluid rounded-circle" style="width:50px; height:50px" onerror="this.onerror=null;this.src='/img/member/member-default.png';">
-            </p>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit">로그아웃</button>
-            </form>
-        </div>
-        <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-            <h2>관리자만 조회할 수 있는 버튼</h2>
-            <button>ADMIN</button>
-        </div>
-        <a href="admin/addMasterData">기준정보 추가</a>
-        -->
     </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script><!-- 사이드바 상담관련 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script><!-- 사이드바 상담관련 -->
