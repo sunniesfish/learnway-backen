@@ -19,9 +19,8 @@
     <!-- 이곳에 작업합시다  --> 
 
     <div class="exam__container">
-        <div class="mb-3">
-            <button class="btn btn-danger exam__btn-delete clickable">삭제</button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#examModal">
+        <div class="exam__btn-box">
+            <button type="button" class="btn exam__reg-btn" data-toggle="modal" data-target="#examModal">
                 시험 등록
             </button>
         </div>
@@ -31,11 +30,11 @@
                     <th>시험 유형</th>
                     <th>시험 이름</th>
                     <th>시험 날짜</th>
-                    <th>삭제</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${examList.content}">
+                <tr th:each="item : ${examList.content}" th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" style="cursor: pointer;">
                     <td>
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examType.examTypeName}"></span>
@@ -55,8 +54,8 @@
                         <form th:action="@{/exam/delete}" method="post" class="m-0">
                             <input type="hidden" name="examId" th:value="${item.examId}" required />
                             <button class="exam__item__delete-btn clickable" type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="16" height="16">
-                                    <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                    <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
                                 </svg>
                             </button>
                         </form>
@@ -72,13 +71,13 @@
     <nav>
         <ul class="pagination">
             <li class="page-item" th:if="${examList.hasPrevious()}">
-                <a class="page-link" th:href="@{/exam/list/{pageNo}(pageNo=${examList.previousPageable().pageNumber+1})}">Previous</a>
+                <a class="page-link" th:href="@{/exam/list/{pageNo}(pageNo=${examList.previousPageable().pageNumber+1})}">«</a>
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(1, examList.totalPages)}" th:classappend="${examList.number + 1== i} ? 'active'">
                 <a class="page-link" th:href="@{/exam/list/{pageNo}(pageNo=${i})}" th:text="${i}"></a>
             </li>
             <li class="page-item" th:if="${examList.hasNext()}">
-                <a class="page-link" th:href="@{/exam/list/{pageNo}(pageNo=${examList.nextPageable().pageNumber+1})}">Next</a>
+                <a class="page-link" th:href="@{/exam/list/{pageNo}(pageNo=${examList.nextPageable().pageNumber+1})}">»</a>
             </li>
         </ul>
     </nav>
@@ -116,7 +115,7 @@
                             <textarea class="form-control" id="exam__modal__form-memo" name="examMemo" rows="3" placeholder="메모를 입력하세요"></textarea>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">등록</button>
+                            <button type="submit" class="btn btn-outline-success float-right insertBtn">등록</button>
                         </div>
                     </form>
                 </div>

@@ -20,9 +20,35 @@
     outline: none;
 }
 .exam__item__delete-btn>svg{
-    width: 15px;
+    width: 10px;
+    fill:rgb(102, 102, 102);
     transition: fill .1s ease-in-out;
 }
 .exam__item__delete-btn>svg:hover{
     fill: tomato;
+}
+
+.exam__btn-box{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.exam__reg-btn{
+    color: #fff;
+    background-color: #343a40;
+    border-color: var(--learnwayBlack);
+    cursor: pointer;
+}
+.exam__reg-btn:hover{
+    color: #343a40;
+    background-color: #fff;
+    border-color: #343a40;
+}
+.page-link{
+    color: #343a40;
+}
+.page-item.active .page-link {
+    background-color: #343a40;
+    border-color: #343a40   ; /* Optional: If you want to change border color */
 }
