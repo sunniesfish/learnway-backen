@@ -4,3 +4,9 @@
     color: #343a40; /* 활성 메뉴 텍스트 색상 */
     font-weight: bold; /* 활성 메뉴 텍스트 굵기 */
 }
+
+/* 모달 제목 글씨체 */
+.modal-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
