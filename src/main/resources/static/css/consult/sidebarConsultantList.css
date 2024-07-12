@@ -80,7 +80,7 @@ body {
 .sidebar-member-info{
 	margin-top: 10px;
 }
-
+/*여기서부터는  예약하기 모달 관련 css*/
 /* 모달을 띄웠을 때 배경 가리기 */
 body.modal-open {
     overflow: hidden; /* 스크롤 막기 */
