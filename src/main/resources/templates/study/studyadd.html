@@ -19,15 +19,14 @@
                         <div class="left-content">
                             <div class="title-section">
                                 <div class="form-group">
-                                    <label for="title">제목:</label>
-                                    <input type="text" id="title" name="title" class="form-control">
+                                <label></label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="제목">
                                 </div>
                             </div>
                             
                             <div class="content-section">
                                 <div class="form-group">
-                                    <label for="content">내용:</label>
-                                    <textarea id="content" name="content" class="form-control" rows="15"></textarea>
+                                    <textarea id="content" name="content" class="form-control" rows="15" placeholder="내용"></textarea>
                                 </div>
                             </div>
                             
@@ -46,7 +45,7 @@
                         <div class="date-section">
                             <div class="date-input">
                                 <label for="startdate">시작일:</label>
-                                <input type="date" id="startdatetest" name="startdatetest" class="form-control">
+                                <input type="date" id="startdatetest" name="startdatetest" class="form-control" >
                             </div>
                             <div class="date-input">
                                 <label for="enddate">종료일:</label>
@@ -74,9 +73,9 @@
                         <div id="problem-details">
                             
                             <div id="additional-fields">
-                               <div class="form-group form-inline">
-				    <label for="subject">과목:</label>
-				    <select id="subject" name="subject" class="form-control form-control-sm">
+                               <div class="form-group form-inline ">
+				    <label for="subject" >과목 : </label> 
+				    <select id="subject" name="subject" class="form-control form-control-sm ml-1">
 				        <option value="과목">과목</option>
 				        <option value="국어">국어</option>
 				        <option value="영어">영어</option>
@@ -95,13 +94,12 @@
 				</div>
 				
 				<div class="form-group">
-                                    <label for="correct">정답:</label>
-                                    <input type="text" id="correct" name="correct" class="form-control">
+                                    <input type="text" id="correct" name="correct" class="form-control mt-1" placeholder="정답을 입력해주세요.">
                                 </div>
                             </div>
                             
                              <div class="form-group">
-                                <label for="imgpath">이미지 파일 업로드:</label>
+                                <label for="imgpath">문제 이미지 업로드 : </label>
                                 <input type="file" id="imgpath" name="imgpath" class="form-control-file" multiple accept="image/*" onchange="previewImages(event)">
                                 <div id="image-preview"></div>
                             </div>
