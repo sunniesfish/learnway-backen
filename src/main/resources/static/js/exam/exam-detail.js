@@ -10,14 +10,11 @@ function render(examId){
 }
 
 
-
-
 function SubjectList({ examId }) {
     const [subjects, setSubjects] = React.useState([]);
     const [examData, setExamData] = React.useState(null);
     const [data, setData] = React.useState(null);
-
-    const childRefs = React.useRef([]); // useRef로 ref 배열 초기화
+    const [ childData, setChildData ] = React.useState([]);
 
     const fetchData = async (retryCount = 0) => {
         try {
@@ -36,7 +33,6 @@ function SubjectList({ examId }) {
             }
         }
     };
-
     const fetchSubjectData = async (retryCount = 0) => {
         try {
             const response = await fetch("/api/subject/");
@@ -54,7 +50,6 @@ function SubjectList({ examId }) {
             }
         }
     };
-
     const fetchExamData = async (retryCount = 0) => {
         try {
             const response = await fetch(`/api/exam/${examId}`);
@@ -72,45 +67,78 @@ function SubjectList({ examId }) {
             }
         }
     };
-
-    const onSubmit = () => {
-        fetchData();
-    };
-
-    const handleSubmitAll = () => {
-        console.log("childRefs.current:", childRefs.current); // childRefs.current 로그 추가
-        childRefs.current.forEach((childRef) => {
-            console.log("childRef:", childRef); // 각 childRef 로그 추가
-            if (childRef && childRef.handleRegister) {
-                childRef.handleRegister();
-            }
+    const fetchSubmit = async (examId, data) => {
+        console.log("submit data",data)
+        
+        const response = await fetch(`/api/score/${examId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(data)
         });
+        if (response.ok) {
+            console.log("성공",response);
+        } else {
+            console.log("실패",response);
+        }
+        return response;
     };
-
-    React.useEffect(() => {
-        childRefs.current = Array(subjects.length)
-            .fill()
-            .map((_, index) => childRefs.current[index] || {}); // 객체 배열로 초기화
-        console.log("childRefs after setting:", childRefs.current); // 초기화 후 childRefs 로그 추가
-    }, [subjects]);
-
+    const fetchModify = async (examId, data) => {
+        const response = await fetch(`/api/score/${examId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(data)
+        });
+        if (response.ok) {
+            console.log("성공");
+        }
+    };
     React.useEffect(() => {
         fetchExamData();
         fetchSubjectData();
         fetchData();
     }, []);
+    const handleDataChange = (data) => {
+        setChildData(prevChildData => {
+            const index = prevChildData.findIndex(item => item.id.subjectCode === data.id.subjectCode);
+            if (index === -1) {
+                return [...prevChildData, data];
+            } else {
+                const newChildData = [...prevChildData];
+                newChildData[index] = data;
+                return newChildData;
+            }
+        });
+    }
 
-    const setChildRef = (index, ref) => {
-        childRefs.current[index] = ref;
-    };
+    const handleSubmitAll = () => {
+        const submitData = [];
+        childData.forEach(data => {
+            submitData.push(data.scoreData)
+        });
+        fetchSubmit(examId,submitData);
+    }
+    const handleModifyAll = () => {
+        const submitData = [];
+        childData.forEach(data => {
+            submitData.push(data.scoreData)
+        });
+        fetchModify(examId,submitData);
+    }
+
 
     return (
         <>
-            <div className="container">
+            <div className="exam-detail__btn-container">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <button
-                            className="btn btn-primary"
+                            className="btn exam-detail__go-list-btn"
                             onClick={() => { location.href = "/exam/list/1" }}
                         >
                             시험목록
@@ -122,44 +150,50 @@ function SubjectList({ examId }) {
                         <span className="d-block">{examData?.examDate}</span>
                     </div>
                     <div>
-                        <button className="btn btn-success" onClick={handleSubmitAll}>등록</button>
+                        {data?
+                        <button className="btn exam-detail__reg-btn" onClick={handleModifyAll}>수정</button>
+                        :
+                        <button className="btn exam-detail__reg-btn" onClick={handleSubmitAll}>등록</button>
+                        }
                     </div>
                 </div>
             </div>
-            <table className="table table-striped mt-4">
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>과목</th>
                         <th>점수</th>
                         <th>표준점수</th>
                         <th>등급</th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data && subjects?.map((subject, index) => {
-                        return <Subject
-                            setRef={(ref) => setChildRef(index, ref)} // 각 Subject에 setRef 전달
+                    {data && subjects?.map((subject) => 
+                        <Subject
                             key={subject.subjectCode}
                             examId={examId}
                             subject={subject}
                             data={data}
-                            onSubmit={onSubmit}
+                            onDataChange={handleDataChange}
                         />
-                    })}
+                    )}
                 </tbody>
             </table>
         </>
     );
 }
 
-const Subject = ({ subject, data, examId, onSubmit, setRef }) => {
+const Subject = ({examId, subject, data, onDataChange}) => {
     const [scoreId, setScoreId] = React.useState(null);
     const [score, setScore] = React.useState(0);
     const [exScore, setExScore] = React.useState(100);
     const [std, setStd] = React.useState(0);
     const [grade, setGrade] = React.useState(1);
     const [isModify, setIsModify] = React.useState(false);
+
+    React.useEffect(()=>{
+        data? setIsModify(true) : setIsModify(false);
+    },[data]);
 
     React.useEffect(() => {
         const item = data.find(item => item.subject.subjectCode === subject.subjectCode);
@@ -177,67 +211,90 @@ const Subject = ({ subject, data, examId, onSubmit, setRef }) => {
     }, [scoreId]);
 
     React.useEffect(() => {
-        setRef({
-            handleRegister,
-            handleModify
-        });
-    }, [grade,score]); // 빈 배열로 한 번만 설정
-
-    const handleRegister = async () => {
-        console.log("handle register",subject.subjectCode,score,exScore,std,grade); // handleRegister 로그 추가
-        const formData = new FormData();
-        formData.append("subjectCode", subject.subjectCode);
-        formData.append("scoreScore", score);
-        formData.append("scoreExScore", exScore);
-        formData.append("scoreStdScore", std);
-        formData.append("scoreGrade", grade);
-        const response = await fetch(`/api/score/${examId}`, {
-            method: "POST",
-            credentials: "include",
-            body: formData
-        });
-        if (response.ok) {
-            console.log("성공",response);
-        } else {
-            console.log("실패",response);
-        }
-        onSubmit();
-    };
-
-    const handleModify = async () => {
-        const formData = new FormData();
-        formData.append("subjectCode", subject.subjectCode);
-        formData.append("scoreId", scoreId);
-        formData.append("scoreScore", score);
-        formData.append("scoreExScore", exScore);
-        formData.append("scoreStdScore", std);
-        formData.append("scoreGrade", grade);
-
-        const response = await fetch(`/api/score/${examId}/${scoreId}`, {
-            method: "PUT",
-            credentials: "include",
-            body: formData
-        });
-        if (response.ok) {
-            console.log("성공");
-        }
-        onSubmit();
-    };
+        onDataChange({
+            id:subject,
+            scoreData:{
+                scoreId:scoreId,
+                examId:examId,
+                subjectCode:subject.subjectCode,
+                scoreScore:score,
+                scoreExScore:exScore,
+                scoreStdScore:std,
+                scoreGrade:grade
+            }
+        })
+    },[scoreId,score,exScore,std,grade]);
 
     return (
         <tr>
-            <td>{subject.subject}</td>
+          <td>{subject.subject}</td>
             <td>
-                <input className="exam-detail__row-input ed-score" value={score} required onChange={(event) => setScore(event.target.value)} type="text" name="scoreScore" />
-                <input className="exam-detail__row-input ed-exscore" value={exScore} required onChange={(event) => setExScore(event.target.value)} type="text" name="scoreExScore" />
+                <input 
+                    className="exam-detail__row-input ed-score" 
+                    value={score} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setScore(input);
+                    }} 
+                    type="text" 
+                    name="scoreScore" 
+                />
+                /
+                <input 
+                    className="exam-detail__row-input ed-exscore" 
+                    value={exScore} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setExScore(input);
+                    }} 
+                    type="text" 
+                    name="scoreExScore" 
+                />
             </td>
             <td>
-                <input className="exam-detail__row-input ed-std" value={std} required onChange={(event) => setStd(event.target.value)} type="text" name="scoreStdScore" />
+                <input 
+                    className="exam-detail__row-input ed-std" 
+                    value={std} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setStd(input);
+                    }} 
+                    type="text" 
+                    name="scoreStdScore" 
+                />
             </td>
             <td>
-                <input className="exam-detail__row-input ed-grade" value={grade} required onChange={(event) => setGrade(event.target.value)} type="text" name="scoreGrade" />
+                <input 
+                    className="exam-detail__row-input ed-grade" 
+                    value={grade} 
+                    required 
+                    onChange={(event) => {
+                        const input = event.target.value;
+                        if (/[^0-9]/.test(input)) {
+                            // 숫자 이외의 문자는 무시하고 이전 값 유지
+                            return;
+                        }
+                        setGrade(input);
+                    }} 
+                    type="text" 
+                    name="scoreGrade" 
+                />
             </td>
-            <td></td>
         </tr>
     );
 };

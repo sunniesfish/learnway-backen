@@ -76,7 +76,7 @@ public class ExamController {
         if(memId != null){
             System.out.println("getting exam list : "+memId);
             pageNo = pageNo == null ? pageNo = 1 : pageNo;
-            model.addAttribute("examList", examService.readExam(memId,pageNo,15));
+            model.addAttribute("examList", examService.readExam(memId,pageNo,10));
             model.addAttribute("examTypes", examTypeService.findAll());
         }
         return "exam/exam";
