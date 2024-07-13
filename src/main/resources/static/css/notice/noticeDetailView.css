@@ -2,9 +2,17 @@
 @import "../consult/sidebarConsultantList.css";
 @import "../consult/sidebarReservationList.css";
 
+
+.notice-content p {
+    min-height: 450px; /* 원하는 높이로 조절 가능 */
+    padding: 20px;
+}
 .notice-detail {
     background-color: #fff;
-    padding: 20px;
+    width: 100%;
+    max-width: 1300px;
+    margin-top: 7vh;
+    height: 85vh;
 }
 
 .notice-detail h2 {
@@ -14,9 +22,8 @@
 }
 
 .media-body .author-info {
-    font-size: 14px;
+    font-size: 16px;
     color: #666;
-    margin-bottom: 5px;
 }
 
 .notice-detail hr {
@@ -63,3 +70,4 @@
 .notice-navigation span.text-secondary {
     display: block;  /* 링크나 텍스트를 블록 레벨 요소로 만들어 한 줄을 차지하게 함 */
 }
+
