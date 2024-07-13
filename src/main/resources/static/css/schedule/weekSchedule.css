@@ -1,5 +1,5 @@
 #calendar{
-	height:720px;
+	height:900px;
 
     }
     
@@ -61,6 +61,16 @@
   */
 }
 
+.fc-col-header {
+  height: 40px !important; /* 원하는 높이로 조정 */
+}
+
+
+.fc-col-header-cell-cushion {
+  font-size: 18px;
+  margin-top:6px;
+}
+
 /* 일요일 날짜 빨간색 */
 .fc-day-sun {
   color: #C62828;
@@ -98,13 +108,15 @@
   border-top-right-radius: 0.5rem;
 }
 
+.modal-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
 .table th {
   font-weight: 600;
 }
 
-.bg-custom {
-  background-color: #546E7A; 
-}
 
 .modal-backdrop {
     display: none;
@@ -294,6 +306,7 @@
 .fc-dayGridMonth-button,
 .fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary {
     outline: none !important;
+    font-weight: bold !important;
 }
 
 /* 버튼 아웃라인 스타일 */
@@ -302,24 +315,26 @@
     background-color: transparent !important;
     border-color: var(--learnwayBlack) !important;
 }
-
 .fc-button-primary:hover {
     color: #fff !important;
     background-color: var(--learnwayBlack) !important;
     border-color: var(--learnwayBlack) !important;
+    font-weight: bold !important;
 }
 
 /* 월 버튼 스타일 */
-.fc-dayGridMonth-button {
+.fc-dayGridMonth-button:hover {
     color: #fff !important;
     background-color: var(--learnwayBlack) !important;
     border-color: var(--learnwayBlack) !important;
+    font-weight: bold !important;
 }
 
-.fc-dayGridMonth-button:hover {
-    color: var(--learnwayBlack) !important;
-    background-color: #fff !important;
+.fc-timeGridWeek-button:hover {
+	color: #fff !important;
+    background-color: var(--learnwayBlack) !important;
     border-color: var(--learnwayBlack) !important;
+    font-weight: bold !important;
 }
 
 .fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary {
@@ -327,12 +342,6 @@
     background-color: #343a40 !important;
     border-color: var(--learnwayBlack) !important;
     cursor: pointer !important;
-}
-
-.fc .fc-toolbar button.fc-today-button.fc-button.fc-button-primary:hover {
-    color: #343a40 !important;
-    background-color: #fff !important;
-    border-color: #343a40 !important;
 }
 
 /* Today 버튼 비활성화 스타일 (현재 날짜가 표시된 범위 내에 있을 때) */

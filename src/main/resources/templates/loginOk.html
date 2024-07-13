@@ -22,7 +22,7 @@
         <div class="grid-container">
             <div class="grid-item">
                 <!-- 공지사항 게시판 -->
-                <h3 class="mb-3">공지사항</h3>
+                <h3 class="mb-3 notice-title">N O T I C E</h3>
 				<ul class="list-group">
 					<a th:href="@{/notice/detail/{id}(id=${priNotice.noticeId})}" class="list-group-item list-group-item-action notice-priority" th:each="priNotice : ${priNotice}">
 			        <div class="d-flex justify-content-between align-items-center">
