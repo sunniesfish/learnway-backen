@@ -68,8 +68,6 @@ function SubjectList({ examId }) {
         }
     };
     const fetchSubmit = async (examId, data) => {
-        console.log("submit data",data)
-        
         const response = await fetch(`/api/score/${examId}`, {
             method: "POST",
             headers: {
@@ -78,12 +76,6 @@ function SubjectList({ examId }) {
             credentials: "include",
             body: JSON.stringify(data)
         });
-        if (response.ok) {
-            console.log("성공",response);
-        } else {
-            console.log("실패",response);
-        }
-        return response;
     };
     const fetchModify = async (examId, data) => {
         const response = await fetch(`/api/score/${examId}`, {
@@ -192,8 +184,8 @@ const Subject = ({examId, subject, data, onDataChange}) => {
     const [isModify, setIsModify] = React.useState(false);
 
     React.useEffect(()=>{
-        data? setIsModify(true) : setIsModify(false);
-    },[data]);
+        data && scoreId? setIsModify(true) : setIsModify(false);
+    },[data, scoreId]);
 
     React.useEffect(() => {
         const item = data.find(item => item.subject.subjectCode === subject.subjectCode);
@@ -205,10 +197,6 @@ const Subject = ({examId, subject, data, onDataChange}) => {
             setGrade(item.scoreGrade || 1);
         }
     }, [isModify]);
-
-    React.useEffect(() => {
-        scoreId ? setIsModify(true) : setIsModify(false);
-    }, [scoreId]);
 
     React.useEffect(() => {
         onDataChange({
