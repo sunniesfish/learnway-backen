@@ -16,15 +16,6 @@ document.addEventListener('DOMContentLoaded', function() {
         '사탐': '#C5E1A5'//
       };
       
-      function updateTitle(view) {
-  var start = view.currentStart;
-  var end = view.currentEnd.clone().subtract(1, 'day');
-  var titleFormat = 'YYYY.MM.DD';
-  var formattedTitle = start.format(titleFormat) + ' - ' + end.format(titleFormat);
-  var titleElement = document.querySelector('.fc-header-toolbar .fc-center');
-  titleElement.innerText = formattedTitle;
-}
-
       // 과목명에 따라 색상을 반환하는 함수
       function getSubjectColor(subject) {
         return subjectColors[subject] || '#F0F4C3'; // 매핑된 색상이 없을 경우 기본 색상 반환
@@ -105,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		      
       var calendar = new FullCalendar.Calendar(calendarEl, {
     	
+		    	titleFormat: function() {
+		    return ''; // 빈 문자열 반환
+		  },
     	events: [],
    	    slotMinTime: '06:00:00',
    	    slotMaxTime: '29:59:59', // 다음날 오전 6시를 의미합니다
@@ -116,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         headerToolbar: {
             left: 'prev,next today weeklySummary',
             center: 'title',
-            right: 'addEventButton dayGridMonth,timeGridWeek'
+            right: 'addEventButton dayGridMonth timeGridWeek'
           },
         customButtons: {
 		 weeklySummary: {
@@ -253,14 +247,31 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         },
         viewDidMount: function(arg) {
+			
+			updateCustomTitle(arg.view);
+			
 		    var weeklySummaryButton = document.querySelector('.fc-weeklySummary-button');
-		    if (weeklySummaryButton) {
-		      if (arg.view.type === 'timeGridWeek') {
-		        weeklySummaryButton.style.display = 'inline-block';
-		      } else {
-		        weeklySummaryButton.style.display = 'none';
-		      }
-		    }
+  var monthButton = document.querySelector('.fc-dayGridMonth-button');
+  var weekButton = document.querySelector('.fc-timeGridWeek-button');
+
+  if (weeklySummaryButton) {
+    if (arg.view.type === 'timeGridWeek') {
+      weeklySummaryButton.style.display = 'inline-block';
+    } else {
+      weeklySummaryButton.style.display = 'none';
+    }
+  }
+
+  if (monthButton && weekButton) {
+    if (arg.view.type === 'dayGridMonth') {
+      weekButton.style.display = 'inline-block';
+      monthButton.style.display = 'none';
+    } else if (arg.view.type === 'timeGridWeek') {
+      weekButton.style.display = 'none';
+      monthButton.style.display = 'inline-block';
+    }
+  }
+		    		    
 		  },
         eventClick:function(info){ // 주간에서는 수정 월간에서는 일일 상세페이지 부분 (날짜 & 시간 클릭 이벤트)
         	
@@ -526,11 +537,64 @@ document.addEventListener('DOMContentLoaded', function() {
                          console.log(error);
                      }
                  });
-	        } 
+	        }else{
+		        clickedDate = info.event.start;
+    
+			    // 날짜를 'YYYY-MM-DD' 형식의 문자열로 변환
+			    clickedDate = clickedDate.toISOString().split('T')[0];
+			    
+            $.ajax({
+                url: "/api/schedule/findByDate",
+                method: "GET",
+                dataType: "json",
+                data: { date: clickedDate },
+                success: function(response) {
+                    // 응답 데이터 처리
+                    var schedules = response;
+
+                    // 모달 제목 설정
+                    $('#monthlyScheduleModalLabel').text(clickedDate);
+
+                    // 일일평균달성율 설정
+                    var avgAchieveRate = schedules.find(function(data) {
+                        return data.hasOwnProperty('avgAchieveRate');
+                    }).avgAchieveRate;
+                    $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
+
+                    // 일정 데이터 설정
+                    var tableBody = $('.schedule-table tbody');
+                    tableBody.empty();
+
+                    schedules.forEach(function(schedule) {
+                        if (!schedule.hasOwnProperty('avgAchieveRate')) {
+                            var row = '<tr>' +
+                                        '<td>' + schedule.studyway + '</td>' +
+                                        '<td>' + schedule.subject + '</td>' +
+                                        '<td>' + schedule.progress + '</td>' +
+                                        '<td>' + schedule.achieveRate + '%</td>' +
+                                      '</tr>';
+                            tableBody.append(row);
+                        }
+                    });
+
+                 	// 모달 띄우기
+                    $('#monthlyScheduleModal').modal({
+					    backdrop: false,
+					    keyboard: true,
+					    show: true
+					});
+
+                    
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
+            
+			}
         },
         dateClick: function(info) {
             clickedDate = info.dateStr;
-			console.log(clickedDate);
             $.ajax({
                 url: "/api/schedule/findByDate",
                 method: "GET",
@@ -947,9 +1011,10 @@ document.addEventListener('DOMContentLoaded', function() {
        	  var view = info.view;
        	  var start = view.currentStart;
        	  var event = info.event;
+       	  updateCustomTitle(info.view);
 
        	  if (view.type === 'dayGridMonth') {
-       		  
+       		
        		calendar.setOption('editable', false);
        	    // 월간 뷰에 대한 이벤트 데이터 로딩
        	    $.ajax({
@@ -982,7 +1047,6 @@ document.addEventListener('DOMContentLoaded', function() {
        	      }
        	    });
        	  }else if (view.type === 'timeGridWeek') {
-       		  
        		calendar.setOption('editable', true);
        		$.ajax({
        	        url: "/api/schedule/findAll",
@@ -1010,6 +1074,44 @@ document.addEventListener('DOMContentLoaded', function() {
        	 }
         });
  
+ function updateCustomTitle(view) {
+  var titleEl = document.querySelector('.fc-toolbar-title');
+  if (!titleEl) return;
+
+  if (view.type === 'timeGridWeek' || view.type === 'dayGridWeek') {
+    setWeekViewTitle(view, titleEl);
+  } else if (view.type === 'dayGridMonth') {
+    setMonthViewTitle(view, titleEl);
+  } else {
+    // 다른 뷰 타입에 대한 처리
+    setDefaultViewTitle(view, titleEl);
+  }
+}
+
+
+function setWeekViewTitle(view, titleEl) {
+  var start = view.currentStart;
+  var end = new Date(view.currentEnd);
+  end.setDate(end.getDate() - 1);
+  var titleFormat = { year: 'numeric', month: 'long', day: 'numeric' };
+  var formattedStart = start.toLocaleDateString('ko-KR', titleFormat);
+  var formattedEnd = end.toLocaleDateString('ko-KR', { day: 'numeric' });
+  var formattedTitle = formattedStart + ' – ' + formattedEnd;
+  titleEl.textContent = formattedTitle;
+}
+
+function setMonthViewTitle(view, titleEl) {
+  var date = view.currentStart;
+  var formattedTitle = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
+  titleEl.textContent = formattedTitle;
+}
+
+function setDefaultViewTitle(view, titleEl) {
+  var date = view.currentStart;
+  var formattedTitle = date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
+  titleEl.textContent = formattedTitle;
+}
+
       calendar.render();
       
   $(document).on('click', function(event) {
@@ -1184,6 +1286,6 @@ function fillDropdown(selector, options, defaultText = "선택하세요") {
         dropdown.append($('<option></option>').attr('value', option.id).text(option.name));
     });
 }
-  
-  
+
+   
 });
