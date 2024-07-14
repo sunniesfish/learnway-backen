@@ -1,79 +1,148 @@
-        $(document).ready(function() {
-            $('.sidebar-item').click(function() {
-                $(this).find('.submenu').slideToggle(300);
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    $('.sidebar-item').click(function() {
+        $(this).find('.submenu').slideToggle(300);
+    });
 
-            $('.consult-link').click(function(event) {
-                event.preventDefault(); // 링크의 기본 동작을 막음
-                openModal();
-            });
+    $('.consult-link').click(function(event) {
+        event.preventDefault(); // 링크의 기본 동작을 막음
+        openModal();
+    });
+
+    $('#myModal .close span, #myModal').click(function(event) {
+        if (event.target == this) {
+            $('#myModal').modal('hide');
+        }
+    });
+});
+
+function openModal() {
+    $('#myModal').modal('show');
+    loadConsultants();
+}
+
+let consultantsData = [];
+let currentPage = 1;
+const pageSize = 4;
+
+// 모달창에 상담사리스트 불러오기 요청
+function loadConsultants() {
+    fetch('/api/consultants')
+        .then(response => response.json())
+        .then(data => {
+            consultantsData = data;
+            renderPage(currentPage);
+            renderPagination();
+        });
+}
+
+function renderPage(page) {
+    const consultantList = document.getElementById('consultantList');
+    consultantList.innerHTML = '';
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const pageConsultants = consultantsData.slice(startIndex, endIndex);
+
+    pageConsultants.forEach(consultant => {
+        const consultantBox = document.createElement('div');
+        consultantBox.className = 'modal-consultant-box';
+
+        const img = document.createElement('img');
+        img.src = consultant.imageUrl;
+        img.alt = `상담사 ${consultant.name} 사진`;
+
+        const consultantHeader = document.createElement('div');
+        consultantHeader.className = 'modal-consultant-header';
+
+        const name = document.createElement('h3');
+        name.textContent = `${consultant.name} 상담사`;
+
+        consultantHeader.appendChild(name);
+
+        const consultantBody = document.createElement('div');
+        consultantBody.className = 'modal-consultant-body';
+
+        const subject = document.createElement('p');
+        subject.textContent = `상담과목: ${consultant.subject}`;
+        subject.style.marginTop = '10px';
+        subject.style.fontWeight = 'bold';
+
+        const description = document.createElement('p');
+        description.textContent = `${consultant.description}`;
+        description.style.marginTop = '50px';
+        description.style.fontWeight = 'bolder';
+
+        consultantBody.appendChild(subject);
+        consultantBody.appendChild(description);
+
+        const consultantFooter = document.createElement('div');
+        consultantFooter.className = 'modal-consultant-footer';
+
+        const link = document.createElement('button');
+        link.className = 'btn btn-outline-success fixed-size-button';
+        link.type = 'button';
+        link.textContent = '예약하기';
+        link.addEventListener('click', function() {
+            window.location.href = `/reservationBoard?consultant=${consultant.id}`;
         });
 
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
+        consultantFooter.appendChild(link);
 
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
+        consultantBox.appendChild(img);
+        consultantBox.appendChild(consultantHeader);
+        consultantBox.appendChild(consultantBody);
+        consultantBox.appendChild(consultantFooter);
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+        consultantList.appendChild(consultantBox);
+    });
+}
+
+function renderPagination() {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    const pageCount = Math.ceil(consultantsData.length / pageSize);
+
+    if (pageCount > 1) {
+        const prevButton = document.createElement('button');
+        prevButton.textContent = '≪';
+        prevButton.className = 'page-link btn btn-info';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+                renderPagination();
             }
+        });
+        paginationContainer.appendChild(prevButton);
+
+        for (let i = 1; i <= pageCount; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i;
+            pageButton.className = 'page-link btn btn-info';
+            pageButton.classList.toggle('active', i === currentPage);
+            pageButton.addEventListener('click', function() {
+                currentPage = i;
+                renderPage(currentPage);
+                renderPagination();
+            });
+            paginationContainer.appendChild(pageButton);
         }
 
-        function openModal() {
-            modal.style.display = "block";
-            loadConsultants();
-        }
+        const nextButton = document.createElement('button');
+        nextButton.textContent = '≫';
+        nextButton.className = 'page-link btn btn-info';
+        nextButton.disabled = currentPage === pageCount;
+        nextButton.addEventListener('click', function() {
+            if (currentPage < pageCount) {
+                currentPage++;
+                renderPage(currentPage);
+                renderPagination();
+            }
+        });
+        paginationContainer.appendChild(nextButton);
+    }
 
-        //모달창에 상담사리스트 불러오기 요청
-        function loadConsultants() {
-            fetch('/api/consultants')
-                .then(response => response.json())
-                .then(data => {
-                    const consultantList = document.getElementById('consultantList');
-                    consultantList.innerHTML = '';
-                    data.forEach(consultant => {
-                        const consultantBox = document.createElement('div');
-                        consultantBox.className = 'modal-consultant-box';
 
-                        const img = document.createElement('img');
-                        img.src = consultant.imageUrl;
-                        img.alt = `상담사 ${consultant.name} 사진`;
-
-                        const consultantInfo = document.createElement('div');
-                        consultantInfo.className = 'modal-consultant-info';
-
-                        const name = document.createElement('h3');
-                        name.textContent = consultant.name + ' 상담사';
-
-                        const subject = document.createElement('p');
-                        subject.textContent = `상담과목: ${consultant.subject}`;
-
-                        const description = document.createElement('p');
-                        description.textContent = `소개: ${consultant.description}`;
-
-						// 예약하기 버튼을 부트스트랩 버튼으로 변경
-						const link = document.createElement('button');
-						link.className = 'btn btn-outline-success';
-						link.type = 'button';
-						link.textContent = '예약하기';
-						link.addEventListener('click', function() {
-						    // 예약하기 버튼 클릭 시 동작 설정
-						    window.location.href = `/reservationBoard?consultant=${consultant.id}`;
-						});
-						
-						// 예약하기 버튼을 상담사 박스에 추가
-						consultantBox.appendChild(link);
-						
-                        consultantInfo.appendChild(name);
-                        consultantInfo.appendChild(subject);
-                        consultantInfo.appendChild(description);
-                        consultantBox.appendChild(img);
-                        consultantBox.appendChild(consultantInfo);
-                        consultantBox.appendChild(link);
-                        consultantList.appendChild(consultantBox);
-                    });
-                });
-        }
+}

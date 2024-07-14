@@ -3,6 +3,8 @@ package com.learnway.global.service;
 import com.learnway.global.domain.*;
 import com.learnway.global.dto.MasterDataDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +24,9 @@ public class MasterDataService {
         switch (masterDataDTO.getCategory()) {
             // 학습 종류 선택 시
             case "material":
+                if (materialRepository.existsByMaterialCode(masterDataDTO.getCode())) {
+                    throw new IllegalArgumentException("이미 존재하는 학습 종류 코드입니다: " + masterDataDTO.getCode());
+                }
                 Material materialClass = Material.builder()
                         .materialCode(masterDataDTO.getCode())
                         .material(masterDataDTO.getName())
@@ -32,6 +37,9 @@ public class MasterDataService {
                 break;
             // 학업 구분 선택 시
             case "studyway":
+                if (studywayRepository.existsByStudywayCode(masterDataDTO.getCode())) {
+                    throw new IllegalArgumentException("이미 존재하는 학업 구분 코드입니다: " + masterDataDTO.getCode());
+                }
                 Studyway studywayClass = Studyway.builder()
                         .studywayCode(masterDataDTO.getCode())
                         .studyway(masterDataDTO.getName())
@@ -42,6 +50,9 @@ public class MasterDataService {
                 break;
             // 과목 선택 시
             case "subject":
+                if (subjectRepository.existsBySubjectCode(masterDataDTO.getCode())) {
+                    throw new IllegalArgumentException("이미 존재하는 과목 코드입니다: " + masterDataDTO.getCode());
+                }
                 Subject subjectClass = Subject.builder()
                         .subjectCode(masterDataDTO.getCode())
                         .subject(masterDataDTO.getName())
@@ -52,6 +63,9 @@ public class MasterDataService {
                 break;
             // 시험 유형 선택 시
             case "exam":
+                if (examRepository.existsByExamCode(masterDataDTO.getCode())) {
+                    throw new IllegalArgumentException("이미 존재하는 시험 유형 코드입니다: " + masterDataDTO.getCode());
+                }
                 ExamT examClass = ExamT.builder()
                         .examCode(masterDataDTO.getCode())
                         .exam(masterDataDTO.getName())
@@ -61,11 +75,10 @@ public class MasterDataService {
                 System.out.println("시험 종류 추가 완료");
                 break;
 
-            default: // IllegalArgumentException (잘못 된 매개변수가 전달되었을 때 예외)
+            default: // IllegalArgumentException (잘못된 매개변수가 전달되었을 때 예외)
                 throw new IllegalArgumentException("잘못된 카테고리입니다 : " + masterDataDTO.getCategory());
         }
     }
-
     // 기준 정보 수정
     public void updateMasterData(MasterDataDTO masterDataDTO) {
         switch (masterDataDTO.getCategory()) {
@@ -139,23 +152,27 @@ public class MasterDataService {
                 ExamT exam = examRepository.findById(code).orElseThrow(() -> new IllegalArgumentException("exam 없음"));
                 yield new MasterDataDTO("exam", exam.getExamCode(), exam.getExam(), exam.getExamNote());
             }
-            default -> throw new IllegalArgumentException("Invalid category");
+            default -> throw new IllegalArgumentException("카테고리를 찾을 수 없습니다");
         };
     }
 
-    public List<Material> getMaterials() {
-        return materialRepository.findAll();
+    public Page<Material> getMaterials(Pageable pageable) {
+        return materialRepository.findAll(pageable);
     }
 
-    public List<Studyway> getStudyways() {
-        return studywayRepository.findAll();
+    public Page<Studyway> getStudyways(Pageable pageable) {
+        return studywayRepository.findAll(pageable);
+    }
+
+    public Page<Subject> getSubjects(Pageable pageable) {
+        return subjectRepository.findAll(pageable);
+    }
+
+    public Page<ExamT> getExams(Pageable pageable) {
+        return examRepository.findAll(pageable);
     }
 
     public List<Subject> getSubjects() {
         return subjectRepository.findAll();
-    }
-
-    public List<ExamT> getExams() {
-        return examRepository.findAll();
     }
 }

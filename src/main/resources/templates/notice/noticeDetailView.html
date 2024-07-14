@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
@@ -15,56 +15,56 @@
 
     <!-- 메인 컨텐츠 이 div 안을 body라고 생각하고 쓰면 됩니다 -->
     <div class="main__content">
-	    <div class="container mt-5">
+	    <div class="container">
 	        <div class="row">
-	            <div class="col-12">
-	                <div class="notice-detail">
-	                    <h2 class="mb-3" th:text="${notice.noticeTitle}">글 제목</h2>
-	                    <div class="media mb-3">
-	                         <img th:src="${notice.memberId.memberImage}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64"> 
-	                        <div class="media-body">
-	                            <p class="mt-0 author-info" th:text="${notice.memberId.memberId}">작성자명</p>
-	                            <p class="author-info" th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}">작성일자</p>
-	                        </div>
-	                    </div>
-	                    <hr>
-	                    <div class="mb-3">
-						    <img th:if="${notice.noticeImgPath != null and !notice.noticeImgPath.isEmpty()}" 
-						         th:src="${notice.noticeImgPath}" 
-						         class="img-fluid" 
-						         alt="글 이미지">
-						</div>
-	                    <p th:utext="${notice.noticeContent}">글 내용이 여기에 들어갑니다.</p>
-	                    <hr>
-	                    <div class="row notice-navigation">
-						    <div class="col-12">
-						        <a th:href="@{/notice/detail/{id}(id=${notice.preNotice?.noticeId})}" class="text-secondary"
-						           th:if="${notice.preNotice != null}">
-						            <strong>이전</strong><span th:text="${notice.preNotice.noticeTitle}"></span>
-						        </a>
-						        <span class="text-secondary" th:if="${notice.preNotice == null}">이전글이 없습니다.</span>
-						    </div>
-						</div>
-						<hr class="my-2">
-						<div class="row notice-navigation">
-						    <div class="col-12">
-						        <a th:href="@{/notice/detail/{id}(id=${notice.nextNotice?.noticeId})}" class="text-secondary"
-						           th:if="${notice.nextNotice != null}">
-						            <strong>다음</strong><span th:text="${notice.nextNotice.noticeTitle}"></span>
-						        </a>
-						        <span class="text-secondary" th:if="${notice.nextNotice == null}">다음글이 없습니다.</span>
-						    </div>
-						</div>
-						<hr class="my-2">
-						<div class="text-right mt-3">
-						    <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-						        <a th:href="@{/notice/rewriteView/{id}(id=${notice.noticeId})}" class="btn btn-outline-success">수정</a>
-						        <a th:href="@{/notice/delete/{id}(id=${notice.noticeId})}" class="btn btn-outline-danger">삭제</a>
-						    </span>
-						    <a th:href="@{/notice/noticeList}" class="btn btn-outline-secondary">목록</a>
-						</div>
-	                </div>
-	            </div>
+                <div class="notice-detail">
+                    <h2 class="mb-3" th:text="${notice.noticeTitle}">글 제목</h2>
+                    <div class="media mb-3">
+                         <img th:src="${notice.memberId.memberImage}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64"> 
+                        <div class="media-body">
+                            <p class="mt-0 author-info" th:text="${notice.memberId.memberId}">작성자명</p>
+                            <p class="author-info" th:text="${#temporals.format(notice.createDate, 'yyyy-MM-dd')}">작성일자</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+					    <img th:if="${notice.noticeImgPath != null and !notice.noticeImgPath.isEmpty()}" 
+					         th:src="${notice.noticeImgPath}" 
+					         class="img-fluid" 
+					         alt="글 이미지">
+					</div>
+					<div class="notice-content">
+                    	<p th:utext="${notice.noticeContent}">글 내용</p>
+                    </div>
+                    <hr>
+                    <div class="row notice-navigation">
+					    <div>
+					        <a th:href="@{/notice/detail/{id}(id=${notice.preNotice?.noticeId})}" class="text-secondary"
+					           th:if="${notice.preNotice != null}">
+					            <strong>이전</strong><span th:text="${notice.preNotice.noticeTitle}"></span>
+					        </a>
+					        <span class="text-secondary" th:if="${notice.preNotice == null}">이전글이 없습니다.</span>
+					    </div>
+					</div>
+					<hr class="my-2">
+					<div class="row notice-navigation">
+					    <div>
+					        <a th:href="@{/notice/detail/{id}(id=${notice.nextNotice?.noticeId})}" class="text-secondary"
+					           th:if="${notice.nextNotice != null}">
+					            <strong>다음</strong><span th:text="${notice.nextNotice.noticeTitle}"></span>
+					        </a>
+					        <span class="text-secondary" th:if="${notice.nextNotice == null}">다음글이 없습니다.</span>
+					    </div>
+					</div>
+					<hr class="my-2">
+					<div class="text-right mt-3">
+					    <span th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+					        <a th:href="@{/notice/rewriteView/{id}(id=${notice.noticeId})}" class="btn btn-outline-success">수정</a>
+					        <a th:href="@{/notice/delete/{id}(id=${notice.noticeId})}" class="btn btn-outline-danger">삭제</a>
+					    </span>
+					    <a th:href="@{/notice/noticeList}" class="btn btn-outline-secondary">목록</a>
+					</div>
+                </div>
 	        </div>
 	    </div>
 	</div>

@@ -40,7 +40,7 @@ body {
 }
 
 .fc-timegrid-slot {
-    height: 70px !important;
+    height: 76.8px !important;
 }
 
 /* 마지막 시간 슬롯의 높이를 다른 슬롯과 동일하게 설정 */
@@ -115,7 +115,6 @@ body {
 
 /* 전체 캘린더 테두리 스타일 */
 .fc-scrollgrid {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     border: 1px solid #666;
     border-radius: 10px;
     overflow: hidden;
@@ -206,21 +205,37 @@ body {
 
 /* 모달 스타일 */
 #consultantInfoModal .modal-dialog {
-    max-width: 600px;
+    max-width: 450px;
 }
 
 #consultantInfoModal .card-img-top {
-    width: 40%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    width: 200px; 
+    height: 200px; 
+    display: block; /* 블록 요소로 설정하여 가운데 정렬을 위해 필요 */
+    margin: 0 auto; /* 가운데 정렬 */
+    margin-top: 20px; /* 위쪽 마진 설정 */
+    border-radius: 50%; /* 원형 테두리 설정 */
 }
-
 #consultantInfoModal .card-body {
     text-align: center;
 }
+
+#consultantName {
+	margin-top: 20px;
+    font-size: 1.5em; 
+    font-weight: bold; 
+}
+
+#consultantSubject {
+	margin-top: 15px;
+    font-size: 1.2em; /* consultantName보다 작은 글씨 */
+    font-weight: bold; /* 기본 글씨 굵기 */
+}
+#consultantDescription {
+	margin-top: 30px;
+	font-weight: bolder; /* 기본 글씨 굵기 */
+}
+
 /*슬롯 안쪽 위치조정*/
 .event {
     display: flex;

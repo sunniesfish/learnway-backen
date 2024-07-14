@@ -7,370 +7,160 @@
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
-    <link rel="stylesheet" href="/css/study/studyList.css" type="text/css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- 이모티콘 -->
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css"><!-- 상담예약 css파일 -->
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css"><!-- 예약리스트 css파일 -->
-    
-  <script>
-    $(document).ready(function() {
-    	
-    	
-        let startDateResults = [];
-        let hashtagResults = [];
-        let chatRoomResults = [];
-
-        // 채팅방 체크 박스 처리 함수
-        function updateCheckboxValue(checkbox) {
-            checkbox.value = checkbox.checked ? 1 : 0;
-            var roomCheck = checkbox.value;
-            console.log(roomCheck);
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchChatStudy",
-                data: JSON.stringify({roomCheck: roomCheck}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("채팅방 데이터전송 성공", data);
-                    chatRoomResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('채팅방 데이터전송 실패:', error);
-                }
-            });
-        }
-        window.updateCheckboxValue = updateCheckboxValue;
-
-        $('#startdate').on('change', function() {
-            startDate();
-        });
-
-        $('#exampleModal').modal('hide');
-        $('#advancedSearchButton').on('click', function() {
-            $('#exampleModal').modal('show');
-        });
-
-        let hashtags = [];
-        const hashtagsContainer = document.querySelector(".hashtag-container");
-        const hiddenHashtagsInput = document.createElement("input");
-        hiddenHashtagsInput.type = "hidden";
-        hiddenHashtagsInput.name = "hashtags";
-        document.body.appendChild(hiddenHashtagsInput);
-
-        // 모달이 보여질 때 해시태그 입력 이벤트 바인딩
-        $('#exampleModal').on('shown.bs.modal', function () {
-            $('#searchtag').off('keyup').on('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    const tag = $('#searchtag').val().trim();
-                    if (tag) {
-                        addHashtag(tag);
-                        $('#searchtag').val(''); // 입력 필드 초기화
-                    }
-                }
-            });
-        });
-
-        // 적용 버튼 클릭 시 처리
-        $('#applyButton').on('click', function() {
-            // 해시태그 처리
-            const tag = $('#searchtag').val();
-            if (tag) {
-                sendHashtagsToServer([tag]);
-            }
-        
-            // 시작일 처리
-            const startDateVal = $('#startdate').val();
-            if (startDateVal) {
-                startDate(startDateVal);
-            }
-        
-            // 채팅방 처리
-            const roomCheck = $('#roomCheck').prop('checked') ? 1 : 0;
-            if (roomCheck) {
-                updateCheckboxValue($('#roomCheck')[0]);
-            }
-        
-            // 모달 창 닫기
-            $('#exampleModal').modal('hide');
-        });
-
-        // 태그 추가 함수
-        function addHashtag(tag) {
-            tag = tag.replace(/[\[\]]/g, '').trim();
-            if (tag && !hashtags.includes("#" + tag)) { // 중복된 해시태그 방지
-                const span = document.createElement("span");
-                span.innerText = "#" + tag;
-                span.classList.add("hashtag");
-
-                const removeButton = document.createElement("button");
-                removeButton.innerText = "x";
-                removeButton.classList.add("remove-button");
-                removeButton.addEventListener("click", () => {
-                    hashtagsContainer.removeChild(span);
-                    hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
-                    hiddenHashtagsInput.value = hashtags.map(tag => tag.substring(1)).join(",");
-                    // 해시태그 제거 후 서버로 보내기
-                    sendHashtagsToServer(hashtags);
-                });
-
-                span.appendChild(removeButton);
-                hashtagsContainer.appendChild(span);
-                hashtags.push("#" + tag);
-                hiddenHashtagsInput.value = hashtags.map(tag => tag.substring(1)).join(",");
-
-                // AJAX 요청
-                sendHashtagsToServer(hashtags);
-            }
-        }
-
-        // 해시태그를 서버로 보내는 함수
-        function sendHashtagsToServer(hashtags) {
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchHashtags",
-                data: JSON.stringify({tags: hashtags}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("해시태그 업데이트 성공:", data);
-                    hashtagResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('해시태그 업데이트 실패:', error);
-                }
-            });
-        }
-
-        // 시작일 날짜 값 처리 함수
-        function startDate(startDateVal) {
-            console.log(startDateVal);
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchStartdate",
-                data: JSON.stringify({startdate: startDateVal}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("시작일 데이터전송 성공", data);
-                    startDateResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('시작일 데이터전송 실패:', error);
-                }
-            });
-        }
-
-        // 중복 체크 및 결과 처리
-        function checkAndProcessDuplicates() {
-            const activeArrays = [
-                startDateResults.length > 0 ? startDateResults : null,
-                hashtagResults.length > 0 ? hashtagResults : null,
-                chatRoomResults.length > 0 ? chatRoomResults : null
-            ].filter(array => array !== null);
-
-            const duplicates = findDuplicates(activeArrays);
-
-            // 결과를 hidden input에 저장
-            $('#hiddenDuplicates').val(duplicates.join(','));
-
-            // 콘솔에 결과 출력
-            console.log('중복된 값:', duplicates);
-
-            // 여기에 추가적인 처리 로직을 넣을 수 있습니다.
-            // 예: 결과를 화면에 표시하거나 다른 작업 수행
-        }
-
-        // 중복된 값 찾는 함수
-        function findDuplicates(arrays) {
-            if (arrays.length === 0) return [];
-
-            let duplicates = arrays[0];
-            for (let i = 1; i < arrays.length; i++) {
-                duplicates = duplicates.filter(value => arrays[i].includes(value));
-            }
-            return duplicates;
-        }
-    });
-</script>
-
-
-
+ 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    	<link rel="stylesheet" href="/css/study/studyList.css" type="text/css"/>
+	<script src="/js/study/studyList.js"></script>
 </head>
 <body>
     <!-- SideBar 불러오는부분 -->
     <div th:replace="sidebar :: sidebar"></div>
-    <div class="container content-wrapper">
-    	<form action="/studylist/search" method="post">
-        <div class="row mb-3">
-            <div class="col">
-                <div class="input-group">
-                    <input type="text" id="title" name="title" class="form-control" placeholder="Search">
-  					  <input type="hidden" id="hiddenDuplicates" name="detailSearch">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="submit" id="searchButton" name="searchButton">검색</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-auto">
-                <button type="button" id="advancedSearchButton" name="advancedSearchButton" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    상세검색
-                </button>
-                
-            </div>
-        </div>
-</form>
-<div class="mb-3">
-            <button id="toggleView" class="btn btn-secondary">카드형으로 보기</button>
-        </div>
-        
-        <!-- 모달 부분은 그대로 유지 -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">상세 검색</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+    
+    <div class="main__content">
+        <div class="container content-wrapper">
+                <div class="search-container">
+                    <form action="/studylist/search" method="post" class="search-form">
+                        <input type="text" id="title" name="title" class="search-input" placeholder="글제목 검색">
+                        <input type="hidden" id="hiddenDuplicates" name="detailSearch">
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
                         </button>
+                    </form>
+                    <button type="button" id="advancedSearchButton" class="btn btn-link" data-toggle="modal" data-target="#exampleModal">
+                         <i class="fas fa-filter"></i>
+                    </button>
+                    <button onclick="location.href='/studyadd'" class="btn btn-outline-info my-2 my-sm-0">
+                        글쓰기
+                    </button>
+                </div>
+
+                
+                <div class="view-toggle">
+                    <i class="fas fa-th-list active" id="listViewIcon"></i>
+                    <i class="fas fa-th-large" id="cardViewIcon"></i>
+                </div>
+                    <!-- 모달 부분은 그대로 유지 -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">상세 검색</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 모달 내용 -->
+                                <div class="form-group">
+                                    <label for="searchtag">해시태그</label>
+                                    <input type="text" class="form-control" id="searchtag" placeholder="Enter to add hashtag">
+                                    <div class="hashtag-container mt-2"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="startdate">시작일</label>
+                                    <input type="date" class="form-control" id="startdate">
+                                </div>
+                                <div class="form-group">
+                                    <label for="roomCheck">채팅방 여부</label>
+                                    <input type="checkbox" id="roomCheck" onchange="updateCheckboxValue(this)">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="applyButton">Apply</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <!-- 모달 내용 -->
-                        <div class="form-group">
-                            <label for="searchtag">해시태그</label>
-                            <input type="text" class="form-control" id="searchtag" placeholder="Enter to add hashtag">
-                            <div class="hashtag-container mt-2"></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="startdate">시작일</label>
-                            <input type="date" class="form-control" id="startdate">
-                        </div>
-                        <div class="form-group">
-                            <label for="roomCheck">채팅방 여부</label>
-                            <input type="checkbox" id="roomCheck" onchange="updateCheckboxValue(this)">
-                        </div>
+                </div>
+
+                <div id="listView" class="list-group">
+                        <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h3 class="mb-2 study-title" th:text="${study.title}">Title</h3>
+                        <small th:text="${study.startdate}" class="text-muted">Start Date</small>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="applyButton">Apply</button>
+                    <p class="mb-1">
+                        <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
+                        <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
+                    </p>
+                    <div class="study-info">
+                <small>
+                    <span class="ml-2" th:if="${study.chatroomCount > 0}">
+                        <i class="fas fa-comments"></i>
+                    </span>
+                    <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
+                </small>
+            </div>
+                </div>
+            </div>
+
+
+    <div id="cardView" class="row" style="display: none;">
+                <div th:each="study : ${list}" class="col-md-3 mb-4">
+                    <div class="card h-100" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${study.title}">Title</h5>
+                            <p class="card-text">
+                                <small class="text-muted" th:text="${study.startdate}">Start Date</small>
+                            </p>
+                            <p class="card-text">
+                                <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
+                            </p>
+                            <p class="card-text">
+                                <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="study-info">
+                        <small>
+                    <span class="ml-2" th:if="${study.chatroomCount > 0}">
+                        <i class="fas fa-comments"></i> 
+                    </span>
+                    <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
+                </small>
+                    </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div id="listView" class="list-group">
-            <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1 study-title" th:text="${study.title}">Title</h5>
-            <small th:text="${study.startdate}" class="text-muted">Start Date</small>
-        </div>
-        <p class="mb-1">
-            <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
-            <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
-        </p>
-        <div class="study-info">
-    <small>
-        <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
-        <span class="ml-2" th:if="${study.chatroomCount > 0}">
-            <i class="fas fa-comments"></i>
-        </span>
-    </small>
-</div>
-    </div>
-</div>
 
 
-<div id="cardView" class="row" style="display: none;">
-            <div th:each="study : ${list}" class="col-md-4 mb-4">
-                <div class="card h-100" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${study.title}">Title</h5>
-                        <p class="card-text">
-                            <small class="text-muted" th:text="${study.startdate}">Start Date</small>
-                        </p>
-                        <p class="card-text">
-                            <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
-                        </p>
-                        <p class="card-text">
-                            <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="study-info">
-		  			  <small>
-		        <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
-		        <span class="ml-2" th:if="${study.chatroomCount > 0}">
-		            <i class="fas fa-comments"></i> <span th:text="${study.chatroomCount}">1</span>
-		        </span>
-		    </small>
-				</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="text-right mt-3">
-            <button onclick="location.href='/studyadd'" class="btn btn-success">글작성</button>
-        </div>
-
+    <div class="footer-container">
         <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${list.first} ? 'disabled'">
-            <a class="page-link" th:href="@{/studylist(page=${list.number - 1})}" tabindex="-1">&laquo;</a>
-        </li>
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${list.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/studylist(page=${list.number - 1})}" tabindex="-1">&laquo;</a>
+            </li>
 
-        <th:block th:if="${list.totalPages > 0}">
-            <th:block th:with="start=${T(java.lang.Math).max(1, list.number-2)}, 
-                                end=${T(java.lang.Math).min(list.totalPages, list.number+3)}">
-                <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" 
-                    th:classappend="${num == list.number + 1} ? 'active'">
-                    <a class="page-link" th:href="@{/studylist(page=${num - 1})}" th:text="${num}"></a>
+            <th:block th:if="${list.totalPages > 0}">
+                <th:block th:with="start=${T(java.lang.Math).max(1, list.number-2)}, 
+                                    end=${T(java.lang.Math).min(list.totalPages, list.number+3)}">
+                    <li class="page-item" th:each="num : ${#numbers.sequence(start, end)}" 
+                        th:classappend="${num == list.number + 1} ? 'active'">
+                        <a class="page-link" th:href="@{/studylist(page=${num - 1})}" th:text="${num}"></a>
+                    </li>
+                </th:block>
+            </th:block>
+            
+            <th:block th:if="${list.totalPages == 0}">
+                <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
                 </li>
             </th:block>
-        </th:block>
-        
-        <th:block th:if="${list.totalPages == 0}">
-            <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-            </li>
-        </th:block>
 
-        <li class="page-item" th:classappend="${list.last} ? 'disabled'">
-            <a class="page-link" th:href="@{/studylist(page=${list.number + 1})}">&raquo;</a>
-        </li>
-    </ul>
-</nav>
+            <li class="page-item" th:classappend="${list.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/studylist(page=${list.number + 1})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+        </div>
+        
+        </div>
     </div>
 
-
-<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.getElementById('toggleView');
-            const listView = document.getElementById('listView');
-            const cardView = document.getElementById('cardView');
-
-            toggleButton.addEventListener('click', function() {
-                if (listView.style.display !== 'none') {
-                    listView.style.display = 'none';
-                    cardView.style.display = 'flex';
-                    toggleButton.textContent = '리스트형으로 보기';
-                } else {
-                    listView.style.display = 'block';
-                    cardView.style.display = 'none';
-                    toggleButton.textContent = '카드형으로 보기';
-                }
-            });
-        });
-    </script>
 
    
 </body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="/js/consult/consultationReservation.js"></script>
-    <script src="/js/consult/reservationList.js"></script>
 </html>

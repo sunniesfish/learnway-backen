@@ -9,14 +9,13 @@ import com.learnway.member.service.EmailService;
 import com.learnway.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @Controller
@@ -102,10 +101,11 @@ public class MemberController {
 
     // 전체 멤버 조회(어드민)
     @GetMapping("/members")
-    public String showMembers(Model model) {
-        List<Member> members = memberService.findAllMembers();
-        model.addAttribute("members", members);
+    public String showMembers(Model model, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "5") int size) {
+        Page<Member> membersPage = memberService.findAllMembers(page, size);
+        model.addAttribute("members", membersPage.getContent());
+        model.addAttribute("totalPages", membersPage.getTotalPages());
+        model.addAttribute("currentPage", membersPage.getNumber());
         return "admin/members";
     }
-
 }
