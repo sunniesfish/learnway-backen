@@ -53,9 +53,10 @@ public class StudyProblemService {
 				.correct(dto.getCorrect()).study(Study.builder().postid(postid).build())
 				.memid(member).build();
 		studyProblemRepository.save(studyProblem);
-		
+		System.out.println(" -- 문제 수정 완료 --");
 		//해당문제 번호 구하기
 		StudyProblem sp=studyProblemRepository.findByStudyPostid(postid);
+		System.out.println(" -- 문제 번호 조회 완료 --");
 		return sp.getProblemid(); //문제번호(문제이미지 테이블에서 사용)
 		
 	}

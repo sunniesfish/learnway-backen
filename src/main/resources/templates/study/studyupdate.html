@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>글 수정</title>
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script><!-- jquery 는 항상 위에둘것 -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script><!-- 부트스트랩 js -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"><!-- 부트스트랩 css -->
     <link rel="stylesheet" href="/css/study/studyAdd.css" type="text/css"/>
 </head>
 <body>
@@ -14,20 +14,20 @@
     <div class="container content-wrapper">
         <div id="form-container">
             <form action="/studyupdate" method="post" enctype="multipart/form-data">
-                <input type="hidden" id="postid" name="postid" th:value="${postid}">
+                <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
                 <div class="form-row">
                     <div class="form-col-left">
                         <div class="left-content">
                             <div class="title-section">
                                 <div class="form-group">
-                                    <label for="title"></label>
+                                    <label for="title">제목</label>
                                     <input type="text" id="title" name="title" class="form-control" th:value="${study.title}" placeholder="제목">
                                 </div>
                             </div>
                             
                             <div class="content-section">
                                 <div class="form-group">
-                                    <textarea id="content" name="content" class="form-control" rows="15" th:utext="${study.content}" placeholder="내용"></textarea>
+                                    <textarea id="content" name="content" class="form-control" rows="15" th:text="${content}" placeholder="내용"></textarea>
                                 </div>
                             </div>
                             
@@ -47,25 +47,24 @@
                     <div class="form-col-right">
                         <div class="date-section">
                             <div class="date-input">
-                                <label for="startdate">시작일:</label>
-                                <input type="date" id="startdate" name="startdate" class="form-control" th:value="${study.startdate}">
+                                <label for="startdatetest">시작일:</label>
+                                <input type="date" id="startdatetest" name="startdatetest" class="form-control" th:value="${study.startdate}">
                             </div>
                             <div class="date-input">
-                                <label for="enddate">종료일:</label>
-                                <input type="date" id="enddate" name="enddate" class="form-control" th:value="${study.enddate}">
+                                <label for="enddatetest">종료일:</label>
+                                <input type="date" id="enddatetest" name="enddatetest" class="form-control" th:value="${study.enddate}">
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label>문제출제:</label>
+                            <label for="problem">문제출제:</label>
                             <div class="form-check">
-                                <input type="checkbox" id="problem" name="problem" class="form-check-input" onclick="toggleProblemDetails()">
+                                <input type="checkbox" id="problem" name="problem" value="0" class="form-check-input" onclick="toggleProblemDetails(event)">
                                 <label class="form-check-label" for="problem">직접출제</label>
                             </div>
                         </div>
                         
                         <div id="problem-details">
-                            
                             <div id="additional-fields">
                                 <div class="form-group form-inline">
                                     <label for="subject">과목:</label>
@@ -92,36 +91,50 @@
                                     <input type="text" id="correct" name="correct" class="form-control mt-1">
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
+                            
+                            <div class="form-group">
                                 <label for="imgpath">이미지 파일 업로드:</label>
                                 <input type="file" id="imgpath" name="imgpath" class="form-control-file" multiple accept="image/*" onchange="previewImages(event)">
                                 <div id="image-preview"></div>
                             </div>
+                        </div>
                         
                         <div class="submit-button">
                             <button type="submit" class="btn btn-outline-info my-2 my-sm-0">수정</button>
+                            <button type="button" id="cancelBtn" name="cancelBtn" class="btn btn-outline-secondary my-2 my-sm-0">취소</button>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
+    
+    <div id="imageModal" class="modal">
+       <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="/js/consult/consultationReservation.js"></script>
+    <script src="/js/consult/reservationList.js"></script>
     <script>
-        function toggleProblemDetails() {
-            var details = document.getElementById('problem-details');
-            details.style.display = details.style.display === 'none' ? 'block' : 'none';
-        }
-
         let lastCheckedRadio = null;
 
         function showPopup(event) {
             event.preventDefault();
-            var popup = window.open('/createRoom', 'popup', 'width=600,height=400');
+
+            var popupWidth = 350;
+            var popupHeight = 250;
+            var left = (window.screen.width / 2) - (popupWidth / 2);
+            var top = (window.screen.height / 2) - (popupHeight / 2);
+
+            var popup = window.open('/createRoom', 'popup', `width=${popupWidth},height=${popupHeight},left=${left},top=${top}`);
+
             popup.onunload = function() {
                 if (popup.closed) {
-                    alert("채팅방 수정 완료");
+                    alert("채팅방 생성 완료");
                     var roomname = popup.document.getElementById('roomname').value;
                     document.getElementById('roomname').value = roomname;
                 }
@@ -130,29 +143,45 @@
 
         function previewImages(event) {
             var preview = document.getElementById('image-preview');
-            preview.innerHTML = ''; // 이미지 미리보기를 업데이트하기 전에 기존 내용을 지웁니다.
+            preview.innerHTML = '';
 
-            var files = event.target.files; // 사용자가 선택한 파일들을 가져옵니다.
+            var files = event.target.files;
 
-            // 모든 파일에 대해 루프를 실행하여 이미지 미리보기를 추가합니다.
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
-                var reader = new FileReader(); // 파일을 읽기 위한 FileReader 객체를 생성합니다.
+                var reader = new FileReader();
 
-                // 파일 읽기가 완료되면 onload 이벤트 핸들러가 실행됩니다.
                 reader.onload = function(e) {
-                    var img = document.createElement('img'); // 이미지 엘리먼트를 생성합니다.
-                    img.src = e.target.result; // 읽은 이미지 데이터를 이미지 엘리먼트의 소스로 설정합니다.
-                    img.style.width = '200px'; // 이미지 너비 설정
-                    img.style.height = '200px'; // 이미지 높이 설정
-                    preview.appendChild(img); // 이미지 미리보기 컨테이너에 이미지를 추가합니다.
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.onclick = function() {
+                        openModal(this.src);
+                    };
+                    preview.appendChild(img);
                 }
 
-                // 파일을 읽어들입니다.
                 reader.readAsDataURL(file);
             }
+
+            document.getElementById('additional-fields').style.display = 'block';
         }
 
+        function openModal(src) {
+            var modal = document.getElementById('imageModal');
+            var modalImg = document.getElementById("modalImage");
+
+            // 이미지 크기 설정
+            modalImg.style.maxWidth = "50vw";  // 화면 너비의 절반 크기로 설정
+            modalImg.style.maxHeight = "80vh"; // 화면 높이의 절반 크기로 설정
+            modalImg.src = src;
+
+            // 모달을 화면 중앙에 표시
+            modal.style.display = "flex";
+            modal.style.alignItems = "center"; 
+            modal.style.justifyContent = "center";
+        }
+        
+        
         function slideDown(element, duration = 500) {
             element.style.display = 'block';
             const height = element.scrollHeight;
@@ -163,12 +192,18 @@
             requestAnimationFrame(() => {
                 element.style.maxHeight = `${height}px`;
             });
+
+            setTimeout(() => {
+                element.style.maxHeight = '';
+                element.style.overflow = '';
+                element.style.transition = '';
+            }, duration);
         }
 
         function slideUp(element, duration = 500) {
             const height = element.scrollHeight;
-            element.style.maxHeight = `${height}px`;
             element.style.overflow = 'hidden';
+            element.style.maxHeight = `${height}px`;
             element.style.transition = `max-height ${duration}ms ease-out`;
 
             requestAnimationFrame(() => {
@@ -177,93 +212,114 @@
 
             setTimeout(() => {
                 element.style.display = 'none';
+                element.style.overflow = '';
+                element.style.transition = '';
             }, duration);
         }
 
-        function toggleProblemDetails() {
+        function toggleProblemDetails(event) {
             const details = document.getElementById('problem-details');
-            const problemRadio = document.querySelector('input[name="problem"]');
-
-            if (lastCheckedRadio === problemRadio) {
-                problemRadio.checked = false;
-                slideUp(details);
-                lastCheckedRadio = null;
-            } else {
-                problemRadio.checked = true;
+            if (event.target.checked) {
                 slideDown(details);
-                lastCheckedRadio = problemRadio;
+            } else {
+                slideUp(details);
             }
         }
 
         window.onload = function() {
             var today = new Date().toISOString().split('T')[0];
-            var startdate = document.getElementById("startdate");
-            var enddate = document.getElementById("enddate");
+            var startdate = document.getElementById("startdatetest");
+            var enddate = document.getElementById("enddatetest");
 
             startdate.setAttribute('min', today);
             enddate.setAttribute('min', today);
 
-            startdate.addEventListener('change', function() {
-                var selectedDate = startdate.value;
-                enddate.setAttribute('min', selectedDate);
-                if (enddate.value < selectedDate) {
-                    enddate.value = selectedDate;
-                }
-            });
-
-            /* 해시태그 복붙 */
-            const hashtagsInput = document.getElementById("hashtags");
-            const hashtagsContainer = document.getElementById("hashtags-container");
-            const hiddenHashtagsInput = document.getElementById("tag");
-
-            let hashtags = [];
-
-            function addHashtag(tag) {
-                tag = tag.replace(/[\[\]]/g, '').trim();
-                if (tag && !hashtags.includes(tag)) {
-                    const span = document.createElement("span");
-                    span.innerText = "#" + tag;
-                    span.classList.add("hashtag");
-
-                    const removeButton = document.createElement("button");
-                    removeButton.innerText = "x";
-                    removeButton.classList.add("remove-button");
-                    removeButton.addEventListener("click", () => {
-                        hashtagsContainer.removeChild(span);
-                        hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
-                        hiddenHashtagsInput.value = hashtags.join(",");
-                    });
-
-                    span.appendChild(removeButton);
-                    hashtagsContainer.appendChild(span);
-                    hashtags.push("#" + tag);
-                    hiddenHashtagsInput.value = hashtags.join(",");
+            var modal = document.getElementById('imageModal');
+            var span = document.getElementsByClassName("close")[0];
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
                 }
             }
 
-            hashtagsInput.addEventListener("keydown", (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    const tag = hashtagsInput.value.trim();
-                    if (tag) {
-                        addHashtag(tag);
-                        hashtagsInput.value = "";
-                    }
+            startdate.addEventListener('change', function() {
+                var selectedDate = new Date(startdate.value);
+                var endDate = new Date(selectedDate);
+                endDate.setDate(selectedDate.getDate() + 7);
+
+                var formattedEndDate = endDate.toISOString().split('T')[0];
+
+                enddate.setAttribute('min', selectedDate.toISOString().split('T')[0]);
+                enddate.value = formattedEndDate;
+
+                if (enddate.value < selectedDate.toISOString().split('T')[0]) {
+                    enddate.value = selectedDate.toISOString().split('T')[0];
                 }
             });
 
-            document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
-                input.addEventListener("keydown", (event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
+                /* 해시태그 복붙 */
+              const hashtagsInput = document.getElementById("hashtags");
+        	  const hashtagsContainer = document.getElementById("hashtags-container");
+        	  const hiddenHashtagsInput = document.getElementById("tag");
+
+        	let hashtags = [];
+
+        function addHashtag(tag) {
+            tag = tag.replace(/[\[\],]/g, '').trim(); // 쉼표(,)와 대괄호([]) 제거
+            if (tag && !hashtags.includes("#" + tag)) { // 중복 체크를 추가함
+                const span = document.createElement("span");
+                span.innerText = "#" + tag;
+                span.classList.add("hashtag");
+
+                const removeButton = document.createElement("button");
+                removeButton.innerText = "x";
+                removeButton.classList.add("remove-button");
+                removeButton.addEventListener("click", () => {
+                    hashtagsContainer.removeChild(span);
+                    hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
+                    hiddenHashtagsInput.value = hashtags.join(",");
+                });
+
+                span.appendChild(removeButton);
+                hashtagsContainer.appendChild(span);
+                hashtags.push("#" + tag);
+                hiddenHashtagsInput.value = hashtags.join(",");
+            } else {
+                console.log("이미 추가된 태그입니다."); // 이미 추가된 경우 콘솔에 로그 출력
+            }
+        }
+
+        hashtagsInput.addEventListener("keydown", (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const tags = hashtagsInput.value.split(','); // 쉼표(,)로 분할
+                tags.forEach(tag => {
+                    if (tag.trim()) {
+                        addHashtag(tag.trim());
                     }
                 });
-            });
-        }
+                hashtagsInput.value = "";
+            }
+        });
+                document.getElementById('problem').addEventListener('click', toggleProblemDetails);
+                
+                document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
+                    input.addEventListener("keydown", (event) => {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                        }
+                    });
+                });
+            }
+        
+        document.getElementById("cancelBtn").addEventListener("click", function() {
+            if (confirm("글 수정을 취소하시겠습니까?")) {
+            	 window.history.back();
+            }
+        });
     </script>
-    
-    
-<script src="/js/consult/consultationReservation.js"></script>
-<script src="/js/consult/reservationList.js"></script>
 </body>
 </html>

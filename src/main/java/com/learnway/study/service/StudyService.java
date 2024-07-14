@@ -95,7 +95,6 @@ public class StudyService {
 	public void updateBoard(StudyDto dto,ChatRoomDto chatRoomDto,StudyTagDto studyTagDto,
 			StudyProblemDto studyProblemDto,StudyProblemImgDto studyProblemImgDto
 			,MultipartFile[] files,Principal principal) {
-		
 		//게시글 수정
 		Study study = studyPostService.boardUpdate(dto,principal);
 		int postid = study.getPostid();
@@ -110,12 +109,13 @@ public class StudyService {
 		//태그값 수정
 		studyTagService.deleteTag(postid);
 		studyTagService.createTag(studyTagDto, study,postid);
-		
 		//문제 수정
-		int problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
-		
-		//문제이미지 저장
-		studyProblemImgService.problemImgUpdate(studyProblemImgDto,files,problemid);
+		Integer problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
+		System.out.println(problemid + ": 문제아이디");
+		if(problemid != null) {
+			//문제이미지 저장
+			studyProblemImgService.problemImgUpdate(studyProblemImgDto,files,problemid);
+		}
 	}
 	
 	
