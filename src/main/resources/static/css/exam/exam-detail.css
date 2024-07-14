@@ -17,9 +17,10 @@
 
 .exam-detail__container{
     width: 100%;
-    max-width: 1300px;
+    max-width: 1320px;
     height: 85vh;
     margin-top: 7vh;
+    padding: 0 10px 0 10px;
 }
 .exam-detail__btn-container{
     margin-bottom: 1rem;
@@ -41,13 +42,26 @@
     background-color: #fff;
     border-color: #343a40;
     cursor: pointer;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam-detail__go-list-btn>svg{
+    fill:#343a40;
+    height: 1rem;
+}
+.exam-detail__go-list-btn>svg:hover{
+    fill:#fff;
 }
 .exam-detail__go-list-btn:hover{
     color: #fff;
     background-color: #343a40;
     border-color: var(--learnwayBlack);
 }
-
+.exam-detail__go-list-btn:hover{
+    fill: #fff;
+}
 .ed-score{
     margin-right: 3px;
 }

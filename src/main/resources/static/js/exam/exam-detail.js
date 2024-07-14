@@ -16,6 +16,8 @@ function SubjectList({ examId }) {
     const [data, setData] = React.useState(null);
     const [ childData, setChildData ] = React.useState([]);
 
+    console.log("data",data)
+
     const fetchData = async (retryCount = 0) => {
         try {
             const response = await fetch(`/api/score/${examId}/1`);
@@ -130,19 +132,23 @@ function SubjectList({ examId }) {
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <button
-                            className="btn exam-detail__go-list-btn"
+                            className="btn exam-detail__go-list-btn btn"
                             onClick={() => { location.href = "/exam/list/1" }}
                         >
-                            시험목록
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/>
+                            </svg>
                         </button>
                     </div>
                     <div className="text-center exam-detail__title">
                         <span className="d-block">{examData?.examType.examTypeName}</span>
                         <span className="d-block">{examData?.examName}</span>
                         <span className="d-block">{examData?.examDate}</span>
+                        <span className="d-block">~</span>
+                        <span className="d-block">{examData?.examEndDate}</span>
                     </div>
                     <div>
-                        {data?
+                        {data && data.length>0?
                         <button className="btn exam-detail__reg-btn" onClick={handleModifyAll}>수정</button>
                         :
                         <button className="btn exam-detail__reg-btn" onClick={handleSubmitAll}>등록</button>

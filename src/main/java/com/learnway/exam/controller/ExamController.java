@@ -36,6 +36,7 @@ public class ExamController {
             Authentication authentication
             ){
         // get memId
+        System.out.println("endDate"+examEndDate);
         Member member = null;
         Long memId = null;
         if (authentication != null && authentication.isAuthenticated()) {

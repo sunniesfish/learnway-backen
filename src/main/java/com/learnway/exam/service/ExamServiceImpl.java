@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -271,6 +272,28 @@ public class ExamServiceImpl implements ExamService{
     @Override
     public List<Exam> findAllExam(Long memId) {
         List<Exam> list = examRepository.findAllByMemId(memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByExamTypeAndDate(Long memId, String examType, Date startDate, Date endDate) {
+        List<Exam> list = examRepository.findExamsByDateRangeMemberIdAndExamType(startDate, endDate, memId, examType);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByDate(Long memId, Date startDate, Date endDate) {
+        List<Exam> list = examRepository.findExamsByDateRangeMemberId(startDate, endDate, memId);
         if(!list.isEmpty()){
             list.forEach(exam -> {
                 exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));

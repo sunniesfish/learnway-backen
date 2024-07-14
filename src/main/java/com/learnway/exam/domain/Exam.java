@@ -36,7 +36,7 @@ public class Exam {
     @Column(name = "exam_date", nullable = false)
     private Date examDate;
 
-    @Column(name = "exam_end_date", nullable = false)
+    @Column(name = "exam_end_date", nullable = true)
     private Date examEndDate;
 
 
@@ -54,6 +54,7 @@ public class Exam {
         this.examName = examName;
         this.examType = examType;
         this.examDate = examDate;
+        this.examEndDate = examEndDate;
         this.examMemo = examMemo;
         this.scoreList = scoreList;
     }
