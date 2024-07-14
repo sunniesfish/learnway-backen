@@ -60,6 +60,15 @@ public class StudyProblemImgService {
                 } catch (S3Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+            	System.out.println(" 문제 이미지 없을때 서비스");
+            	  StudyProblemImg studyProblemImg = StudyProblemImg.builder()
+                          .imgdir("") // S3 URL만 사용하므로 비워둠
+                          .imgpath("")
+                          .correct("")
+                          .studyProblem(StudyProblem.builder().problemid(problemid).build())
+                          .build();
+                  studyProblemImgRepository.save(studyProblemImg);
             }
         }
     }
@@ -71,7 +80,9 @@ public class StudyProblemImgService {
                 try {
                     // S3에 이미지 업로드
                     String imageUrl = s3ImageService.upload(file,dir);
-
+                    if(imageUrl ==null) {
+                    	imageUrl="default.png";
+                    }
                     List<StudyProblemImg> list = studyProblemImgRepository.findByStudyProblemProblemid(problemid);
                     int pbimgId = 0;
                     for (StudyProblemImg a : list) {
