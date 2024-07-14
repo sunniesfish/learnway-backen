@@ -79,10 +79,10 @@
 
                         
                     <div class="d-flex w-100 justify-content-between">
-                        <h3 class="mb-2 study-title" th:text="${study.title}">Title</h3>
-                        <small th:text="${study.startdate}" class="text-muted">Start Date</small>
+                        <h3 class="mb-3 study-title" th:text="${study.title != null and study.title != ''} ? ${study.title} : '제목없음'">Title</h3>
+                        <small th:text="${study.createdate}" class="text-muted">Start Date</small>
                     </div>
-                    <p class="mb-1">
+                    <p class="mb-1 mt-4">
                         <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
                         <span th:each="tag : ${study.tags}" class="badge badge-light mr-1" th:text="${tag.tag}">Tag</span>
                     </p>
@@ -105,9 +105,10 @@
     <div th:each="study, iterStat : ${list}" th:if="${iterStat.index < 6}" class="col-md-4 mb-4">
         <div class="card h-100" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${study.title}">Title</h5>
+                            <h5 class="card-title" th:text="${study.title != null and study.title != ''} ? ${study.title} : '제목없음'">Title</h5>
+
                             <p class="card-text">
-                                <small class="text-muted" th:text="${study.startdate}">Start Date</small>
+                                <small class="text-muted" th:text="${study.createdate}">Start Date</small>
                             </p>
                             <p class="card-text">
                                 <span class="author" th:each="member : ${study.member}" th:text="${member.memberName}">작성자</span>
@@ -120,7 +121,10 @@
                             <div class="study-info">
                         <small>
                     <span class="ml-2" th:if="${study.chatroomCount > 0}">
-                        <i class="fas fa-comments"></i> 
+                        <i class="fas fa-comments"></i>
+                    </span>
+                    <span class="ml-2" th:if="${study.chatroomCount == 0}">
+                        <i class="far fa-comments"></i>
                     </span>
                     <span>&#128172; <span th:text="${study.repliesCount}">0</span></span>
                 </small>

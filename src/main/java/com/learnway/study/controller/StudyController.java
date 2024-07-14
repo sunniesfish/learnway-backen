@@ -130,6 +130,7 @@ public class StudyController {
 		Optional<Study> study =  studyService.updateView(dto);
 		if(study.isPresent()) {
 			model.addAttribute("study",study.get());
+			model.addAttribute("content",study.get().getContent().replace("<br>","\n"));
 			model.addAttribute("postid",dto.getPostid());
 			return "study/studyupdate";
 		}
