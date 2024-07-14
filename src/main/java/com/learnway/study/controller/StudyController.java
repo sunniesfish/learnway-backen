@@ -61,7 +61,7 @@ public class StudyController {
 
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
 	@GetMapping("/studylist")
-	public String studyList(@PageableDefault(size = 7) Pageable pageable, Model model) {
+	public String studyList(@PageableDefault(size = 6) Pageable pageable, Model model) {
 	    Page<Study> studies = studyPostService.getBoardList(pageable);
 
 	    int startPage = Math.max(1, studies.getNumber() + 1 - 4);
@@ -188,6 +188,7 @@ public class StudyController {
 			model.addAttribute("imgList",imgList);
 			model.addAttribute("chatRoom",chatRoom);
 			model.addAttribute("hostList",result);
+			model.addAttribute("member",principal.getName());
 			System.out.println(" 값 전달 성공");
 			return "study/studydetail";
 		}else {

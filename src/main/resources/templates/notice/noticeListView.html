@@ -17,16 +17,17 @@
     <div class="main__content">
         <div class="notice-list">
              <!-- 필터링 기능과 검색 기능  -->
-             <div class="d-flex justify-content-between mb-3">
+             <div class="d-flex justify-content-between mb-3 search-container">
                 <div>
                     <button type="button" class="btn btn-outline-secondary mr-2" onclick="filterNotices('전체')">전체</button>
                     <button type="button" class="btn btn-outline-secondary mr-2" onclick="filterNotices('점검')">점검</button>
                     <button type="button" class="btn btn-outline-secondary" onclick="filterNotices('서비스')">서비스</button>
                 </div>
                 <div>
-                    <form action="/notice/noticeList" class="form-inline" method="get">
-                        <input class="form-control mr-sm-2" type="search" id="keyword" name="keyword" placeholder="공지사항 검색" aria-label="Search">
-                        <button class="btn btn-outline-info my-2 my-sm-0" type="submit">검색</button>
+                    <form action="/notice/noticeList" class="search-form" method="get">
+                        <input class="search-input" type="text" id="keyword" name="keyword" placeholder="공지사항 검색" aria-label="Search">             
+                       	 <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+					    <a href="/notice/writeView" class="btn btn-outline-info my-2 my-sm-0 ml-3" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">글쓰기</a>
                     </form>
                 </div>
             </div>
@@ -51,11 +52,9 @@
 			        </div>
 			    </a>
 			</ul>
-			<!-- Priority 공지사항 끝 -->		
-			<div class="text-right mt-3" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
-			    <a href="/notice/writeView" class="btn btn-outline-info">글쓰기</a>
-			</div>
+			<!-- Priority 공지사항 끝 -->	
                 <!-- 페이징 처리 코드 추가 -->
+			<div class="footer-container">
                 <nav aria-label="Page navigation" th:if="${notice.totalPages > 0}">   
                     <ul class="pagination justify-content-center">
                         <!-- 이전 페이지 처리 -->
@@ -85,6 +84,7 @@
                         </li>
                     </ul>
                 </nav>
+              </div>
                 <!-- 페이징 처리 끝 -->
         </div>
     </div>

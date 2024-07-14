@@ -9,6 +9,10 @@ import com.learnway.member.dto.MemberUpdateDTO;
 import com.learnway.member.dto.TargetUniDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,8 +34,8 @@ public class MemberService {
     private final ConsultantRepository consultantRepository;
     private final TargetUniRepository targetUniRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;  // 비밀번호 암호화 저장
-    private final S3ImageService s3ImageService; // 추가된 부분
-    private static final String DEFAULT_IMAGE_PATH = "/img/member/member-default.png"; // 기본 이미지 상수
+    private final S3ImageService s3ImageService; // S3 AWS
+    private static final String DEFAULT_IMAGE_PATH = "/img/member/member-default.png"; // 기본 이미지 경로
 
     // ID 중복 체크 (컨설턴트까지 같이 비교)
     public boolean isUsernameTaken(String username) {
@@ -222,17 +226,17 @@ public class MemberService {
     //     }
     // }
 
-    // 전체 멤버 조회 (어드민)
-    public List<Member> findAllMembers() {
-        return memberRepository.findAll();
+    // 어드민
+    public Page<Member> findAllMembers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return memberRepository.findAll(pageable);
     }
 
-    // 멤버 검색 (어드민)
-    public List<Member> searchMembersByName(String name) {
-        return memberRepository.findByMemberNameContainingIgnoreCase(name);
+    public Page<Member> searchMembersByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return memberRepository.findByMemberNameContainingIgnoreCase(name, pageable);
     }
 
-    // 멤버 비고(노트) 업데이트 (어드민)
     public void updateMemberNote(Long id, String note) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));

@@ -82,6 +82,7 @@ public class NoticeService {
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
 		notice.setPriority(dto.isPriority());
 		notice.setMember(dto.getMemberId());
+		notice.setCategory(dto.getCategory());
 
 		noticeRepository.save(notice);
 
@@ -137,7 +138,8 @@ public class NoticeService {
 		dto.setNoticeImgPath(notice.getNoticeImgPath());
 		dto.setNoticeImgUname(notice.getNoticeImgUname());
 		dto.setMemberId(notice.getMember());
-
+		dto.setCategory(notice.getCategory());
+		dto.setPriority(notice.isPriority());
 		return dto;
 	}
 
