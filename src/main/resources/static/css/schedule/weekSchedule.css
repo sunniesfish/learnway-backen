@@ -31,7 +31,7 @@
 }
 
 .fc-event-studyway {
-  font-size: 13px;	
+  font-size: 12px;	
   font-weight: bold;
   margin-bottom: 5px;
 }
@@ -44,7 +44,7 @@
 }
 
 .fc-event-subtitle {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   margin: 2px 0px;
 }
@@ -289,7 +289,7 @@
 }
 
 .add-progress, .remove-progress {
-    width: 28px;
+    width: 25px;
     height: 30px;
     padding: 0;
     line-height: 1;
