@@ -10,17 +10,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="/js/admin/masterdata.js"></script>
     <script src="/js/admin/sidebar.js"></script>
-    <style>
-        .content-wrapper {
-            min-height: calc(100vh - 100px); /* 페이지 높이에서 헤더와 패딩을 제외한 높이 설정 */
-            position: relative;
-        }
-        .pagination-wrapper {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
 <div class="container-fluid">
@@ -32,11 +21,11 @@
         <!-- 빈공간 1 -->
         <div class="col-md-1"></div>
         <!-- 메인컨텐츠 8 -->
-        <div class="col-md-8 mt-5 content-wrapper">
-            <h2>기준 정보 조회</h2>
+        <div class="content__wrapper col-md-8 mt-5">
+            <h2>기준 정보 관리</h2>
             <hr>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-group w-50 mb-0">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="form-group mt-4 w-50">
                     <label for="viewCategory" class="sr-only">기준 정보 선택</label>
                     <select id="viewCategory" class="form-control" onchange="ViewMasterData()">
                         <option value="">카테고리를 선택하세요</option>

@@ -52,7 +52,7 @@ function ViewMasterData(page = 0) {
             rows += `<tr>
                 <td>${code}</td>
                 <td>${name}</td>
-                <td>${note}</td>
+                <td class="truncate">${note}</td> <!-- truncate 클래스를 사용하여 텍스트 길이 제한 -->
                 <td>
                 <a href="/admin/updateMasterData/${category.slice(0, -1)}/${code}" class="btn btn-outline-success btn-block" >수정</a>
                 </td>

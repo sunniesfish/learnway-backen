@@ -20,7 +20,7 @@
             <h2>기준 정보 추가</h2>
             <hr>
             <form th:action="@{/admin/addMasterData}" method="post" th:object="${masterDataDTO}">
-                <div class="form-group">
+                <div class="form-group mt-5">
                     <label for="category">기준 정보 선택:</label>
                     <select id="category" name="category" class="form-control" th:field="*{category}">
                         <option value="subject">Subject</option>

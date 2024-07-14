@@ -21,7 +21,7 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-8 mt-5" style="overflow-y: auto">
-            <h2 class="mb-4">Consultant Update</h2>
+            <h2 class="mb-4">컨설턴트 정보 수정</h2>
             <form th:action="@{/consult/update}" method="post" th:object="${consultantUpdateDTO}" enctype="multipart/form-data" onsubmit="validateForm(event)">
                 <input type="hidden" id="isUsernameChecked" value="true">
 
