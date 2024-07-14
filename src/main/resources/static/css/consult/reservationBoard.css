@@ -209,8 +209,8 @@ body {
 }
 
 #consultantInfoModal .card-img-top {
-    width: 200px; /* 고정된 너비 설정 */
-    height: 200px; /* 고정된 높이 설정 */
+    width: 200px; 
+    height: 200px; 
     display: block; /* 블록 요소로 설정하여 가운데 정렬을 위해 필요 */
     margin: 0 auto; /* 가운데 정렬 */
     margin-top: 20px; /* 위쪽 마진 설정 */
