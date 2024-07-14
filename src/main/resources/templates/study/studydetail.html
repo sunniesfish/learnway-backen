@@ -55,12 +55,15 @@
   <li class="list-group-item">
     <textarea class="form-control" id="content" name="content" rows="3"></textarea>
     <div class="action-buttons d-flex justify-content-start">
-      <button type="button" id="addReplyButton" class="btn btn-dark mr-2">댓글</button>
+      <button type="button" id="addReplyButton" class="btn btn-outline-secondary mr-2">댓글</button>
                             </div>
                             <div class="action-buttons d-flex justify-content-end mt-2">
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                    채팅방 입장
-                                </button>
+                            
+                            <div th:each="chatRoom : ${chatRoom}">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" th:if="${chatRoom.chatroomid} != 0">
+                            채팅방입장
+                            </button>
+   							 </div>
                                 <div th:if="${hostList==true}" class="ml-2">
                                     <form action="/studyupdateview" method="post" class="d-inline">
                                         <input type="hidden" id="postid" name="postid" th:value="${study.postid}">
@@ -68,6 +71,7 @@
                                     </form>
                                     <button class="btn btn-danger ml-2" id="boarddelete" name="boarddelete">삭제</button>
                                 </div>
+                                <button class="btn btn-outline-secondary mr-2" onclick="window.location.href='/studylist'">글목록</button>
                             </div>
                         </li>
                     </ul>

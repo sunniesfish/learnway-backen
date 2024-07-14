@@ -61,7 +61,7 @@ public class StudyController {
 
 //	@RequestMapping(value="/studylist",method= {RequestMethod.GET,RequestMethod.POST})
 	@GetMapping("/studylist")
-	public String studyList(@PageableDefault(size = 7) Pageable pageable, Model model) {
+	public String studyList(@PageableDefault(size = 6) Pageable pageable, Model model) {
 	    Page<Study> studies = studyPostService.getBoardList(pageable);
 
 	    int startPage = Math.max(1, studies.getNumber() + 1 - 4);
