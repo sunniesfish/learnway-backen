@@ -188,6 +188,7 @@ public class StudyController {
 			model.addAttribute("imgList",imgList);
 			model.addAttribute("chatRoom",chatRoom);
 			model.addAttribute("hostList",result);
+			model.addAttribute("member",principal.getName());
 			System.out.println(" 값 전달 성공");
 			return "study/studydetail";
 		}else {

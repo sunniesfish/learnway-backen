@@ -74,7 +74,10 @@
                 </div>
 
                 <div id="listView" class="list-group">
-                        <div th:each="study : ${list}" class="list-group-item list-group-item-action" th:onclick="window.location.href='/study/detail/' + [[${study.postid}]]">
+              <div th:each="study : ${list.content}" class="list-group-item list-group-item-action"
+         th:onclick="|window.location.href='/study/detail/' + ${study.postid} + '?page=' + ${list.number}|">
+
+                        
                     <div class="d-flex w-100 justify-content-between">
                         <h3 class="mb-2 study-title" th:text="${study.title}">Title</h3>
                         <small th:text="${study.startdate}" class="text-muted">Start Date</small>
