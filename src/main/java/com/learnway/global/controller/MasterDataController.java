@@ -4,6 +4,9 @@ import com.learnway.global.domain.ExamT;
 import com.learnway.global.domain.Material;
 import com.learnway.global.domain.Studyway;
 import com.learnway.global.domain.Subject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +17,7 @@ import com.learnway.global.service.MasterDataService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -39,16 +43,22 @@ public class MasterDataController {
         return "admin/addMasterData"; // 폼을 보여줄 뷰 이름
     }
 
-    // 기준 정보 추가
     @PostMapping("/addMasterData")
-    public String addMasterData(@Valid @ModelAttribute MasterDataDTO masterDataDTO, BindingResult bindingResult, Model model) {
-        //유효성 검사 실패 시 입력된 데이터 Model 에 담아서 현재 페이지 반환
+    public String addMasterData(@Valid @ModelAttribute MasterDataDTO masterDataDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        // 유효성 검사 실패 시 입력된 데이터 Model 에 담아서 현재 페이지 반환
         if (bindingResult.hasErrors()) {
             model.addAttribute("masterDataDTO", masterDataDTO);
             return "admin/addMasterData";
         }
-        masterDataService.addMasterData(masterDataDTO);
-        return "redirect:/admin/masterdata?message=success"; // 리다이렉트 경로 변경
+        // 중복 처리 예외
+        try {
+            masterDataService.addMasterData(masterDataDTO);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("masterDataDTO", masterDataDTO);
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/admin/addMasterData?error=true";
+        }
+        return "redirect:/admin/masterdata?message=success";
     }
 
     // 기준 정보 수정 폼
@@ -77,31 +87,32 @@ public class MasterDataController {
         return "redirect:/admin/masterdata?message=deleteSuccess";
     }
 
-    // 학습 종류 조회
     @GetMapping("/materials")
     @ResponseBody
-    public List<Material> getMaterials() {
-        return masterDataService.getMaterials();
+    public Page<Material> getMaterials(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return masterDataService.getMaterials(pageable);
     }
 
-    // 학업 구분 조회
     @GetMapping("/studyways")
     @ResponseBody
-    public List<Studyway> getStudyways() {
-        return masterDataService.getStudyways();
+    public Page<Studyway> getStudyways(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return masterDataService.getStudyways(pageable);
     }
 
-    // 과목 조회
     @GetMapping("/subjects")
     @ResponseBody
-    public List<Subject> getSubjects() {
-        return masterDataService.getSubjects();
+    public Page<Subject> getSubjects(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return masterDataService.getSubjects(pageable);
     }
 
-    // 시험 유형 조회
     @GetMapping("/exams")
     @ResponseBody
-    public List<ExamT> getExams() {
-        return masterDataService.getExams();
+    public Page<ExamT> getExams(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return masterDataService.getExams(pageable);
     }
+
 }
