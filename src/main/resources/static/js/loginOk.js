@@ -2,14 +2,17 @@ document.addEventListener('DOMContentLoaded', function() {
   var calendarEl = document.getElementById('calendar');
 
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    timeZone: 'UTC',
     initialView: 'dayGridMonth',
     editable: true,
     selectable: true,
+    slotMinTime: '06:00:00',
+    slotMaxTime: '29:59:59', // 다음날 오전 6시를 의미합니다
+    nextDayThreshold: '06:00:00',
+    initialDate: new Date(),
     eventContent: function(arg) {
 	    if (arg.event.title === "●") {
 	      return {
-      html: '<img src="/img/schedule/check3.png" alt="Check" style="width: 20px; height: 20px;  margin: 0 auto; display: block;">'
+      html: '<img src="/img/schedule/check3.png" alt="Check" style="width: 23px; height: 23px;  margin: 0 auto; display: block;">'
 			};
 	    }
 	  },

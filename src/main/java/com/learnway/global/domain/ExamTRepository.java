@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamTRepository extends JpaRepository<ExamT, String> {
+    boolean existsByExamCode(String examCode);
 }
