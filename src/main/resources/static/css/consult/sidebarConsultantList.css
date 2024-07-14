@@ -202,3 +202,28 @@ body.modal-open {
 #myModal .modal-consultant-body p + p {
     margin-top: 10px; /* 상담과목과 소개 내용 사이에 한 줄 띄우기 */
 }
+
+
+/* 페이지 네이션 버튼 스타일 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-container button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.pagination-container button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination-container button:hover:not(.active) {
+    background-color: #ddd;
+}
