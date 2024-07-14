@@ -37,8 +37,6 @@ public class ScoreRestController {
             ) {
         //get memId
         Long memId = userDetails.getMemberId();
-        System.out.println("memId = " + memId);
-        System.out.println("exmId = " + examId);
 
         Page<Score> page = examService.getScoreListByExam(examId, memId, PageRequest.of(pageNo-1,10));
         page.get().forEach(System.out::println);
@@ -67,10 +65,7 @@ public class ScoreRestController {
             @RequestBody List<ScoreRequestDTO> scoreRequestList,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-
-        System.out.println("list" + scoreRequestList);
         long memId = userDetails.getMemberId();
-        // 점수 처리 로직 (예: 데이터베이스에 저장)
         try {
             scoreRequestList.forEach(x -> {
                 Score score = Score.builder()
