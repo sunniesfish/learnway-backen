@@ -25,15 +25,13 @@ public class ExamServiceImpl implements ExamService{
     private final ExamTypeRepository examTypeRepository;
     private final ExamRepository examRepository;
     private final ScoreRepository scoreRepository;
-//    private final ScoreService scoreService;
 
     //시험 등록
     @Override
     @Transactional
     public void writeExam(Exam exam) {
-        // Save ExamType first if it is not already persisted
         ExamType examType = exam.getExamType();
-        if (examType.getExamTypeId() == null) { // Assuming ExamType has an ID field to check if it's persisted
+        if (examType.getExamTypeId() == null) {
             Optional<ExamType> examTypeOptional = examTypeRepository.findByExamTypeName(examType.getExamTypeName());
             if (examTypeOptional.isPresent()) {
                 exam.setExamType(examTypeOptional.get());

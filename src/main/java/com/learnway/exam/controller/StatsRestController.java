@@ -73,43 +73,6 @@ public class StatsRestController {
 
 
     //과목별 성적
-//    @GetMapping("/subject/{subjectCode}/{pageNo}")
-//    public ResponseEntity<Page<Score>> getScoreBySubject(
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @PathVariable("subjectCode") String subjectCode,
-//            @PathVariable("pageNo") int pageNo
-//    ) {
-//        Long memId = userDetails.getMemberId();
-//
-//        Page<Score> page = examService.getScoreListByExamType(memId, subjectCode, PageRequest.of(pageNo - 1, 10));
-//        return new ResponseEntity<>(page, HttpStatus.OK);
-//    }
-
-
-//    //시험 유형별 성적 추이
-//    @GetMapping("/{examTypeName}/{pageNo}")
-//    public ResponseEntity<Page> getScoreByExamType(
-//            @PathVariable("examTypeName") String examTypeName,
-//            @PathVariable("pageNo") int pageNo,
-//            @AuthenticationPrincipal CustomUserDetails userDetails
-//    ){
-//        Long memId = userDetails.getMemberId();
-//        Page<Exam> page;
-//        if(!examTypeName.equals("all")){
-//            page = examService.findScoreListByExamType(memId, examTypeName, PageRequest.of(pageNo-1, 5));
-//        } else {
-//            page = examService.findScoreList(memId, PageRequest.of(pageNo-1, 5));
-//        }
-//
-//        if(page != null){
-//            return new ResponseEntity<>(page, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
-
-
-    //과목별 성적
     @GetMapping("/admin/subject/{subjectCode}/{pageNo}")
     public ResponseEntity<Page<Score>> getScoreBySubjectAdmin(
             @AuthenticationPrincipal CustomUserDetails userDetails,

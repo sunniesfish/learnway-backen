@@ -94,20 +94,24 @@
                 </div>
                 <div class="modal-body">
                     <form action="/exam/register" method="post">
-                        <div class="form-group">
-                            <label for="exam__modal__form-name">시험 이름</label>
-                            <input type="text" class="form-control" id="exam__modal__form-name" name="examName" required placeholder="시험 이름을 입력하세요">
-                        </div>
                         <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="exam__modal__form-name">시험 이름</label>
+                                <input type="text" class="form-control" id="exam__modal__form-name" name="examName" required placeholder="시험 이름을 입력하세요">
+                            </div>
                             <div class="form-group col-md-6">
                                 <label for="exam__modal__form-type">시험 종류</label>
                                 <select class="form-control" id="exam__modal__form-type" name="examTypeName" required>
                                     <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-6">
-                                <label for="exam__modal__form-date">날짜</label>
+                        </div>
+                        <div class="form-group">
+                            <label >시험기간</label>
+                            <div>
                                 <input type="date" class="form-control" id="exam__modal__form-date" name="examDate" required>
+                                <span>부터</span>
+                                <input type="date" class="form-control" id="exam__modal__form-end-date" name="examEndDate" required>
                             </div>
                         </div>
                         <div class="form-group">
