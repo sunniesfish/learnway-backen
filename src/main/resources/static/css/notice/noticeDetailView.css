@@ -46,13 +46,6 @@
     color: #333;
 }
 
-.notice-detail .img-fluid {
-    max-width: 100%;
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
 .notice-detail .text-secondary strong{
     color: #666;
     font-size: 14px;
