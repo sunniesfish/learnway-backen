@@ -78,6 +78,9 @@ function SubjectList({ examId }) {
             credentials: "include",
             body: JSON.stringify(data)
         });
+        if(response.ok){
+            alert("등록 완료")
+        }
     };
     const fetchModify = async (examId, data) => {
         const response = await fetch(`/api/score/${examId}`, {
@@ -89,7 +92,7 @@ function SubjectList({ examId }) {
             body: JSON.stringify(data)
         });
         if (response.ok) {
-            console.log("성공");
+            alert("수정 완료")
         }
     };
     React.useEffect(() => {
@@ -110,25 +113,19 @@ function SubjectList({ examId }) {
         });
     }
 
-    const handleSubmitAll = async () => {
+    const handleSubmitAll = () => {
         const submitData = [];
         childData.forEach(data => {
             submitData.push(data.scoreData)
         });
-        const response = await fetchSubmit(examId,submitData);
-        if(response.ok){
-            alert("등록 완료")
-        }
+        fetchSubmit(examId,submitData);
     }
-    const handleModifyAll = async () => {
+    const handleModifyAll = () => {
         const submitData = [];
         childData.forEach(data => {
             submitData.push(data.scoreData)
         });
-        const response = await fetchModify(examId,submitData);
-        if(response.ok){
-            alert("수정 완료")
-        }
+        fetchModify(examId,submitData);
     }
 
 
