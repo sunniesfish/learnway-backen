@@ -31,7 +31,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -48,7 +48,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchSubjectData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -65,7 +65,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchExamData(retryCount + 1), 500);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -110,19 +110,25 @@ function SubjectList({ examId }) {
         });
     }
 
-    const handleSubmitAll = () => {
+    const handleSubmitAll = async () => {
         const submitData = [];
         childData.forEach(data => {
             submitData.push(data.scoreData)
         });
-        fetchSubmit(examId,submitData);
+        const response = await fetchSubmit(examId,submitData);
+        if(response.ok){
+            alert("등록 완료")
+        }
     }
-    const handleModifyAll = () => {
+    const handleModifyAll = async () => {
         const submitData = [];
         childData.forEach(data => {
             submitData.push(data.scoreData)
         });
-        fetchModify(examId,submitData);
+        const response = await fetchModify(examId,submitData);
+        if(response.ok){
+            alert("수정 완료")
+        }
     }
 
 

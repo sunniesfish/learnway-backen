@@ -16,6 +16,7 @@ import com.learnway.member.domain.Member;
 import com.learnway.member.domain.MemberRepository;
 import com.learnway.study.domain.Study;
 import com.learnway.study.domain.StudyRepository;
+import com.learnway.study.domain.StudyTagRepository;
 import com.learnway.study.dto.ChatRoomDto;
 import com.learnway.study.dto.StudyDto;
 import com.learnway.study.dto.StudyProblemDto;
@@ -36,11 +37,12 @@ public class StudyService {
 	private StudyProblemImgService studyProblemImgService;
 	private MemberRepository memberRepository;
 	private StudyRepository studyRepository;  
+	private StudyTagRepository studyTagRepository;  
 	@Autowired
 	public StudyService(StudyPostService studyPostService, StudyChatService studyChatService,
 						StudyTagService studyTagService,StudyProblemService studyProblemService
 						,StudyProblemImgService studyProblemImgService,MemberRepository memberRepository
-						,StudyRepository studyRepository) {
+						,StudyRepository studyRepository,StudyTagRepository studyTagRepository) {
 		this.studyPostService = studyPostService;
 		this.studyChatService = studyChatService;
 		this.studyTagService = studyTagService;
@@ -48,6 +50,7 @@ public class StudyService {
 		this.studyProblemImgService = studyProblemImgService;
 		this.memberRepository = memberRepository;
 		this.studyRepository = studyRepository;
+		this.studyTagRepository = studyTagRepository;
 	}
 	
 	
@@ -107,8 +110,9 @@ public class StudyService {
 			studyChatService.chatRoomUpdate(chatRoomDto, study,principal,postid);
 		}
 		//태그값 수정
-		studyTagService.deleteTag(postid);
-		studyTagService.createTag(studyTagDto, study,postid);
+		if(studyTagRepository.findByStudyPostid(postid) !=null) {
+		studyTagService.updateTag(studyTagDto,postid);
+		}
 		//문제 수정
 		Integer problemid = studyProblemService.problemUpdate(studyProblemDto,postid,principal);
 		System.out.println(problemid + ": 문제아이디");
