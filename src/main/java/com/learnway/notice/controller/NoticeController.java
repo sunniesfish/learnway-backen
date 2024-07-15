@@ -170,7 +170,7 @@ public class NoticeController {
 	//글 수정
 	@Transactional
 	@PostMapping("/rewrite/{noticeId}")
-	public String postMethodName(@ModelAttribute NoticeDto dto, @RequestParam("comFile") MultipartFile[] files,
+	public String postMethodName(NoticeDto dto, @RequestParam("comFile") MultipartFile[] files,
 	                             @RequestParam(value = "noticeImgUname", required = false) String noticeImgUname,
 	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath) {
 	    
