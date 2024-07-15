@@ -119,4 +119,12 @@ public class StudyRestController {
 		return studyChatService.searchChatStudy(dto);
 	}
 	
+	// 게시글 정답 체크메서드
+	@PostMapping("/problemCheck")
+	public boolean problemCheck(@RequestBody CorrectCheckDto dto,Principal principal) {
+		
+		return studyCorrectService.problemCheck(dto, principal);
+		
+	}
+	
 }
