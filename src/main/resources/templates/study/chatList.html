@@ -21,7 +21,7 @@
                             <i class="fas fa-comments"></i>
                         </div>
                         <div class="chat-name" th:text="${list.chatRoom.roomname}"></div>
-                        <div class="chat-host">방장: <span th:text="${list.member.memberName}"></span></div>
+                        <div class="chat-host">방장: <span th:text="${list.chatRoom.member.memberName}"></span></div>
                         <button class="btn-enter">입장하기</button>
                     </div>
                 </div>

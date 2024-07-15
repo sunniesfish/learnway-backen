@@ -149,6 +149,8 @@ public class StudyController {
 		
 		System.out.println("컨트롤러 접근");
 		System.out.println(studyTagDto.getTag());
+		System.out.println(files.length + " : 파일값");
+		System.out.println(files.toString() + " : 파일String");
 		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		return "redirect:/studylist";
 	}

@@ -70,7 +70,7 @@
                                     </form>
                                     <button class="btn btn-outline-danger mr-2" id="boarddelete" name="boarddelete">삭제</button>
                                 </div>
-                                <a th:href="@{/studylist(page=${param.page})}" class="btn btn-outline-secondary mr-2">글목록</a>
+                                <a id="listBtn" class="btn btn-outline-secondary mr-2">글목록</a>
                             </div>
                         </li>
                     </ul>
@@ -111,8 +111,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="correct_ck" >정답 제출</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-outline-info" id="correct_ck" >정답 제출</button>
             </div>
         </div>
     </div>
@@ -324,13 +323,16 @@ function updateReplyList(replyList) {
 	    replyListElement.find('.list-group-item:last').before(listItem);
 	  });
 	}
+	
+document.getElementById("listBtn").addEventListener("click", function() {
+    	 window.history.back();
+    
+});
 </script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/consult/consultationReservation.js"></script>
 <script src="/js/consult/reservationList.js"></script>
 <script src="/js/icon.js"></script>
