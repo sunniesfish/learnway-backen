@@ -172,8 +172,9 @@ public class NoticeController {
 	@PostMapping("/rewrite/{noticeId}")
 	public String postMethodName(NoticeDto dto, @RequestParam("comFile") MultipartFile[] files,
 	                             @RequestParam(value = "noticeImgUname", required = false) String noticeImgUname,
-	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath
-	                             ,Authentication authentication) {
+	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath,
+	                             @RequestParam(value = "noticeId", required = false) Long noticeId,
+	                             Authentication authentication) throws DataNotExeption {
 	    
 		Member member = null;
 		if(authentication != null && authentication.isAuthenticated()) {
@@ -181,6 +182,8 @@ public class NoticeController {
             member = user.getMember();
             dto.setMemberId(member);
 		}
+		
+		NoticeDto oDto = noticeService.findDetail(noticeId);
 		
 	    String imgURI = noticeImgPath;
 	    String imgOgName = noticeImgUname;
@@ -232,7 +235,7 @@ public class NoticeController {
 	    
 	    dto.setNoticeId(dto.getNoticeId());
 	    dto.setPriority(dto.isPriority());
-	    noticeService.rewrite(dto,member);
+	    noticeService.rewrite(dto,member,oDto);
 	    
 	    return "redirect:/notice/detail/" + dto.getNoticeId();
 	}
