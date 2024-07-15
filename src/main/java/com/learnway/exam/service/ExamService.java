@@ -6,6 +6,7 @@ import com.learnway.exam.dto.ExamDetailDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,4 +39,7 @@ public interface ExamService {
     public List<Exam> findExamByExamTypeAndYear(Long memId, String examType, int year);
     public List<Exam> findExamByYear(Long memId, int year);
     public List<Exam> findAllExam(Long memId);
+
+    public List<Exam> findExamByExamTypeAndDate(Long memId, String examType, Date startDate, Date endDate);
+    public List<Exam> findExamByDate(Long memId, Date startDate, Date endDate);
 }

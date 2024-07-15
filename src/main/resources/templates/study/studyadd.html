@@ -6,138 +6,7 @@
     <title>글 작성</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarConsultantList.css">
-    <link rel="stylesheet" type="text/css" href="/css/consult/sidebarReservationList.css">
-    <style>
-        .content-wrapper {
-            padding: 20px;
-        }
-        #form-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            min-height: 700px;
-            position: relative;
-        }
-        .form-row {
-            display: flex;
-            margin-right: -15px;
-            margin-left: -15px;
-        }
-        .form-col-left {
-            flex: 0 0 70%;
-            max-width: 70%;
-            padding: 0 15px;
-        }
-        .form-col-right {
-            flex: 0 0 30%;
-            max-width: 30%;
-            padding: 0 15px;
-            display: flex;
-            flex-direction: column;
-        }
-        .left-content {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .title-section {
-            flex: 0 0 10%;
-        }
-        .content-section {
-            flex: 0 0 70%;
-        }
-        .hashtag-section {
-            flex: 0 0 20%;
-        }
-        .date-section {
-            font-size: 0.9em;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .date-input {
-            width: 48%;
-        }
-        #image-preview img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.9);
-        }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-        }
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .close:hover,
-        .close:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .hashtag {
-            display: inline-block;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            padding: 3px 8px;
-            background-color: #f1f1f1;
-            border-radius: 5px;
-            font-size: 0.9em;
-        }
-        .hashtag-section {
-            position: absolute;
-            bottom: 70px;
-            left: 15px;
-            width: calc(70% - 30px);
-        }
-        .remove-button {
-            margin-left: 3px;
-            color: red;
-            cursor: pointer;
-            border: none;
-            background: none;
-            font-size: 0.8em;
-        }
-        #problem-details {
-            display: none;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        #problem-details.show {
-            display: block;
-        }
-       .submit-button {
-            position: absolute;
-            bottom: 20px;
-            right: 35px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/study/studyAdd.css" type="text/css"/>
 </head>
 <body>
     <div th:replace="sidebar :: sidebar"></div>
@@ -150,15 +19,14 @@
                         <div class="left-content">
                             <div class="title-section">
                                 <div class="form-group">
-                                    <label for="title">제목:</label>
-                                    <input type="text" id="title" name="title" class="form-control">
+                                <label></label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="제목">
                                 </div>
                             </div>
                             
                             <div class="content-section">
                                 <div class="form-group">
-                                    <label for="content">내용:</label>
-                                    <textarea id="content" name="content" class="form-control" rows="10"></textarea>
+                                    <textarea id="content" name="content" class="form-control" rows="15" placeholder="내용"></textarea>
                                 </div>
                             </div>
                             
@@ -177,7 +45,7 @@
                         <div class="date-section">
                             <div class="date-input">
                                 <label for="startdate">시작일:</label>
-                                <input type="date" id="startdatetest" name="startdatetest" class="form-control">
+                                <input type="date" id="startdatetest" name="startdatetest" class="form-control" >
                             </div>
                             <div class="date-input">
                                 <label for="enddate">종료일:</label>
@@ -187,7 +55,7 @@
                         
                         <div class="form-group">
                             <label for="roomname">채팅방 생성:</label>
-                            <button type="button" class="btn btn-primary btn-sm" onclick="showPopup(event);">생성하기</button>
+                            <button type="button" class="btn btn-outline-info my-2 my-sm-0" onclick="showPopup(event);">생성하기</button>
                         </div>
                         
                         <input type="hidden" name="roomname" id="roomname">
@@ -203,54 +71,42 @@
                         </div>
                         
                         <div id="problem-details">
-                            <!-- <div class="form-group">
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" name="problemtype" value="1" id="direct" class="form-check-input">
-                                    <label class="form-check-label" for="direct">직접출제</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input type="radio" name="problemtype" value="2" id="random" class="form-check-input">
-                                    <label class="form-check-label" for="random">랜덤</label>
-                                </div>
-                            </div> -->
                             
-                            <div class="form-group">
-                                <label for="imgpath">이미지 파일 업로드:</label>
+                            <div id="additional-fields">
+                               <div class="form-group form-inline ">
+				    <label for="subject" >과목 : </label> 
+				    <select id="subject" name="subject" class="form-control form-control-sm ml-1">
+				        <option value="과목">과목</option>
+				        <option value="국어">국어</option>
+				        <option value="영어">영어</option>
+				        <option value="수학">수학</option>
+				        <option value="사탐">사탐</option>
+				        <option value="과탐">과탐</option>
+				        <option value="기타">기타</option>
+				    </select>
+				    <label for="level" class="ml-3">난이도:</label>
+				    <select id="level" name="level" class="form-control form-control-sm ml-1">
+				        <option value="난이도">난이도</option>
+				        <option value="상">상</option>
+				        <option value="중">중</option>
+				        <option value="하">하</option>
+				    </select>
+				</div>
+				
+				<div class="form-group">
+                                    <input type="text" id="correct" name="correct" class="form-control mt-1" placeholder="정답을 입력해주세요.">
+                                </div>
+                            </div>
+                            
+                             <div class="form-group">
+                                <label for="imgpath">문제 이미지 업로드 : </label>
                                 <input type="file" id="imgpath" name="imgpath" class="form-control-file" multiple accept="image/*" onchange="previewImages(event)">
                                 <div id="image-preview"></div>
                             </div>
-                            
-                            <div id="additional-fields">
-                                <div class="form-group">
-                                    <label for="correct">정답:</label>
-                                    <input type="text" id="correct" name="correct" class="form-control">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="subject">과목:</label>
-                                    <select id="subject" name="subject" class="form-control">
-                                        <option value="과목">과목</option>
-                                        <option value="국어">국어</option>
-                                        <option value="영어">영어</option>
-                                        <option value="수학">수학</option>
-                                        <option value="사탐">사탐</option>
-                                        <option value="과탐">과탐</option>
-                                        <option value="기타">기타</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="level">난이도:</label>
-                                    <select id="level" name="level" class="form-control">
-                                        <option value="난이도">난이도</option>
-                                        <option value="상">상</option>
-                                        <option value="중">중</option>
-                                        <option value="하">하</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                         <div class="submit-button">
-                            <button type="submit" class="btn btn-success mt-3">작성</button>
+                            <button type="submit" class="btn btn-outline-info my-2 my-sm-0">작성</button>
+                            <button type="button" id="cancelBtn" name="cancelBtn" class="btn btn-outline-secondary my-2 my-sm-0">취소</button>
                         </div>
                     </div>
                 </div>
@@ -321,12 +177,20 @@
         document.getElementById('additional-fields').style.display = 'block';
     }
 
-function openModal(src) {
-    var modal = document.getElementById('imageModal');
-    var modalImg = document.getElementById("modalImage");
-    modal.style.display = "block";
-    modalImg.src = src;
-}
+    function openModal(src) {
+        var modal = document.getElementById('imageModal');
+        var modalImg = document.getElementById("modalImage");
+
+        // 이미지 크기 설정
+        modalImg.style.maxWidth = "50vw";  
+        modalImg.style.maxHeight = "80vh"; 
+        modalImg.src = src;
+
+        // 모달을 화면 중앙에 표시
+        modal.style.display = "flex";
+        modal.style.alignItems = "center";
+        modal.style.justifyContent = "center";
+    }
 
 function slideDown(element, duration = 500) {
     element.style.display = 'block';
@@ -378,74 +242,85 @@ function toggleProblemDetails(event) {
 }
 
 
-    window.onload = function() {
-        var today = new Date().toISOString().split('T')[0];
-        var startdate = document.getElementById("startdatetest");
-        var enddate = document.getElementById("enddatetest");
+window.onload = function() {
+    var today = new Date().toISOString().split('T')[0];
+    var startdate = document.getElementById("startdatetest");
+    var enddate = document.getElementById("enddatetest");
 
-        startdate.setAttribute('min', today);
-        enddate.setAttribute('min', today);
+    startdate.setAttribute('min', today);
+    enddate.setAttribute('min', today);
 
-        /* 모달함수 */
-        var modal = document.getElementById('imageModal');
-        var span = document.getElementsByClassName("close")[0];
-        span.onclick = function() {
+    /* 모달함수 */
+    var modal = document.getElementById('imageModal');
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    }
+
+    startdate.addEventListener('change', function() {
+        var selectedDate = new Date(startdate.value);
+        var endDate = new Date(selectedDate);
+        endDate.setDate(selectedDate.getDate() + 7);
+
+        var formattedEndDate = endDate.toISOString().split('T')[0];
+
+        enddate.setAttribute('min', selectedDate.toISOString().split('T')[0]);
+        enddate.value = formattedEndDate;
+
+        if (enddate.value < selectedDate.toISOString().split('T')[0]) {
+            enddate.value = selectedDate.toISOString().split('T')[0];
         }
-        
-        startdate.addEventListener('change', function() {
-            var selectedDate = startdate.value;
-            enddate.setAttribute('min', selectedDate);
-            if (enddate.value < selectedDate) {
-                enddate.value = selectedDate;
-            }
-        });
+    });
 
         /* 해시태그 복붙 */
-        const hashtagsInput = document.getElementById("hashtags");
-        const hashtagsContainer = document.getElementById("hashtags-container");
-        const hiddenHashtagsInput = document.getElementById("tag");
+      const hashtagsInput = document.getElementById("hashtags");
+	  const hashtagsContainer = document.getElementById("hashtags-container");
+	  const hiddenHashtagsInput = document.getElementById("tag");
 
-        let hashtags = [];
+	let hashtags = [];
 
-        function addHashtag(tag) {
-            tag = tag.replace(/[\[\]]/g, '').trim();
-            if (tag && !hashtags.includes(tag)) {
-                const span = document.createElement("span");
-                span.innerText = "#" + tag;
-                span.classList.add("hashtag");
+function addHashtag(tag) {
+    tag = tag.replace(/[\[\],]/g, '').trim(); // 쉼표(,)와 대괄호([]) 제거
+    if (tag && !hashtags.includes("#" + tag)) { // 중복 체크를 추가함
+        const span = document.createElement("span");
+        span.innerText = "#" + tag;
+        span.classList.add("hashtag");
 
-                const removeButton = document.createElement("button");
-                removeButton.innerText = "x";
-                removeButton.classList.add("remove-button");
-                removeButton.addEventListener("click", () => {
-                    hashtagsContainer.removeChild(span);
-                    hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
-                    hiddenHashtagsInput.value = hashtags.join(",");
-                });
+        const removeButton = document.createElement("button");
+        removeButton.innerText = "x";
+        removeButton.classList.add("remove-button");
+        removeButton.addEventListener("click", () => {
+            hashtagsContainer.removeChild(span);
+            hashtags = hashtags.filter((hashtag) => hashtag !== "#" + tag);
+            hiddenHashtagsInput.value = hashtags.join(",");
+        });
 
-                span.appendChild(removeButton);
-                hashtagsContainer.appendChild(span);
-                hashtags.push("#" + tag);
-                hiddenHashtagsInput.value = hashtags.join(",");
-            }
-        }
+        span.appendChild(removeButton);
+        hashtagsContainer.appendChild(span);
+        hashtags.push("#" + tag);
+        hiddenHashtagsInput.value = hashtags.join(",");
+    } else {
+        console.log("이미 추가된 태그입니다."); // 이미 추가된 경우 콘솔에 로그 출력
+    }
+}
 
-        hashtagsInput.addEventListener("keydown", (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const tag = hashtagsInput.value.trim();
-                if (tag) {
-                    addHashtag(tag);
-                    hashtagsInput.value = "";
-                }
+hashtagsInput.addEventListener("keydown", (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const tags = hashtagsInput.value.split(','); // 쉼표(,)로 분할
+        tags.forEach(tag => {
+            if (tag.trim()) {
+                addHashtag(tag.trim());
             }
         });
+        hashtagsInput.value = "";
+    }
+});
         document.getElementById('problem').addEventListener('click', toggleProblemDetails);
         
         document.querySelectorAll('input[type="text"], input[type="date"]').forEach(input => {
@@ -456,6 +331,12 @@ function toggleProblemDetails(event) {
             });
         });
     }
+    
+document.getElementById("cancelBtn").addEventListener("click", function() {
+    if (confirm("글 작성을 취소하시겠습니까?")) {
+        location.href = "/studylist";
+    }
+});
 </script>
 </body>
 </html>

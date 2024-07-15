@@ -5,6 +5,11 @@
 .content-wrapper {
         padding: 20px;
     }
+    
+    .title{
+    	font-size: 28px;
+    	font-weight: normal;
+    }
     #detail-container {
         background-color: #fff;
         padding: 20px;
@@ -71,7 +76,7 @@
         margin-top: 10px;
     }
     .action-buttons button, .action-buttons form {
-        margin-left: 10px;
+        margin-left: 2px;
     }
     
      .reply-item {

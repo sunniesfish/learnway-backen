@@ -35,7 +35,7 @@ public class StudyProblemImg {
 	@Column(name="study_imgpath")
 	private String imgpath;
 	
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "study_problemid", nullable = false)
 	private StudyProblem studyProblem;
 }

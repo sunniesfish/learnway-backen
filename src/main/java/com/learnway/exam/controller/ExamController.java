@@ -31,10 +31,12 @@ public class ExamController {
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
             @RequestParam(name = "examDate") Date examDate,
+            @RequestParam(name = "examEndDate") Date examEndDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication
             ){
         // get memId
+        System.out.println("endDate"+examEndDate);
         Member member = null;
         Long memId = null;
         if (authentication != null && authentication.isAuthenticated()) {
@@ -51,6 +53,7 @@ public class ExamController {
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
                             .examDate(examDate)
+                            .examEndDate(examEndDate)
                             .examMemo(examMemo).build()
             );
         }
@@ -91,6 +94,7 @@ public class ExamController {
             @RequestParam(name = "examName") String examName,
             @RequestParam(name = "examTypeName") String examTypeName,
             @RequestParam(name = "examDate") Date examDate,
+            @RequestParam(name = "examEndDate") Date examEndDate,
             @RequestParam(name = "examMemo") String examMemo,
             Authentication authentication
     ){
@@ -113,6 +117,7 @@ public class ExamController {
                             .examName(examName)
                             .examType(ExamType.builder().examTypeName(examTypeName).build())
                             .examDate(examDate)
+                            .examEndDate(examEndDate)
                             .examMemo(examMemo).build()
             );
         }

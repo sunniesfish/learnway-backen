@@ -7,26 +7,29 @@
 
 .exam__container{
     width: 100%;
-    max-width: 1300px;
+    max-width: 1320px;
     height: 85vh;
     margin-top: 7vh;
+    padding: 0 10px 0 10px;
 }
 
 .exam__item__delete-btn{
-    background-color: transparent;
-    border: none;
+    background-color: #fff;
+    color: #343a40;
+    border: 1px solid #343a40;
 }
 .exam__item__delete-btn:hover{
-    outline: none;
+    background-color: tomato;
+    color: #fff;
 }
-.exam__item__delete-btn>svg{
+/* .exam__item__delete-btn>svg{
     width: 10px;
     fill:rgb(102, 102, 102);
     transition: fill .1s ease-in-out;
 }
 .exam__item__delete-btn>svg:hover{
     fill: tomato;
-}
+} */
 
 .exam__btn-box{
     display: flex;

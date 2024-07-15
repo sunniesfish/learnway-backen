@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-// ★ 세션에 저장되는 사용자 정보
+// ★ 세션에 저장되는 사용자 정보라고 생각하면 됨
 // CustomUserDetailsService 에서 반환된 UserDetails 인터페이스를 구현한 클래스
 @RequiredArgsConstructor
 @Getter
@@ -18,6 +18,8 @@ public class CustomUserDetails implements UserDetails {
     private final Member member;
 
     // ---------------------------- 커스텀 메서드 ----------------------------------------
+    // 엔티티에서 세션에 저장 필요한 것들
+
     // 멤버 PK 반환 메서드
     public long getMemberId() {
         return member.getId();
@@ -27,6 +29,7 @@ public class CustomUserDetails implements UserDetails {
         return member.getMemberName();
     }
 
+    // 이미지
     public String getImage() {
         String memberImage = member.getMemberImage();
         if (memberImage != null && !memberImage.isEmpty() && !memberImage.equals("/img/member/member-default.png")) {
