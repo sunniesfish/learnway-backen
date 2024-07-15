@@ -3,7 +3,9 @@
 @import "/css/consult/sidebarReservationList.css";
 
 
-
+td{
+    vertical-align: middle;
+}
 
 .exam__container{
     width: 100%;
