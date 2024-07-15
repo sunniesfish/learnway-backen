@@ -31,7 +31,7 @@
 }
 
 .fc-event-studyway {
-  font-size: 13px;	
+  font-size: 12px;	
   font-weight: bold;
   margin-bottom: 5px;
 }
@@ -44,7 +44,7 @@
 }
 
 .fc-event-subtitle {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   margin: 2px 0px;
 }
@@ -97,7 +97,7 @@
     display: none !important;
 }
 
-/*월간에서 일일상세모달창*/
+/* "월간"에서 일일상세모달창====================================*/
 .modal-content {
   border-radius: 0.5rem;
   margin: auto;
@@ -117,7 +117,11 @@
   font-weight: 600;
 }
 
-
+ .schedule-table tbody td:nth-child(4) {
+    text-align: right;
+    padding-right: 30px !important;
+  }
+  
 .modal-backdrop {
     display: none;
 }
@@ -289,7 +293,7 @@
 }
 
 .add-progress, .remove-progress {
-    width: 28px;
+    width: 25px;
     height: 30px;
     padding: 0;
     line-height: 1;

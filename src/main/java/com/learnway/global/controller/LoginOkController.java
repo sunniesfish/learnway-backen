@@ -34,16 +34,13 @@ public class LoginOkController {
 	@Autowired
 	private LoginOkService loginOkService;
 	
-	@Autowired
-	private ScheduleService scheduleService;
-	
 	// 시큐리티 로그인 성공 후 Redirect 경로 Get 매핑 -> 하기 메서드는 로그인 후 홈이 설정되면 삭제될 예정
     @GetMapping("/loginOk")
     public String loginOK(Model model,@RequestParam(value="page", defaultValue="0") int page) {
     	
     	//공지사항 부분
 		Page<Notice> priNotice;
-		Pageable pri = PageRequest.of(page, 4);
+		Pageable pri = PageRequest.of(page, 8);
 		priNotice = noticeService.priNoticeList(pri);
 		System.out.println(priNotice);
 		model.addAttribute("priNotice",priNotice);

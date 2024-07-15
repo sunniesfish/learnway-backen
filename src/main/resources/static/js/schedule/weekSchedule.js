@@ -92,7 +92,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 
     	
-    	
+    	function initializeProgressCount() {
+		  progressCount = $("#updateModal #progressEntries .progress-entry").length;
+		  console.log(progressCount);
+		  
+		  if (progressCount < 5) {
+		    $("#updateModal .add-progress").css("display", "inline-block");
+		  } else {
+		    $("#updateModal .add-progress").css("display", "none");
+		  }
+		}
 		      
       var calendar = new FullCalendar.Calendar(calendarEl, {
     	
@@ -173,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				$("#progressEntries .progress-entry:not(:first)").each(function() {
 				    var materialId = $(this).find("select[name='material[]']").val();
 				    var progress = $(this).find("input[name='progress[]']").val();
-				    var achieveRate = $(this).find("input[name='achieveRate[][]']").val();
+				    var achieveRate = $(this).find("input[name='achieveRate[]']").val();
 				    if (materialId && progress) {
 				        progressList.push({
 				            materialId: materialId,
@@ -250,28 +259,28 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			updateCustomTitle(arg.view);
 			
-		    var weeklySummaryButton = document.querySelector('.fc-weeklySummary-button');
-  var monthButton = document.querySelector('.fc-dayGridMonth-button');
-  var weekButton = document.querySelector('.fc-timeGridWeek-button');
-
-  if (weeklySummaryButton) {
-    if (arg.view.type === 'timeGridWeek') {
-      weeklySummaryButton.style.display = 'inline-block';
-    } else {
-      weeklySummaryButton.style.display = 'none';
-    }
-  }
-
-  if (monthButton && weekButton) {
-    if (arg.view.type === 'dayGridMonth') {
-      weekButton.style.display = 'inline-block';
-      monthButton.style.display = 'none';
-    } else if (arg.view.type === 'timeGridWeek') {
-      weekButton.style.display = 'none';
-      monthButton.style.display = 'inline-block';
-    }
-  }
-		    		    
+		      var weeklySummaryButton = document.querySelector('.fc-weeklySummary-button');
+			  var monthButton = document.querySelector('.fc-dayGridMonth-button');
+			  var weekButton = document.querySelector('.fc-timeGridWeek-button');
+			
+			  if (weeklySummaryButton) {
+			    if (arg.view.type === 'timeGridWeek') {
+			      weeklySummaryButton.style.display = 'inline-block';
+			    } else {
+			      weeklySummaryButton.style.display = 'none';
+			    }
+			  }
+			
+			  if (monthButton && weekButton) {
+			    if (arg.view.type === 'dayGridMonth') {
+			      weekButton.style.display = 'inline-block';
+			      monthButton.style.display = 'none';
+			    } else if (arg.view.type === 'timeGridWeek') {
+			      weekButton.style.display = 'none';
+			      monthButton.style.display = 'inline-block';
+			    }
+			  }
+					    		    
 		  },
         eventClick:function(info){ // 주간에서는 수정 월간에서는 일일 상세페이지 부분 (날짜 & 시간 클릭 이벤트)
         	
@@ -539,6 +548,9 @@ document.addEventListener('DOMContentLoaded', function() {
                  });
 	        }else{
 		        clickedDate = info.event.start;
+		        
+		        // 날짜에 하루를 더함
+				clickedDate.setDate(clickedDate.getDate() + 1);
     
 			    // 날짜를 'YYYY-MM-DD' 형식의 문자열로 변환
 			    clickedDate = clickedDate.toISOString().split('T')[0];
@@ -559,7 +571,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     var avgAchieveRate = schedules.find(function(data) {
                         return data.hasOwnProperty('avgAchieveRate');
                     }).avgAchieveRate;
-                    $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
+                    
+                    var avgImageSrc = '';
+					if (avgAchieveRate >= 0 && avgAchieveRate <= 30) {
+					  avgImageSrc = '/img/schedule/sad.png';
+					} else if (avgAchieveRate >= 31 && avgAchieveRate <= 70) {
+					  avgImageSrc = '/img/schedule/neutral.png';
+					} else if (avgAchieveRate >= 71 && avgAchieveRate <= 100) {
+					  avgImageSrc = '/img/schedule/happy.png';
+					}
+
+
+                    $('.average-achieve-rate').html('일일평균달성율: ' + avgAchieveRate + '%' +
+  						'<img src="' + avgImageSrc + '" alt="Average Emotion" style="width: 20px; height: 20px; margin-left: 5px; vertical-align: middle; margin-bottom:5px;">');
 
                     // 일정 데이터 설정
                     var tableBody = $('.schedule-table tbody');
@@ -611,7 +635,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     var avgAchieveRate = schedules.find(function(data) {
                         return data.hasOwnProperty('avgAchieveRate');
                     }).avgAchieveRate;
-                    $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
+                    
+                    var avgImageSrc = '';
+					if (avgAchieveRate >= 0 && avgAchieveRate <= 30) {
+					  avgImageSrc = '/img/schedule/sad.png';
+					} else if (avgAchieveRate >= 31 && avgAchieveRate <= 70) {
+					  avgImageSrc = '/img/schedule/neutral.png';
+					} else if (avgAchieveRate >= 71 && avgAchieveRate <= 100) {
+					  avgImageSrc = '/img/schedule/happy.png';
+					}
+
+
+                    $('.average-achieve-rate').html('일일평균달성율: ' + avgAchieveRate + '%' +
+  						'<img src="' + avgImageSrc + '" alt="Average Emotion" style="width: 20px; height: 20px; margin-left: 5px; vertical-align: middle; margin-bottom:5px;">');
 
                     // 일정 데이터 설정
                     var tableBody = $('.schedule-table tbody');
@@ -695,7 +731,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					$("#progressEntries .progress-entry:not(:first)").each(function() {
 					    var materialId = $(this).find("select[name='material[]']").val();
 					    var progress = $(this).find("input[name='progress[]']").val();
-					    var achieveRate = $(this).find("input[name='achieveRate[][]']").val();
+					    var achieveRate = $(this).find("input[name='achieveRate[]']").val();
 					    if (materialId && progress) {
 					        progressList.push({
 					            materialId: materialId,
@@ -1159,7 +1195,9 @@ function setDefaultViewTitle(view, titleEl) {
  
 });
 
-
+$("#updateModal").on("show.bs.modal", function() {
+  initializeProgressCount();
+});
 
 $("#updateModal").on("hidden.bs.modal", function() {
   // 수정 모달 창이 닫힌 후 실행되는 코드
