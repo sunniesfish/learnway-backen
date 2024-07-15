@@ -10,9 +10,10 @@
 }
 
 .notice-content img {
-  max-width: 100%; /* 이미지의 최대 너비를 컨테이너의 너비에 맞춤 */
+  max-width: 30%; /* 이미지의 최대 너비를 컨테이너의 너비에 맞춤 */
   height: auto; /* 이미지의 높이를 자동으로 조절 */
-  margin-bottom: 15px; /* 이미지 아래 여백 추가 */
+  margin: 0 auto 15px; /* 이미지를 가운데 정렬하고 아래 여백 추가 */
+  display: block; /* 이미지를 블록 레벨 요소로 설정 */
 }
 
 .notice-detail {
