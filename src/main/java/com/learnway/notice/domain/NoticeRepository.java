@@ -26,4 +26,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>{
 	
 	Page<Notice> findByNoticeTitleContainingOrderByCreateDateDesc(Pageable pageable,String keyword);
 	Page<Notice> findByCategoryContainingOrderByCreateDateDesc(String category, Pageable pageable);
+	Page<Notice> findByNoticeTitleContainingAndCategoryContaining(String keyword, String category,
+			Pageable pageable);
 }
