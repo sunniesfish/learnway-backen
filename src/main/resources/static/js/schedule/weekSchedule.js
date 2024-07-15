@@ -126,8 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		      text: '주간 요약',
 		      click: function() {
 		        var view = calendar.view.type;
-		        var currentDate = calendar.getDate();
-		        var formattedDate = currentDate.toISOString().slice(0, 10);
+			    var currentDate = calendar.getDate();
+			    var startOfWeek = calendar.view.currentStart;
+			    var endOfWeek = calendar.view.currentEnd;
 		
 		        if(view === 'timeGridWeek') {
 		          showLoadingSpinner(); // 로딩 스피너 표시
@@ -135,7 +136,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		          $.ajax({
 		            url:"/api/weeklySummary",
 		            type:"get",
-		            data: {currentDate: formattedDate},
+		            data: {startDate: startOfWeek.toISOString().slice(0, 10),
+          			       endDate: endOfWeek.toISOString().slice(0, 10)},
 		            contentType: 'application/json',
 		            success: function(response) {
 		              console.log(response); // 응답 객체 출력
