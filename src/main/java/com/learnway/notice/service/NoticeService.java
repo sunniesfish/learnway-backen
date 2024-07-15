@@ -45,6 +45,13 @@ public class NoticeService {
 		return noticeRepository.findByPriorityTrueOrderByCreateDateDesc(pageable);
 	}
 
+	//카테고리 
+	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
+		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
+	}
+	public Page<Notice> noticeSearchCategoryList(Pageable pageable, String keyword, String category) {
+	    return noticeRepository.findByNoticeTitleContainingAndCategoryContaining(keyword, category, pageable);
+	}
 
 
 	//글쓰기
@@ -70,7 +77,7 @@ public class NoticeService {
 	}
 
 	//글수정
-	public void rewrite(NoticeDto dto) {
+	public void rewrite(NoticeDto dto, Member member, NoticeDto oDto) {
 
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
 
@@ -80,8 +87,8 @@ public class NoticeService {
 		notice.setNoticeContent(formattedContent);
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
-		notice.setPriority(dto.isPriority());
-		notice.setMember(dto.getMemberId());
+		notice.setCreateDate(oDto.getCreateDate());
+		notice.setMember(member);
 		notice.setCategory(dto.getCategory());
 
 		noticeRepository.save(notice);
@@ -143,10 +150,6 @@ public class NoticeService {
 		return dto;
 	}
 
-	//카테고리 
-	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
-		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
-	}
 
 
 }

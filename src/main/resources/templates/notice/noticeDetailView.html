@@ -27,13 +27,10 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="mb-3">
+					<div class="notice-content">
 					    <img th:if="${notice.noticeImgPath != null and !notice.noticeImgPath.isEmpty()}" 
 					         th:src="${notice.noticeImgPath}" 
-					         class="img-fluid" 
-					         alt="글 이미지">
-					</div>
-					<div class="notice-content">
+					         alt="글 이미지">				
                     	<p th:utext="${notice.noticeContent}">글 내용</p>
                     </div>
                     <hr>

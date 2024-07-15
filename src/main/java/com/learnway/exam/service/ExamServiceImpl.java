@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,15 +26,13 @@ public class ExamServiceImpl implements ExamService{
     private final ExamTypeRepository examTypeRepository;
     private final ExamRepository examRepository;
     private final ScoreRepository scoreRepository;
-//    private final ScoreService scoreService;
 
     //시험 등록
     @Override
     @Transactional
     public void writeExam(Exam exam) {
-        // Save ExamType first if it is not already persisted
         ExamType examType = exam.getExamType();
-        if (examType.getExamTypeId() == null) { // Assuming ExamType has an ID field to check if it's persisted
+        if (examType.getExamTypeId() == null) {
             Optional<ExamType> examTypeOptional = examTypeRepository.findByExamTypeName(examType.getExamTypeName());
             if (examTypeOptional.isPresent()) {
                 exam.setExamType(examTypeOptional.get());
@@ -273,6 +272,28 @@ public class ExamServiceImpl implements ExamService{
     @Override
     public List<Exam> findAllExam(Long memId) {
         List<Exam> list = examRepository.findAllByMemId(memId);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByExamTypeAndDate(Long memId, String examType, Date startDate, Date endDate) {
+        List<Exam> list = examRepository.findExamsByDateRangeMemberIdAndExamType(startDate, endDate, memId, examType);
+        if(!list.isEmpty()){
+            list.forEach(exam -> {
+                exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));
+            });
+        };
+        return list;
+    }
+
+    @Override
+    public List<Exam> findExamByDate(Long memId, Date startDate, Date endDate) {
+        List<Exam> list = examRepository.findExamsByDateRangeMemberId(startDate, endDate, memId);
         if(!list.isEmpty()){
             list.forEach(exam -> {
                 exam.setScoreList(scoreRepository.findAllByMemIdAndExam_ExamId(memId, exam.getExamId()));

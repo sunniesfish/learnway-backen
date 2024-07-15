@@ -8,14 +8,12 @@
     height: 40px;
 }
 
-    .content-wrapper {
-        padding: 20px;
-    }
     #form-container {
         background-color: #fff;
-        padding: 20px;
         border-radius: 8px;
-        min-height: 700px;
+        max-width: 1300px;
+ 	    height: 85vh;
+   	    margin-top: 7vh;
         position: relative;
     }
     .form-row {
@@ -101,20 +99,30 @@
         cursor: pointer;
     }
     .hashtag {
-        display: inline-block;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        padding: 3px 8px;
-        background-color: #f1f1f1;
-        border-radius: 5px;
-        font-size: 0.9em;
-    }
-    .hashtag-section {
-        position: absolute;
-        bottom: 70px;
-        left: 15px;
-        width: calc(70% - 30px);
-    }
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    padding: 3px 8px;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    font-size: 0.9em;
+}
+.form-group {
+    position: relative;
+}
+
+#hashtags {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#hashtags-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 10px;
+}
     .remove-button {
         margin-left: 3px;
         color: red;

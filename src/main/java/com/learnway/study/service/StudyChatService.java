@@ -55,6 +55,14 @@ public class StudyChatService {
 		return list;
 	}
 	
+	//로그인사용자가 방장인 채팅방 조회
+	public List<ChatRoom> myChatList(Principal principal) {
+		
+		List<ChatRoom> list = chatRoomRepository.findByMember_MemberId(
+				principal.getName());
+		return list;
+	}
+	
 //	채팅방 참여 메서드
 	public ChatRoomMember joinChatRoom(ChatRoomDto dto,Principal principal) {
 		
@@ -158,7 +166,16 @@ public class StudyChatService {
 			ChatRoom chatRoom = studyChatRepository.findById(dto.getRoomId()).get();
 			
 			
-			ChatRoomMember room = ChatRoomMember.builder().member(member).chatMemId(member.getId().intValue())
+			//여기부터
+			List<ChatRoomMember> list1 = chatRoomMemberRepository.findByMember_MemberId(principal.getName());
+			
+			for(ChatRoomMember a : list1) {
+				chatDto.setChatMemId(a.getChatMemId());
+			}
+			//
+			
+			
+			ChatRoomMember room = ChatRoomMember.builder().member(member).chatMemId(chatDto.getChatMemId())
 					  				.chatRoom(chatRoom).hasEntered(false).build();
 			
 			chatRoomMemberRepository.save(room);

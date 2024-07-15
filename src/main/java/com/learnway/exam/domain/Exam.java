@@ -36,6 +36,10 @@ public class Exam {
     @Column(name = "exam_date", nullable = false)
     private Date examDate;
 
+    @Column(name = "exam_end_date", nullable = true)
+    private Date examEndDate;
+
+
     @Column(name = "exam_memo", nullable = true)
     private String examMemo;
 
@@ -44,12 +48,13 @@ public class Exam {
     private List<Score> scoreList;
 
     @Builder
-    public Exam(Long examId, Long memId, String examName, ExamType examType, Date examDate, String examMemo, List<Score> scoreList) {
+    public Exam(Long examId, Long memId, String examName, ExamType examType, Date examDate, Date examEndDate, String examMemo, List<Score> scoreList) {
         this.examId = examId;
         this.memId = memId;
         this.examName = examName;
         this.examType = examType;
         this.examDate = examDate;
+        this.examEndDate = examEndDate;
         this.examMemo = examMemo;
         this.scoreList = scoreList;
     }

@@ -130,6 +130,7 @@ public class StudyController {
 		Optional<Study> study =  studyService.updateView(dto);
 		if(study.isPresent()) {
 			model.addAttribute("study",study.get());
+			model.addAttribute("content",study.get().getContent().replace("<br>","\n"));
 			model.addAttribute("postid",dto.getPostid());
 			return "study/studyupdate";
 		}
@@ -148,6 +149,8 @@ public class StudyController {
 		
 		System.out.println("컨트롤러 접근");
 		System.out.println(studyTagDto.getTag());
+		System.out.println(files.length + " : 파일값");
+		System.out.println(files.toString() + " : 파일String");
 		studyService.crateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		return "redirect:/studylist";
 	}
@@ -161,7 +164,7 @@ public class StudyController {
 		System.out.println("게시글 id 수정창" + studyDto.getPostid());
 		studyService.updateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		
-		return "redirect:/studylist";
+		return "redirect:studylist";
 	}
 	
 	

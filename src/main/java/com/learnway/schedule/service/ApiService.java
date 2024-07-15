@@ -27,14 +27,13 @@ public class ApiService {
 
     @Value("${gpt.api.key}")
     private String openaiAccessKey;
-//  private String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
 	
 	
-	@GetMapping("/weeklySummary")
+	@GetMapping("/weeklySummary") 
     public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
-    	String openaiAccessKey = "000";
+    	// String openaiAccessKey = "sk-proj-DKAWQGuxMeoJkvEJpPeRT3BlbkFJNRe8k2H2J4n7k64x88rG";
         OpenAiService service = new OpenAiService(openaiAccessKey, Duration.ofSeconds(30));
         
         List<Schedule> weeklySchedules = scheduleRepository.findByMemberIdAndStartTimeBetween(
@@ -42,7 +41,6 @@ public class ApiService {
                 startOfWeekDateTime, 
                 endOfWeekDateTime
             );
-        
         String structuredScheduleData = convertSchedulesToString(weeklySchedules);
         
         List<ChatMessage> messages = new ArrayList<>();

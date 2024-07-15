@@ -16,6 +16,8 @@ function SubjectList({ examId }) {
     const [data, setData] = React.useState(null);
     const [ childData, setChildData ] = React.useState([]);
 
+    console.log("data",data)
+
     const fetchData = async (retryCount = 0) => {
         try {
             const response = await fetch(`/api/score/${examId}/1`);
@@ -29,7 +31,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -46,7 +48,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchSubjectData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -63,13 +65,11 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchExamData(retryCount + 1), 500);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
     const fetchSubmit = async (examId, data) => {
-        console.log("submit data",data)
-        
         const response = await fetch(`/api/score/${examId}`, {
             method: "POST",
             headers: {
@@ -78,12 +78,9 @@ function SubjectList({ examId }) {
             credentials: "include",
             body: JSON.stringify(data)
         });
-        if (response.ok) {
-            console.log("성공",response);
-        } else {
-            console.log("실패",response);
+        if(response.ok){
+            alert("등록 완료")
         }
-        return response;
     };
     const fetchModify = async (examId, data) => {
         const response = await fetch(`/api/score/${examId}`, {
@@ -95,7 +92,7 @@ function SubjectList({ examId }) {
             body: JSON.stringify(data)
         });
         if (response.ok) {
-            console.log("성공");
+            alert("수정 완료")
         }
     };
     React.useEffect(() => {
@@ -138,19 +135,23 @@ function SubjectList({ examId }) {
                 <div className="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <button
-                            className="btn exam-detail__go-list-btn"
+                            className="btn exam-detail__go-list-btn btn"
                             onClick={() => { location.href = "/exam/list/1" }}
                         >
-                            시험목록
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                                <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/>
+                            </svg>
                         </button>
                     </div>
                     <div className="text-center exam-detail__title">
                         <span className="d-block">{examData?.examType.examTypeName}</span>
                         <span className="d-block">{examData?.examName}</span>
                         <span className="d-block">{examData?.examDate}</span>
+                        <span className="d-block">~</span>
+                        <span className="d-block">{examData?.examEndDate}</span>
                     </div>
                     <div>
-                        {data?
+                        {data && data.length>0?
                         <button className="btn exam-detail__reg-btn" onClick={handleModifyAll}>수정</button>
                         :
                         <button className="btn exam-detail__reg-btn" onClick={handleSubmitAll}>등록</button>
@@ -192,8 +193,8 @@ const Subject = ({examId, subject, data, onDataChange}) => {
     const [isModify, setIsModify] = React.useState(false);
 
     React.useEffect(()=>{
-        data? setIsModify(true) : setIsModify(false);
-    },[data]);
+        data && scoreId? setIsModify(true) : setIsModify(false);
+    },[data, scoreId]);
 
     React.useEffect(() => {
         const item = data.find(item => item.subject.subjectCode === subject.subjectCode);
@@ -205,10 +206,6 @@ const Subject = ({examId, subject, data, onDataChange}) => {
             setGrade(item.scoreGrade || 1);
         }
     }, [isModify]);
-
-    React.useEffect(() => {
-        scoreId ? setIsModify(true) : setIsModify(false);
-    }, [scoreId]);
 
     React.useEffect(() => {
         onDataChange({

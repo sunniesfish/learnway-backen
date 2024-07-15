@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>채팅방 생성</title>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,7 +21,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            width: 300px;
+            width: 350px;
         }
         h2 {
             color: #333;
@@ -41,16 +43,10 @@
             border-radius: 4px;
         }
         input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
         }
     </style>
     <script>
@@ -69,7 +65,7 @@
         <form onsubmit="sendToParent(); return false;">
             <label for="roomname">채팅방 이름:</label>
             <input type="text" id="roomname" name="roomname" required>
-            <input type="submit" value="생성하기">
+            <input class="btn btn-outline-info mr-2" type="submit" value="생성하기">
         </form>
     </div>
 </body>

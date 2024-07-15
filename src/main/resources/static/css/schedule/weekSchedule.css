@@ -31,7 +31,7 @@
 }
 
 .fc-event-studyway {
-  font-size: 13px;	
+  font-size: 12px;	
   font-weight: bold;
   margin-bottom: 5px;
 }
@@ -44,7 +44,7 @@
 }
 
 .fc-event-subtitle {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
   margin: 2px 0px;
 }
@@ -97,7 +97,7 @@
     display: none !important;
 }
 
-/*월간에서 일일상세모달창*/
+/* "월간"에서 일일상세모달창====================================*/
 .modal-content {
   border-radius: 0.5rem;
   margin: auto;
@@ -117,7 +117,11 @@
   font-weight: 600;
 }
 
-
+ .schedule-table tbody td:nth-child(4) {
+    text-align: right;
+    padding-right: 30px !important;
+  }
+  
 .modal-backdrop {
     display: none;
 }
@@ -143,6 +147,10 @@
     background-color: #e3f2fd;
 }
 
+#monthlyScheduleModal.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
 /* 전체 캘린더 테두리 스타일 */
 .fc-scrollgrid {
     overflow: hidden;
@@ -165,6 +173,11 @@
 
 /*주간요약*/
 /* 주간 요약 모달 스타일 */
+
+#weeklySummaryModal.modal {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
 .weekly-summary-modal .modal-content {
   border-radius: 0.5rem;
   border: none;
@@ -239,6 +252,7 @@
 #weeklySummaryContent {
     white-space: pre-wrap;
   }
+
   
   /*로딩*/
   .loading-overlay {
@@ -274,9 +288,17 @@
   }
   
   /*주간 일정 모달*/
-  .modal-body {
-  overflow-y: auto;
-  max-height: 400px; /* 원하는 최대 높이로 조정 */
+#updateModal.modal {
+   background-color: rgba(0, 0, 0, 0.5);
+ }
+ 
+#calendarModal.modal {
+   background-color: rgba(0, 0, 0, 0.5);
+ }
+  
+.modal-body {
+ overflow-y: auto;
+ max-height: 400px; /* 원하는 최대 높이로 조정 */
 }
 
 .modal-title {
@@ -289,7 +311,7 @@
 }
 
 .add-progress, .remove-progress {
-    width: 28px;
+    width: 25px;
     height: 30px;
     padding: 0;
     line-height: 1;

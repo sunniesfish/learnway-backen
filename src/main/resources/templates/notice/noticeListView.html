@@ -113,11 +113,14 @@ function filterNotices(category) {
         method: 'GET',
         data: searchParams.toString(),
         success: function(response) {
-            // 받은 HTML로 테이블 내용 업데이트
-            $('#noticeTable tbody').html($(response).find('#noticeTable tbody').html());
+        	// 받은 HTML에서 일반 공지사항 목록 부분만 추출하여 업데이트
+            var noticeList = $(response).find('.list-group .list-group-item:not(.notice-priority)');
+            $('.list-group .list-group-item:not(.notice-priority)').remove();
+            $('.list-group').append(noticeList);
             
             // 페이징 업데이트 (필요한 경우)
-            $('.pagination').html($(response).find('.pagination').html());
+            var pagination = $(response).find('.footer-container').html();
+            $('.footer-container').html(pagination);
 
             // URL 변경 (새로고침 없이)
             history.replaceState(null, null, currentUrl.toString() + '?' + searchParams.toString());

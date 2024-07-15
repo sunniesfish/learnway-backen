@@ -32,7 +32,8 @@ public class ApiContoriller {
 	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/weeklySummary")
-    public ResponseEntity<Map<String, String>> weeklySummary(@RequestParam("currentDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate currentDate
+    public ResponseEntity<Map<String, String>> weeklySummary(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate
+    		                    ,@RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     		 					,Authentication authentication ) {
 		
 		Member member = null;
@@ -41,20 +42,12 @@ public class ApiContoriller {
             member = user.getMember();
         }
 		// 주간 날짜 정보 수정
-		LocalDate prevWeekSameDay = currentDate.minusWeeks(1);
-		LocalDate startOfWeek = prevWeekSameDay.with(TemporalAdjusters.previousOrSame(DayOfWeek.from(prevWeekSameDay)));
-		LocalDate endOfWeek = startOfWeek.plusDays(6);
 		
-		if (currentDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
-			startOfWeek = currentDate;
-			endOfWeek = startOfWeek.plusDays(6);
-		}
-		
-		LocalDateTime startOfWeekDateTime = startOfWeek.atStartOfDay();
-	    LocalDateTime endOfWeekDateTime = endOfWeek.atTime(23, 59, 59);
+        LocalDateTime startOfWeekDateTime = startDate.plusDays(1).atTime(6, 0);
+        LocalDateTime endOfWeekDateTime = endDate.plusDays(1).atTime(5, 59);
 
-	    String weekRange = startOfWeek.format(DateTimeFormatter.ofPattern("MM.dd")) + " - " + endOfWeek.format(DateTimeFormatter.ofPattern("MM.dd"));
-
+	    String weekRange = startDate.plusDays(1).format(DateTimeFormatter.ofPattern("MM.dd")) + " - " + endDate.format(DateTimeFormatter.ofPattern("MM.dd"));
+	    System.out.println(weekRange);
 	    String summary = apiService.weeklySummary(member.getId(), startOfWeekDateTime, endOfWeekDateTime);
 
 	    Map<String, String> response = new HashMap<>();
