@@ -172,8 +172,16 @@ public class NoticeController {
 	@PostMapping("/rewrite/{noticeId}")
 	public String postMethodName(NoticeDto dto, @RequestParam("comFile") MultipartFile[] files,
 	                             @RequestParam(value = "noticeImgUname", required = false) String noticeImgUname,
-	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath) {
+	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath
+	                             ,Authentication authentication) {
 	    
+		Member member = null;
+		if(authentication != null && authentication.isAuthenticated()) {
+			CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+            member = user.getMember();
+            dto.setMemberId(member);
+		}
+		
 	    String imgURI = noticeImgPath;
 	    String imgOgName = noticeImgUname;
 	    
@@ -224,7 +232,7 @@ public class NoticeController {
 	    
 	    dto.setNoticeId(dto.getNoticeId());
 	    dto.setPriority(dto.isPriority());
-	    noticeService.rewrite(dto);
+	    noticeService.rewrite(dto,member);
 	    
 	    return "redirect:/notice/detail/" + dto.getNoticeId();
 	}
