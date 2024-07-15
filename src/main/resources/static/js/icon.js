@@ -1,8 +1,12 @@
 // 페이지 로드 시 초기 활성화 상태 설정
 $(document).ready(function() {
     var pageUrl = window.location.pathname;
+    var hostid =  $('#postid').val();
+    var roomid = $("#roomId").val();
              //링크항목이 두개라서 url이 다르기때문에 페이지Url 맵핑 통일시키기위함
-             if(pageUrl==="/studylist" || pageUrl ==="/learnway/chat"){
+             if(pageUrl==="/studylist" || pageUrl ==="/learnway/chat" || pageUrl ==="/enterRoom"
+              || pageUrl ==="/studyadd" || pageUrl ==="/studyupdateview" 
+              || pageUrl ==="/study/detail/"+hostid || pageUrl ==="/studylist/search" ){
 			 pageUrl = "/study";
 		 	}
 		 	//링크항목이 두개라서 url이 다르기때문에 페이지Url 맵핑 통일시키기위함

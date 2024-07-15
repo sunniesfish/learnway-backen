@@ -47,6 +47,7 @@ public class StudyChatController {
 	public String chatList(Principal principal,Model model) {
 
 		model.addAttribute("list",studyChatService.chatList(principal));
+		model.addAttribute("myList",studyChatService.myChatList(principal));
 		return "study/chatList";
 	}
 	
@@ -56,7 +57,7 @@ public class StudyChatController {
 			Model model,Principal principal) {
 		
 		
-		studyChatService.joinChatRoom(dto, principal);
+//		studyChatService.joinChatRoom(dto, principal);
 		
 		//채팅방 입장
 		System.out.println("save");
@@ -96,8 +97,9 @@ public class StudyChatController {
 	    return chatMessageRepository.findByChatroom_Chatroomid(roomId);
 	}
 	
+	
+	//문제정답후 로직
 	@PostMapping(value="/joinRoom")
-//	@RequestMapping(value="/joinRoom",method= {RequestMethod.GET,RequestMethod.POST})
 	public String addRoom(@RequestBody ChatRoomDto dto,
 			Model model,Principal principal) {
 		System.out.println("진입");
@@ -108,9 +110,6 @@ public class StudyChatController {
 		//채팅방 입장
 		System.out.println("save");
 		
-//		model.addAttribute("name",principal.getName()); //채팅방-멤버테이블 가져올값
-//		model.addAttribute("roomId",dto.getRoomId()); //수정해야됨
-//		model.addAttribute("roomname","테스트");
 	
 
 		return "study/mychat";
