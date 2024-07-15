@@ -87,7 +87,7 @@ public class NoticeService {
 		notice.setNoticeContent(formattedContent);
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
-		notice.setPriority(dto.isPriority());
+		notice.setCreateDate(dto.getCreateDate());
 		notice.setMember(dto.getMemberId());
 		notice.setCategory(dto.getCategory());
 
