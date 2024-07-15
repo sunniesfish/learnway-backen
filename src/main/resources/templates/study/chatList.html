@@ -26,7 +26,20 @@
                     </div>
                 </div>
             </div>
-            <div th:if="${list == null}" class="alert alert-info mt-3">
+            
+            <div th:if="${myList != null}" class="chat-list">
+                <div th:each="myList, iterStat : ${myList}" class="chat-card" th:if="${iterStat.index < 6}" th:data-room-id="${myList.chatroomid}">
+                    <div class="chat-info">
+                        <div class="chat-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="chat-name" th:text="${myList.roomname}"></div>
+                        <div class="chat-host">방장: <span th:text="${myList.member.memberName}"></span></div>
+                        <button class="btn-enter">입장하기</button>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${myList == null}" class="alert alert-info mt-3">
                 <p>채팅방 멤버가 없습니다.</p>
             </div>
         </div>
