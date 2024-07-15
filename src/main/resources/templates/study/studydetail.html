@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/study/studyDetail.css" type="text/css"/>
 
-
-
 </head>
 <body>
-<div th:replace="sidebar :: sidebar"></div>
 
+<div class="sidebar-container">
+<div th:replace="sidebar :: sidebar"></div>
+</div>
+<div th:replace="sidebar :: sidebar"></div>
 <div class="container content-wrapper">
     <div id="detail-container">
         <div class="detail-row">
@@ -58,7 +59,7 @@
                             <div class="action-buttons d-flex justify-content-end mt-2">
                             
                             <div th:each="chatRoom : ${chatRoom}">
-                            <button type="button" class="btn btn-outline-secondary mr-2" data-toggle="modal" data-target="#exampleModal" 
+                            <button type="button" id="chatenter" name="chatenter" class="btn btn-outline-info mr-2" 
                             th:if="${chatRoom.chatroomid} != 0 and ${chatRoom.member.memberId} != ${member}">
                             채팅방입장
                             </button>
@@ -79,7 +80,6 @@
         </div>
     </div>
 </div>
-
 
     <input type="hidden" th:value="${study.postid}" id="postid" name="postid">
     <input type="hidden" th:value="${study.member.memberName}" name="memberName" id="memberName">
@@ -119,6 +119,7 @@
 
 <script>
 $(document).ready(function() {
+    chatenter();
     correct_ck();
     addReply();
     loadReplyList(); // 페이지 로드 시 기존 댓글 목록 불러오기
@@ -157,6 +158,41 @@ function clickDelete() {
 }
 
  
+ 
+
+function chatenter() {
+    $('#chatenter').click(function(event) {
+        event.preventDefault(); // 기본 이벤트 동작 방지
+
+        var status = null;
+        var roomId = $('#chatroomid').val();
+        var correct = $('#problemCorrect').val();
+        var inputData = $('#correct').val();
+        var postId = $('#postid').val();
+
+        console.log(inputData + ' 입력값');
+        console.log(correct + ' 정답');
+        
+        $.ajax({ 
+            type: "POST",
+            url: "/api/problemCheck",
+            data: JSON.stringify({ postId: postId }),
+            contentType: "application/json",
+            success: function(response) {
+                if(response == true){
+                    alert("이미 푼 문제입니다.");
+                } else {
+                    // 모달을 수동으로 엽니다.
+                    $('#exampleModal').modal('show');
+                }
+            },
+            error: function(error) {
+                console.log('에러발생: ' + error);
+            }
+        }); 
+    });
+}
+
 /* 정답체크 js */
 function correct_ck() {
     $('#correct_ck').click(function() {
@@ -168,26 +204,7 @@ function correct_ck() {
 
         console.log(inputData + ' 입력값');
         console.log(correct + ' 정답');
-        
-       /*  $.ajax({ 여기부터 시작
-            type: "POST",
-            url: "/joinRoom",
-            data: JSON.stringify({ roomId: roomId, postId: postId }),
-            contentType: "application/json",
-            success: function(response) {
-                console.log("2차 성공");
-                if (confirm("채팅방 목록으로 이동하시겠습니까?")){
-                window.location.href = "/learnway/chat";}
-                else {
-                	return false;
-                }
-            },
-            error: function(error) {
-                console.log('2차 에러');
-            }
-        }); */
-        
-        
+      
         if (inputData === correct) {
             alert('정답입니다.');
             status = 1;
@@ -223,6 +240,23 @@ function correct_ck() {
             });
         } else {
             alert('오답입니다.');
+            status = 0;
+            $.ajax({
+            	 type: "POST",
+            	 url: "/api/member/correct",
+            	 data: JSON.stringify({ status: status, roomId: roomId, postId: postId }),
+            	 contentType: "application/json",
+                 dataType: "json",
+                success: function(data) {
+                    console.log("성공");
+                    $('#exampleModal').modal('hide');
+                   
+                },
+                error: function(error) {
+                    console.log('에러');
+                }
+            });
+            
         }
     });
 }
