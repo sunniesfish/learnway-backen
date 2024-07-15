@@ -30,7 +30,7 @@ public class ApiService {
 //  private String openaiAccessKey = "sk-proj-nKXS22lZfB2oYONgnylxT3BlbkFJHihWNvDP9w8D7w2gmvBO";
 	
 	
-	@GetMapping("/weeklySummary")
+	@GetMapping("/weeklySummary") 
     public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
