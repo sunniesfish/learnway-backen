@@ -13,7 +13,7 @@ async function fetchTypeStats(examType, startDate, endDate, retryCount = 0, maxR
         if (retryCount < maxRetries) {
             setTimeout(() => fetchTypeStats(examType, startDate, endDate, retryCount + 1, maxRetries), 300); // Retry after 1 second
         } else {
-            // location.href = "/"                
+            location.href = "/"                
         }
     }
 }
@@ -38,7 +38,6 @@ function Stats() {
     
     const [examType, setExamType] = React.useState("all");
     const [examTypeList, setExamTypeList] = React.useState(["all"]);
-    const [year, setYear] = React.useState(2024);
     const [scoreOption, setScoreOption] = React.useState();
     const [gradeOption, setGradeOption] = React.useState();
     const [stdOption, setStdOption] = React.useState();
@@ -91,7 +90,7 @@ function Stats() {
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) {
-                setTimeout(() => fetchData(retryCount + 1), 1000); // Retry after 1 second
+                setTimeout(() => fetchData(retryCount + 1), 1000);
             }
         }
     };
@@ -106,7 +105,7 @@ function Stats() {
         } catch (error) {
             console.error('Error fetching exam types:', error);
             if (retryCount < 5) {
-                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000); // Retry after 1 second
+                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000);
             }
         }
     };
@@ -127,9 +126,7 @@ function Stats() {
     const handleExamTypeChange = (event) => {
         setExamType(event.target.value);
     }
-    // const handleYearChange = (event) => {
-    //     setYear(event.target.value);
-    // }
+
     const handleStartDateChange  = (event) => {
         setStartDate(event.target.value)
     }
@@ -190,8 +187,6 @@ function Stats() {
 
 function ChartType({ cat, option }) {
     const chartRef = React.useRef(null);
-    const [subjectList, setSubjectList] = React.useState([]);
-    const [checkedList, setCheckedList] = React.useState([]);
 
     React.useEffect(() => {
         fetchSubjectData();
@@ -201,32 +196,6 @@ function ChartType({ cat, option }) {
             chart.destroy();
         };
     }, [cat, option]);
-
-    const fetchSubjectData = async (retryCount = 0) => {
-        try{
-            const response = await fetch("/api/subject/");
-            if(!response.ok){
-                throw new Error('Network response was not ok');
-            }
-            const subjectData = await response.json();
-            setSubjectList(subjectData)
-            setCheckedList(subjectData.map(item => true));
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            if (retryCount < 3) { // Retry up to 3 times
-                setTimeout(() => fetchSubjectData(retryCount + 1), 300); // Retry after 1 second
-            } else {
-                // location.href = "/"                
-            }
-        }
-    }
-
-    const handleCheckBox = (index) => {
-        const newCheckedList = [...checkedList];
-        newCheckedList[index] = !newCheckedList
-        setCheckedList(prev => [])
-    }
-
     return (
         <>
         <div className="chart" ref={chartRef}></div>
