@@ -40,8 +40,8 @@
 	                <textarea class="form-control" id="noticeContent" name="noticeContent" rows="17" th:text="${notice.noticeContent}" placeholder="내용" required></textarea>
 	            </div>
 	            <div class="form-group">
-	                <input type="hidden" name="comImgSname" th:value="${notice.noticeImgUname}">
-					<input type="hidden" name="comImgPath" th:value="${notice.noticeImgPath}">
+	                <input type="hidden" name="noticeImgUname" th:value="${notice.noticeImgUname}">
+					<input type="hidden" name="noticeImgPath" th:value="${notice.noticeImgPath}">
 	                <button type="button" id="deleteFile" class="file-label" th:if="${notice.noticeImgUname != null and notice.noticeImgUname != ''}">사진 삭제</button>
 					<span id="fileName" th:data-original-name="${notice.noticeImgUname}" th:text="${notice.noticeImgUname != null and notice.noticeImgUname!= ''} ? '현재 파일명 : ' + ${notice.noticeImgUname} : null"></span>			
 	                <input type="file" class="form-control-file" name="comFile" multiple accept="image/*" onchange="readURL(this)">
