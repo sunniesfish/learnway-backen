@@ -13,4 +13,5 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
     @Query("SELECT s.postid FROM Study s LEFT JOIN s.chatroom c WHERE c.chatroomid IS NULL")
     List<Integer> findStudyPostIdsWithoutChatRooms();
 
+    List<ChatRoom> findByMember_MemberId(String memberId);
 }
