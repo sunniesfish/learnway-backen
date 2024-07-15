@@ -53,21 +53,24 @@ public class NoticeController {
 								,@RequestParam(value="category", required=false) String category) {
 		
 		Page<Notice> pageNotice = null;
+		Pageable pageable = PageRequest.of(page, 10);
 		
 		if (keyword == null || keyword.isEmpty()) {
 	        if (category == null || category.isEmpty()) {
 	            // 검색하지 않고 카테고리 선택하지 않았을 때
-	            Pageable pageable = PageRequest.of(page, 10);
 	            pageNotice = noticeService.noticeList(pageable);
 	        } else {
 	            // 검색하지 않고 카테고리 선택했을 때
-	            Pageable pageable = PageRequest.of(page, 10);
 	            pageNotice = noticeService.noticeCategoryList(pageable, category);
 	        }
 	    } else {
-	        // 검색했을 때
-	        Pageable pageable = PageRequest.of(page, 10);
-	        pageNotice = noticeService.noticeSearchList(pageable, keyword);
+	        if (category == null || category.isEmpty()) {
+	            // 검색했지만 카테고리 선택하지 않았을 때
+	            pageNotice = noticeService.noticeSearchList(pageable, keyword);
+	        } else {
+	            // 검색과 카테고리 선택을 동시에 했을 때
+	            pageNotice = noticeService.noticeSearchCategoryList(pageable, keyword, category);
+	        }
 	    }
 		
 		Page<Notice> priNotice;

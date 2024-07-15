@@ -97,7 +97,7 @@
     display: none !important;
 }
 
-/*월간에서 일일상세모달창*/
+/* "월간"에서 일일상세모달창====================================*/
 .modal-content {
   border-radius: 0.5rem;
   margin: auto;
@@ -117,7 +117,11 @@
   font-weight: 600;
 }
 
-
+ .schedule-table tbody td:nth-child(4) {
+    text-align: right;
+    padding-right: 30px !important;
+  }
+  
 .modal-backdrop {
     display: none;
 }

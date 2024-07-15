@@ -45,6 +45,13 @@ public class NoticeService {
 		return noticeRepository.findByPriorityTrueOrderByCreateDateDesc(pageable);
 	}
 
+	//카테고리 
+	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
+		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
+	}
+	public Page<Notice> noticeSearchCategoryList(Pageable pageable, String keyword, String category) {
+	    return noticeRepository.findByNoticeTitleContainingAndCategoryContaining(keyword, category, pageable);
+	}
 
 
 	//글쓰기
@@ -143,10 +150,6 @@ public class NoticeService {
 		return dto;
 	}
 
-	//카테고리 
-	public Page<Notice> noticeCategoryList(Pageable pageable, String category) {
-		return noticeRepository.findByCategoryContainingOrderByCreateDateDesc(category,pageable);
-	}
 
 
 }

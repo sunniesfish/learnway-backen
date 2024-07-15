@@ -548,6 +548,9 @@ document.addEventListener('DOMContentLoaded', function() {
                  });
 	        }else{
 		        clickedDate = info.event.start;
+		        
+		        // 날짜에 하루를 더함
+				clickedDate.setDate(clickedDate.getDate() + 1);
     
 			    // 날짜를 'YYYY-MM-DD' 형식의 문자열로 변환
 			    clickedDate = clickedDate.toISOString().split('T')[0];
@@ -568,7 +571,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     var avgAchieveRate = schedules.find(function(data) {
                         return data.hasOwnProperty('avgAchieveRate');
                     }).avgAchieveRate;
-                    $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
+                    
+                    var avgImageSrc = '';
+					if (avgAchieveRate >= 0 && avgAchieveRate <= 30) {
+					  avgImageSrc = '/img/schedule/sad.png';
+					} else if (avgAchieveRate >= 31 && avgAchieveRate <= 70) {
+					  avgImageSrc = '/img/schedule/neutral.png';
+					} else if (avgAchieveRate >= 71 && avgAchieveRate <= 100) {
+					  avgImageSrc = '/img/schedule/happy.png';
+					}
+
+
+                    $('.average-achieve-rate').html('일일평균달성율: ' + avgAchieveRate + '%' +
+  						'<img src="' + avgImageSrc + '" alt="Average Emotion" style="width: 20px; height: 20px; margin-left: 5px; vertical-align: middle; margin-bottom:5px;">');
 
                     // 일정 데이터 설정
                     var tableBody = $('.schedule-table tbody');
@@ -620,7 +635,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     var avgAchieveRate = schedules.find(function(data) {
                         return data.hasOwnProperty('avgAchieveRate');
                     }).avgAchieveRate;
-                    $('.average-achieve-rate').text('일일평균달성율: ' + avgAchieveRate + '%');
+                    
+                    var avgImageSrc = '';
+					if (avgAchieveRate >= 0 && avgAchieveRate <= 30) {
+					  avgImageSrc = '/img/schedule/sad.png';
+					} else if (avgAchieveRate >= 31 && avgAchieveRate <= 70) {
+					  avgImageSrc = '/img/schedule/neutral.png';
+					} else if (avgAchieveRate >= 71 && avgAchieveRate <= 100) {
+					  avgImageSrc = '/img/schedule/happy.png';
+					}
+
+
+                    $('.average-achieve-rate').html('일일평균달성율: ' + avgAchieveRate + '%' +
+  						'<img src="' + avgImageSrc + '" alt="Average Emotion" style="width: 20px; height: 20px; margin-left: 5px; vertical-align: middle; margin-bottom:5px;">');
 
                     // 일정 데이터 설정
                     var tableBody = $('.schedule-table tbody');
