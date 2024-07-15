@@ -77,7 +77,7 @@ public class NoticeService {
 	}
 
 	//글수정
-	public void rewrite(NoticeDto dto, Member member) {
+	public void rewrite(NoticeDto dto, Member member, NoticeDto oDto) {
 
 		String formattedContent = dto.getNoticeContent().replace("\n", "<br>");
 
@@ -87,7 +87,7 @@ public class NoticeService {
 		notice.setNoticeContent(formattedContent);
 		notice.setNoticeImgPath(dto.getNoticeImgPath());
 		notice.setNoticeImgUname(dto.getNoticeImgUname());
-		notice.setCreateDate(dto.getCreateDate());
+		notice.setCreateDate(oDto.getCreateDate());
 		notice.setMember(member);
 		notice.setCategory(dto.getCategory());
 
