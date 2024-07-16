@@ -47,7 +47,8 @@
 	                <input type="file" class="form-control-file" name="comFile" multiple accept="image/*" onchange="readURL(this)">
 	            </div>
 	            <div id="previewContainer" class="form-group">
-	                <img id="preview" th:src="@{${notice.noticeImgPath} + '/' + ${notice.noticeImgUname}}" alt="이미지 미리보기" class="img-fluid">
+	                <img id="preview" th:if="${notice.noticeImgPath != null and !notice.noticeImgPath.isEmpty()}" 
+					         th:src="${notice.noticeImgPath}"  alt="이미지 미리보기" class="img-fluid">
 	            </div>
 	            <div class="text-right">
 	                <button type="submit" class="btn btn-outline-success">수정</button>
