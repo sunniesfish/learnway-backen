@@ -154,6 +154,7 @@ public class ScheduleService {
 		}
 		
 		//스케쥴 삭제하기
+		@Transactional
 		public void deleteSchedule(Long id,Long memberId) {
 			// 연관된 Progress 엔티티 먼저 삭제
 			Schedule schedule = scheduleRepository.findByScheduleIdAndMemberId(id,memberId)
