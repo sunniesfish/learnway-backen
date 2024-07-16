@@ -51,7 +51,7 @@
                         </a>
                     </td>
                     <td>
-                        <form class="exam__delete-btn-form" th:action="@{/exam/delete}" method="post" class="m-0">
+                        <form th:action="@{/exam/delete}" method="post" class="m-0 exam__delete-btn-form">
                             <input type="hidden" name="examId" th:value="${item.examId}" required />
                             <button class="exam__item__delete-btn btn clickable" type="submit">
                                 삭제
