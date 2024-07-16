@@ -4,7 +4,6 @@ async function fetchExamData(examId) {
     return response.json();
 }
 
-const modifyModal = document.getElementById("examModModal");
 const modBtns = document.querySelectorAll(".exam__modㅡbtn");
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -19,7 +18,9 @@ modBtns.forEach(btn => {
         console.log("data",data);
         $('#examModModal').on('show.bs.modal', function (event) {
             // 폼 요소들
+            console.log("data",examData)
             const modal = $(this);
+            modal.find('#exam__modal__form-examId').val(examData.examId);
             modal.find('#exam__modal__form-name').val(examData.examName);
             modal.find('#exam__modal__form-type').val(examData.examType.examTypeName);
             modal.find('#exam__modal__form-date').val(examData.examDate);
