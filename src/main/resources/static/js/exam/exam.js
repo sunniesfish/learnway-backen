@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener("click", async function(event) {
-    console.log(event.target);
+    console.log(event.target.value);
     const data = await fetchExamData(3);
     console.log("data",data)
 })

@@ -59,7 +59,7 @@
     background-color: #343a40;
     border-color: var(--learnwayBlack);
 }
-.exam-detail__go-list-btn:hover{
+.exam-detail__go-list-btn>svg:hover{
     fill: #fff;
 }
 .ed-score{
