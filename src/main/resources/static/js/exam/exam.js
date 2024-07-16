@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 document.addEventListener("click", async function(event) {
-    console.log(event.target.value);
-    const data = await fetchExamData(3);
+    const examId = event.target.value
+    const data = await fetchExamData(examId);
     console.log("data",data)
 })
