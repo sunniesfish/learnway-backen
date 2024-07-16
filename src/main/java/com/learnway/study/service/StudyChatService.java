@@ -154,6 +154,9 @@ public class StudyChatService {
         List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoom_Chatroomid(roomId);
         for (ChatRoomMember member : members) {
             userImages.put(member.getMember().getMemberName(), member.getMember().getMemberImage());
+            System.out.println(member.getMember().getMemberName() + ": 멤버 이름");
+            System.out.println(member.getMember().getMemberImage() + ": 멤버 이미지");
+            
         }
         
         return userImages;
