@@ -29,7 +29,7 @@ public class ApiService {
     private String openaiAccessKey;
 	
 	
-	@GetMapping("/weeklySummary") 
+	@GetMapping("/weeklySummary")  
     public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
@@ -52,7 +52,7 @@ public class ApiService {
 
         ChatMessage userMessage = new ChatMessage();
         userMessage.setRole("user");
-        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 500자 이내로 이모티콘을 2~3개만 써서 친근하게 해주세요. 주간일정이 없다면 없다고 말하시오. 지어내지 마시오.:\n\n" + structuredScheduleData);
+        userMessage.setContent("다음은 학생의 주간 학습 일정입니다. 이를 바탕으로 학생에게 도움이 될 만한 조언을 500자 이내로 이모티콘을 2~3개만 써서 3~5개의 문단으로 나눠서 친근하게 해주세요. 주간일정이 없다면 없다고 말하시오. 지어내지 마시오.:\n\n" + structuredScheduleData);
         messages.add(userMessage);
 
         // 요청

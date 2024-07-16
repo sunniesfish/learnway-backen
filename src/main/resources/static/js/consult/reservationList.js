@@ -46,17 +46,7 @@ function fetchReservations() {
                         <td>${subject}</td>
                         <td>${counselorName} 상담사</td>
                         <td>${formattedTime}</td>
-                        <td>
-						  <button 
-						    type="button" 
-						    class="btn ${!isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" 
-						    data-room-id="${roomId}"
-						    data-member-id="${memberId}"
-						    ${!isWithinBookingTime ? '' : 'disabled'}
-						  >
-						    ${linkText}
-						  </button>
-						</td>
+						<td><button type="button" class="btn ${isWithinBookingTime ? 'btn-outline-success join-link' : 'btn-outline-secondary disabled-link'}" data-room-id="${roomId}" ${isWithinBookingTime ? '' : 'disabled'}>${linkText}</button></td>
 
                     </tr>
                 `;

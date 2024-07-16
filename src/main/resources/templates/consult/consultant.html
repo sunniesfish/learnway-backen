@@ -14,7 +14,6 @@
             min-height: 100vh;
             margin: 0;
         }
-
         #sidebar {
             width: 300px;
             background-color: #343a40;
@@ -121,6 +120,15 @@
 		    margin: 0 10px; /* 버튼 사이의 가로 여백 설정 */
 		    font-weight: 500; /* 폰트 두껍게 설정 */
 		    font-size: 14px; /* 폰트 크기 설정 */
+		}
+		/* a 태그 관련 CSS */
+		a{
+			text-decoration: none;
+		}
+		a:hover{
+		  text-decoration: none;
+		  color:inherit;
+		  cursor: pointer;
 		}
 		
 		.content {
@@ -265,7 +273,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-success" id="printButton">프린트</button>
-                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button>
+                      <!--  <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">닫기</button> -->
                     </div>
                 </div>
             </div>
@@ -300,7 +308,7 @@
                             <label for="memoContent">🖊 내용</label>
                             <textarea class="form-control" id="memoContent" name="content" rows="5" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">저장</button>
+                        <button type="submit" class="btn btn-outline-success float-right insertBtn">저장</button>
                     </form>
                 </div>
             </div>
@@ -605,8 +613,8 @@
 			
 							 // 현재 시간이 예약 시간 내에 있는지 확인
                             var isWithinBookingTime = currentTime >= bookingStartTime && currentTime <= bookingEndTime;
-                            //var linkClass = isWithinBookingTime ? '' : 'disabled-link';
-                            var linkClass = isWithinBookingTime ? 'disabled-link' : '';
+                            var linkClass = isWithinBookingTime ? '' : 'disabled-link';
+                            //var linkClass = isWithinBookingTime ? 'disabled-link' : '';
                             var linkText = isWithinBookingTime ? '💻 입장하기' : '🚫 입장불가';
 
                             var row = `
