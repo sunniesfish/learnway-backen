@@ -34,18 +34,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${examList.content}" th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" style="cursor: pointer;">
-                    <td>
+                <tr th:each="item : ${examList.content}" style="cursor: pointer;">
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examType.examTypeName}"></span>
                         </a>
                     </td>
-                    <td>
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examName}"></span>
                         </a>
                     </td>
-                    <td>
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examDate}"></span>
                         </a>
