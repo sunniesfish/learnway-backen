@@ -164,7 +164,7 @@ public class StudyController {
 		System.out.println("게시글 id 수정창" + studyDto.getPostid());
 		studyService.updateBoard(studyDto,chatRoomDto,studyTagDto,studyProblemDto,studyProblemImgDto,files,principal);
 		
-		return "redirect:/studylist";
+		return "redirect:studylist";
 	}
 	
 	

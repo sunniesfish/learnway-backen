@@ -13,7 +13,7 @@ async function fetchTypeStats(examType, startDate, endDate, retryCount = 0, maxR
         if (retryCount < maxRetries) {
             setTimeout(() => fetchTypeStats(examType, startDate, endDate, retryCount + 1, maxRetries), 300); // Retry after 1 second
         } else {
-            // location.href = "/"                
+            location.href = "/"                
         }
     }
 }
@@ -23,13 +23,10 @@ const statsRoot = document.getElementById("stats-root");
 render();
 
 function render() {
-    console.log("render")
     ReactDOM.render(<Stats />, statsRoot);
 }
 
 function Stats() {
-    console.log("stat")
-    console.log("date",getToday())
     
     const [cat, setCat] = React.useState("score");
     const [startDate,  setStartDate] = React.useState(getToday())
@@ -38,7 +35,6 @@ function Stats() {
     
     const [examType, setExamType] = React.useState("all");
     const [examTypeList, setExamTypeList] = React.useState(["all"]);
-    const [year, setYear] = React.useState(2024);
     const [scoreOption, setScoreOption] = React.useState();
     const [gradeOption, setGradeOption] = React.useState();
     const [stdOption, setStdOption] = React.useState();
@@ -47,7 +43,6 @@ function Stats() {
     const fetchData = async (retryCount = 0) => {
         try {
             const statdata = await fetchTypeStats(examType, startDate, endDate);
-            console.log("fetchData", statdata)
             
             const subjects = await fetch("/api/subject/").then(res => {
                 if (!res.ok) throw new Error('Failed to fetch subjects');
@@ -61,8 +56,6 @@ function Stats() {
             let xasisCat = statdata.map(exam => exam.examDate);
     
             const addDataToSeries = (series, dataKey) => {
-                console.log("series",series)
-                console.log("dataKey",dataKey)
                 statdata.forEach(exam => {
                     console.log("in forEach exam",exam)
                     series?.forEach(seriesData => {
@@ -84,14 +77,10 @@ function Stats() {
             setGradeOption(createOption(gradeSeries, xasisCat, 1, 9, "시험 일자", "등급", true));
             setStdOption(createOption(stdSeries, xasisCat, 0, 150, "시험 일자", "표준점수", false));
 
-            console.log("scoreSeries",scoreSeries);
-            console.log("gradeSeries",gradeSeries);
-            console.log("stdSeries",stdSeries);
-
         } catch (error) {
             console.error('Error fetching data:', error);
             if (retryCount < 5) {
-                setTimeout(() => fetchData(retryCount + 1), 1000); // Retry after 1 second
+                setTimeout(() => fetchData(retryCount + 1), 1000);
             }
         }
     };
@@ -106,7 +95,7 @@ function Stats() {
         } catch (error) {
             console.error('Error fetching exam types:', error);
             if (retryCount < 5) {
-                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000); // Retry after 1 second
+                setTimeout(() => fetchExamTypeData(retryCount + 1), 1000);
             }
         }
     };
@@ -127,9 +116,7 @@ function Stats() {
     const handleExamTypeChange = (event) => {
         setExamType(event.target.value);
     }
-    // const handleYearChange = (event) => {
-    //     setYear(event.target.value);
-    // }
+
     const handleStartDateChange  = (event) => {
         setStartDate(event.target.value)
     }
@@ -190,43 +177,14 @@ function Stats() {
 
 function ChartType({ cat, option }) {
     const chartRef = React.useRef(null);
-    const [subjectList, setSubjectList] = React.useState([]);
-    const [checkedList, setCheckedList] = React.useState([]);
 
     React.useEffect(() => {
-        fetchSubjectData();
         const chart = new ApexCharts(chartRef.current, option);
         chart.render();
         return () => {
             chart.destroy();
         };
     }, [cat, option]);
-
-    const fetchSubjectData = async (retryCount = 0) => {
-        try{
-            const response = await fetch("/api/subject/");
-            if(!response.ok){
-                throw new Error('Network response was not ok');
-            }
-            const subjectData = await response.json();
-            setSubjectList(subjectData)
-            setCheckedList(subjectData.map(item => true));
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            if (retryCount < 3) { // Retry up to 3 times
-                setTimeout(() => fetchSubjectData(retryCount + 1), 300); // Retry after 1 second
-            } else {
-                // location.href = "/"                
-            }
-        }
-    }
-
-    const handleCheckBox = (index) => {
-        const newCheckedList = [...checkedList];
-        newCheckedList[index] = !newCheckedList
-        setCheckedList(prev => [])
-    }
-
     return (
         <>
         <div className="chart" ref={chartRef}></div>
@@ -235,8 +193,6 @@ function ChartType({ cat, option }) {
 }
 
 function createOption(series, xaxisCat, min, max, xaxisTitle, yaxisTitle, reversed) {
-    console.log("series",series);
-    console.log("xaxis",xaxisCat);
     return {
         series: series,
         chart: {

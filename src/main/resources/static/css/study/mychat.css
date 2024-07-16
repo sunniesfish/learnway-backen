@@ -77,11 +77,28 @@ body {
 .message.self {
     align-self: flex-end;
     justify-content: flex-end;
+    flex-direction: row-reverse;
 }
 
 .message.other {
     align-self: flex-start;
     justify-content: flex-start;
+}
+
+.message-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.self .message-content {
+    flex-direction: row-reverse !important;
+}
+
+.user-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 10px;
 }
 
 .bubble {
@@ -93,14 +110,16 @@ body {
 }
 
 .self .bubble {
-    background-color: #4a76a8;
+    background-color: #5a9bd4;
     color: white;
+    margin-left: 10px;
 }
 
 .other .bubble {
     background-color: #e9eaeb;
     color: black;
     border: 1px solid #e0e0e0;
+    margin-right: 10px;
 }
 
 .name {
@@ -115,7 +134,7 @@ body {
 
 .time {
     font-size: 0.75em;
-    color: #888;
+    color: #343a40;
     text-align: right;
 }
 

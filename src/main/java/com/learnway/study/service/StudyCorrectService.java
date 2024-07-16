@@ -1,6 +1,7 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,26 @@ public class StudyCorrectService {
 							  .member(member).study(study).build();
 		
 		correctCheckRepository.save(ck);
+	}
+	
+	
+	// 문제 정답체크 메서드
+	public boolean problemCheck(CorrectCheckDto dto,Principal principal) {
+		Member member = memberRepository.findByMemberId(principal.getName())
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + principal.getName()));
+		System.out.println(member.getMemberId() + "로그인한 멤버값 조회");
+		List<CorrectCheck> list = correctCheckRepository.findByStudy_Postid(dto.getPostId());
+		String memberName = null;
+		for(CorrectCheck a: list) {
+			memberName = a.getMember().getMemberId();
+			System.out.println(a.getMember().getMemberId() + " 포스트값 멤버조회");
+		}
+		if(memberName == member.getMemberId()) {
+		
+		return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
