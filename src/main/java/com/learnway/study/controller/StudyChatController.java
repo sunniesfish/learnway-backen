@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -80,10 +81,14 @@ public class StudyChatController {
 		model.addAttribute("name",studyChatService.MemberName(principal)); 
 		model.addAttribute("roomId",dto.getRoomId()); 
 		model.addAttribute("roomName",dto.getRoomname()); 
-	    
+		Map<String, String> userImages = studyChatService.getUserImagesForRoom(dto.getRoomId());
+
+		
 		//채팅방 멤버리스트 (방장,입잠멤버)
 		model.addAttribute("chatListHost",studyChatService.chatListHost(dto));
 		model.addAttribute("chatListGuest",studyChatService.chatListGuest(dto));
+		model.addAttribute("userImages", userImages);
+        model.addAttribute("currentUserName", principal.getName());
 		
 		model.addAttribute("chatMessageList",studyChatService.chatMessageList(dto));
 		
