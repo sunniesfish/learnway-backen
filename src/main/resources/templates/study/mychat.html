@@ -137,8 +137,10 @@
     <div id="chat-container">
         <div id="chat-header">
             <span id="roomname" th:text="${roomName}"></span>
+
             <input type="hidden" id="userImages" th:value="${userImages}">
 <input type="hidden" id="currentUserName" th:value="${currentUserName}">
+
 <!--   <img th:src="${study.member.memberImage}" class="mr-3 rounded-circle" alt="작성자 이미지" width="64" height="64">  --> 
         </div>
         <div id="msgArea"></div>

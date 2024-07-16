@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SignalingController {
 
 	//roomId 는 상담사 pk 값으로 정함
-	//camKey 는 로그인사용자 아이디(String)로함 <상담사 아이디와 멤버 아이디> 
+	//camKey 는 로그인사용자 아이디(String)로함 <상담사 아이디 와 멤버 아이디> 
 	
     // 방(Room)별로 참여자 수를 관리하기 위한 맵
     private Map<String, Set<String>> roomParticipants = new HashMap<>();
