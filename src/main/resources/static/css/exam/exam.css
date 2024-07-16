@@ -57,7 +57,9 @@ td{
     background-color: #343a40;
     border-color: #343a40   ; /* Optional: If you want to change border color */
 }
-
+.exam__delete-btn-form{
+    display: inline-block;
+}
 .exam__modㅡbtn{
     display: inline block;
     margin-left: 5px;
