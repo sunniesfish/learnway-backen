@@ -27,7 +27,6 @@
                     <form action="/notice/noticeList" class="search-form" method="get">
                         <input class="search-input" type="text" id="keyword" name="keyword" placeholder="공지사항 검색" aria-label="Search">             
                        	 <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
-					    <a href="/notice/writeView" class="btn btn-outline-info my-2 my-sm-0 ml-3" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">글쓰기</a>
                     </form>
                 </div>
             </div>
@@ -55,6 +54,9 @@
 			<!-- Priority 공지사항 끝 -->	
                 <!-- 페이징 처리 코드 추가 -->
 			<div class="footer-container">
+				<div class="d-flex justify-content-end add-btn">
+				  <a href="/notice/writeView" class="btn btn-outline-info my-2 my-sm-0 ml-3" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">글쓰기</a>
+				</div>
                 <nav aria-label="Page navigation" th:if="${notice.totalPages > 0}">   
                     <ul class="pagination justify-content-center">
                         <!-- 이전 페이지 처리 -->

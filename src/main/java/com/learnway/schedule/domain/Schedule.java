@@ -46,25 +46,21 @@ public class Schedule {
 	@Column(nullable=true)
 	private double scheduleAchieveRate;
 	
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "member_id", unique = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id")
 	private Member member; 
 
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name = "subjectId", unique = false)
 	private Subject subjectId;
 	
-	@ManyToOne(cascade = CascadeType.REMOVE)
+	@ManyToOne
 	@JoinColumn(name = "studywayId",unique = false)
 	private Studyway studywayId;
 	
 	@OneToMany(mappedBy = "scheduleId", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private List<Progress> progresses;
 
-
-	
-	
-	
 	
 	
 }
