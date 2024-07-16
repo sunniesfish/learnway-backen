@@ -1,21 +1,27 @@
 async function fetchExamData(examId) {
-    try {
-        const response = await fetch(`/api/exam/${examId}`);
-        if (!response.ok) throw new Error('Failed to fetch stats');
-        return response.json();
-    } catch (error){
-        console.error('Error fetching data:', error);
-        location.href = "/"                
-    }
+    const response = await fetch(`/api/exam/${examId}`);
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    return response.json();
 }
+
+ const modifyModal = document.getElementById("examModModal");
 
 document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().split('T')[0];
     document.getElementById('exam__modal__form-date').value = today;
 });
 
-document.addEventListener("click", async function(event) {
+modifyModal.addEventListener("click", async function(event) {
     const examId = event.target.value
-    const data = await fetchExamData(examId);
-    console.log("data",data)
+    const examData = await fetchExamData(examId);
+    console.log("data",data);
+    $('#examModModal').on('show.bs.modal', function (event) {
+        // 폼 요소들
+        const modal = $(this);
+        modal.find('#exam__modal__form-name').val(examData.examName);
+        modal.find('#exam__modal__form-type').val(examData.examType.examTypeName);
+        modal.find('#exam__modal__form-date').val(examData.examDate);
+        modal.find('#exam__modal__form-end-date').val(examData.examEndDate);
+        modal.find('#exam__modal__form-memo').val(examData.examMemo);
+    });
 })
