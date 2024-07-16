@@ -31,7 +31,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -48,7 +48,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchSubjectData(retryCount + 1), 300);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -65,7 +65,7 @@ function SubjectList({ examId }) {
             if (retryCount < 3) {
                 setTimeout(() => fetchExamData(retryCount + 1), 500);
             } else {
-                // location.href = "/"                
+                location.href = "/"                
             }
         }
     };
@@ -78,6 +78,9 @@ function SubjectList({ examId }) {
             credentials: "include",
             body: JSON.stringify(data)
         });
+        if(response.ok){
+            alert("등록 완료")
+        }
     };
     const fetchModify = async (examId, data) => {
         const response = await fetch(`/api/score/${examId}`, {
@@ -89,7 +92,7 @@ function SubjectList({ examId }) {
             body: JSON.stringify(data)
         });
         if (response.ok) {
-            console.log("성공");
+            alert("수정 완료")
         }
     };
     React.useEffect(() => {
