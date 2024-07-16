@@ -1,7 +1,9 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,14 @@ public class StudyChatService {
 	public List<ChatRoomMember> chatList(Principal principal) {
 		
 		List<ChatRoomMember> list = chatRoomMemberRepository.findByMember_MemberId(
+				principal.getName());
+		return list;
+	}
+	
+	//로그인사용자가 방장인 채팅방 조회
+	public List<ChatRoom> myChatList(Principal principal) {
+		
+		List<ChatRoom> list = chatRoomRepository.findByMember_MemberId(
 				principal.getName());
 		return list;
 	}
@@ -133,6 +143,23 @@ public class StudyChatService {
 		return chatRoomMemberRepository.findByChatRoom_Chatroomid(dto.getRoomId());
 	}
 	
+	public Map<String, String> getUserImagesForRoom(int roomId) {
+        Map<String, String> userImages = new HashMap<>();
+        
+        // 방장 정보 가져오기
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow();
+        userImages.put(chatRoom.getMember().getMemberName(), chatRoom.getMember().getMemberImage());
+        
+        // 참여자 정보 가져오기
+        List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoom_Chatroomid(roomId);
+        for (ChatRoomMember member : members) {
+            userImages.put(member.getMember().getMemberName(), member.getMember().getMemberImage());
+        }
+        
+        return userImages;
+    }
+
+	
 	//이전채팅 가져오기
 	public List<ChatMessage> chatMessageList(ChatRoomDto dto) {
 		return chatMessageRepository.findByChatroom_Chatroomid(dto.getRoomId());
@@ -158,7 +185,16 @@ public class StudyChatService {
 			ChatRoom chatRoom = studyChatRepository.findById(dto.getRoomId()).get();
 			
 			
-			ChatRoomMember room = ChatRoomMember.builder().member(member).chatMemId(member.getId().intValue())
+			//여기부터
+			List<ChatRoomMember> list1 = chatRoomMemberRepository.findByMember_MemberId(principal.getName());
+			
+			for(ChatRoomMember a : list1) {
+				chatDto.setChatMemId(a.getChatMemId());
+			}
+			//
+			
+			
+			ChatRoomMember room = ChatRoomMember.builder().member(member).chatMemId(chatDto.getChatMemId())
 					  				.chatRoom(chatRoom).hasEntered(false).build();
 			
 			chatRoomMemberRepository.save(room);

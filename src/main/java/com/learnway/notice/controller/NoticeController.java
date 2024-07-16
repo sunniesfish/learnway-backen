@@ -53,21 +53,23 @@ public class NoticeController {
 								,@RequestParam(value="category", required=false) String category) {
 		
 		Page<Notice> pageNotice = null;
-		
+		Pageable pageable = PageRequest.of(page, 10);
 		if (keyword == null || keyword.isEmpty()) {
 	        if (category == null || category.isEmpty()) {
 	            // 검색하지 않고 카테고리 선택하지 않았을 때
-	            Pageable pageable = PageRequest.of(page, 10);
 	            pageNotice = noticeService.noticeList(pageable);
 	        } else {
 	            // 검색하지 않고 카테고리 선택했을 때
-	            Pageable pageable = PageRequest.of(page, 10);
 	            pageNotice = noticeService.noticeCategoryList(pageable, category);
 	        }
 	    } else {
-	        // 검색했을 때
-	        Pageable pageable = PageRequest.of(page, 10);
-	        pageNotice = noticeService.noticeSearchList(pageable, keyword);
+	        if (category == null || category.isEmpty()) {
+	            // 검색했지만 카테고리 선택하지 않았을 때
+	            pageNotice = noticeService.noticeSearchList(pageable, keyword);
+	        } else {
+	            // 검색과 카테고리 선택을 동시에 했을 때
+	            pageNotice = noticeService.noticeSearchCategoryList(pageable, keyword, category);
+	        }
 	    }
 		
 		Page<Notice> priNotice;
@@ -168,50 +170,74 @@ public class NoticeController {
 	//글 수정
 	@Transactional
 	@PostMapping("/rewrite/{noticeId}")
-	public String postMethodName( @ModelAttribute NoticeDto dto,@RequestParam("comFile") MultipartFile[] files) {
-		
-		String imgURI = dto.getNoticeImgPath();
-		String imgOgName = dto.getNoticeImgUname();
-
-		if(files != null && files.length > 0 && !files[0].isEmpty()) {
-			MultipartFile File = files[0];
-			
-			//이미지 파일만 업로드 가능
-			if(File.getContentType().startsWith("image")) {
-				// 이미 기존 저장된 이미지가 있다면 기존 파일 삭제
-	            if (imgOgName != null && !imgOgName.isEmpty()) {
-	                try {
-	                	s3ImageService.deleteImageFromS3(imgURI);
-	                } catch (S3Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-				try {
-					//실제 파일 이름 IE나 Edge는 전체 경로가 들어옴
-					String newImgOgName = files[0].getOriginalFilename();
-					//마지막 백슬래시의 위치를 찾고 그 다음 글자부터(+1) 추출
-					newImgOgName = imgOgName.substring(imgOgName.lastIndexOf("\\")+1);
-
-					String newImgURI = s3ImageService.upload(files[0], imgPath);
-
-					dto.setNoticeImgPath(newImgURI);
-					dto.setNoticeImgUname(newImgOgName);
-
-				} catch (S3Exception e) {
-					throw new RuntimeException(e);
-				}
-            }
-		}else {//이미지 수정하는 if문 끝 & 새로운 파일을 업로드하지 않은 경우, 기존 파일명과 경로를 그대로 유지
-			dto.setNoticeImgPath(imgURI);
-			dto.setNoticeImgUname(imgOgName);
+	public String postMethodName(NoticeDto dto, @RequestParam("comFile") MultipartFile[] files,
+	                             @RequestParam(value = "noticeImgUname", required = false) String noticeImgUname,
+	                             @RequestParam(value = "noticeImgPath", required = false) String noticeImgPath,
+	                             @RequestParam(value = "noticeId", required = false) Long noticeId,
+	                             Authentication authentication) throws DataNotExeption {
+	    
+		Member member = null;
+		if(authentication != null && authentication.isAuthenticated()) {
+			CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+            member = user.getMember();
+            dto.setMemberId(member);
 		}
 		
-		dto.setNoticeId(dto.getNoticeId());
-		dto.setPriority(dto.isPriority());
-		noticeService.rewrite(dto);
+		NoticeDto oDto = noticeService.findDetail(noticeId);
 		
-		return "redirect:/notice/detail/" + dto.getNoticeId();
+	    String imgURI = noticeImgPath;
+	    String imgOgName = noticeImgUname;
+	    
+	    // 사진 삭제 처리
+	    if (imgOgName == null || imgOgName.isEmpty()) {
+	        // 기존 이미지가 존재하는 경우 S3에서 삭제
+	        if (dto.getNoticeImgUname() != null && !dto.getNoticeImgUname().isEmpty()) {
+	            try {
+	                s3ImageService.deleteImageFromS3(dto.getNoticeImgPath());
+	            } catch (S3Exception e) {
+	                throw new RuntimeException(e);
+	            }
+	        }
+	        // 이미지 관련 필드를 빈 값으로 설정
+	        dto.setNoticeImgPath(null);
+	        dto.setNoticeImgUname(null);
+	    } else if (files != null && files.length > 0 && !files[0].isEmpty()) {
+	        // 이미지 수정 처리
+	        MultipartFile File = files[0];
+	        
+	        if (File.getContentType().startsWith("image")) {
+	            // 기존 이미지 삭제
+	            if (dto.getNoticeImgUname() != null && !dto.getNoticeImgUname().isEmpty()) {
+	                try {
+	                    s3ImageService.deleteImageFromS3(dto.getNoticeImgPath());
+	                } catch (S3Exception e) {
+	                    throw new RuntimeException(e);
+	                }
+	            }
+	            
+	            try {
+	                String newImgOgName = files[0].getOriginalFilename();
+	                newImgOgName = newImgOgName.substring(newImgOgName.lastIndexOf("\\") + 1);
+	                
+	                String newImgURI = s3ImageService.upload(files[0], imgPath);
+	                
+	                dto.setNoticeImgPath(newImgURI);
+	                dto.setNoticeImgUname(newImgOgName);
+	            } catch (S3Exception e) {
+	                throw new RuntimeException(e);
+	            }
+	        }
+	    } else {
+	        // 이미지 수정하지 않는 경우, 기존 파일명과 경로 유지
+	        dto.setNoticeImgPath(imgURI);
+	        dto.setNoticeImgUname(imgOgName);
+	    }
+	    
+	    dto.setNoticeId(dto.getNoticeId());
+	    dto.setPriority(dto.isPriority());
+	    noticeService.rewrite(dto,member,oDto);
+	    
+	    return "redirect:/notice/detail/" + dto.getNoticeId();
 	}
 	
 	//글 삭제하기

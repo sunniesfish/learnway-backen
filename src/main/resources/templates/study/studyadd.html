@@ -34,7 +34,7 @@
                                 <div class="form-group">
                                     <label for="hashtags">해시태그</label>
                                     <input type="text" id="hashtags" class="form-control" placeholder="Enter로 추가해보세요.">
-                                    <div id="hashtags-container" class="mt-2"></div>
+                                    <div id="hashtags-container" class="mt-1"></div>
                                     <input type="hidden" id="tag" name="tag">
                                 </div>
                             </div>
@@ -105,8 +105,8 @@
                             </div>
                         </div>
                         <div class="submit-button">
-                            <button type="submit" class="btn btn-outline-info my-2 my-sm-0">작성</button>
-                            <button type="button" id="cancelBtn" name="cancelBtn" class="btn btn-outline-secondary my-2 my-sm-0">취소</button>
+                            <button type="submit" class="btn btn-outline-info my-2 my-sm-0 mr-2" >작성</button>
+                            <button type="button" id="cancelBtn" name="cancelBtn" class="btn btn-outline-danger my-2 my-sm-0">취소</button>
                         </div>
                     </div>
                 </div>
@@ -177,12 +177,20 @@
         document.getElementById('additional-fields').style.display = 'block';
     }
 
-function openModal(src) {
-    var modal = document.getElementById('imageModal');
-    var modalImg = document.getElementById("modalImage");
-    modal.style.display = "block";
-    modalImg.src = src;
-}
+    function openModal(src) {
+        var modal = document.getElementById('imageModal');
+        var modalImg = document.getElementById("modalImage");
+
+        // 이미지 크기 설정
+        modalImg.style.maxWidth = "50vw";  
+        modalImg.style.maxHeight = "80vh"; 
+        modalImg.src = src;
+
+        // 모달을 화면 중앙에 표시
+        modal.style.display = "flex";
+        modal.style.alignItems = "center";
+        modal.style.justifyContent = "center";
+    }
 
 function slideDown(element, duration = 500) {
     element.style.display = 'block';
@@ -330,5 +338,6 @@ document.getElementById("cancelBtn").addEventListener("click", function() {
     }
 });
 </script>
+<script src="/js/icon.js"></script>
 </body>
 </html>

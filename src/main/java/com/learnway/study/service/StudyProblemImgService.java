@@ -18,6 +18,7 @@ import com.learnway.global.service.S3ImageService;
 import com.learnway.study.domain.StudyProblem;
 import com.learnway.study.domain.StudyProblemImg;
 import com.learnway.study.domain.StudyProblemImgRepository;
+import com.learnway.study.domain.StudyProblemRepository;
 import com.learnway.study.dto.StudyProblemImgDto;
 
 @Service
@@ -28,6 +29,8 @@ public class StudyProblemImgService {
 
 	@Autowired
 	private StudyProblemImgRepository studyProblemImgRepository;
+	@Autowired
+	private StudyProblemRepository studyProblemRepository;
 	
 	//해당문제 이미지값 조회
 	public List<StudyProblemImg> problemImgPath(int problemid) {
@@ -45,6 +48,9 @@ public class StudyProblemImgService {
 	
 	 // 문제 이미지 업로드 메서드
     public void problemImgAdd(StudyProblemImgDto dto, MultipartFile[] files, int problemid) {
+    	StudyProblem studyProblem = studyProblemRepository.findById((long)problemid)
+    		    .orElseThrow(() -> new IllegalArgumentException("Invalid problem id: " + problemid));
+    	
         for (MultipartFile file : files) {
             if (!file.isEmpty() && file.getContentType().startsWith("image")) {
                 try {
@@ -54,24 +60,40 @@ public class StudyProblemImgService {
                             .imgdir("") // S3 URL만 사용하므로 비워둠
                             .imgpath(imageUrl)
                             .correct(dto.getCorrect())
-                            .studyProblem(StudyProblem.builder().problemid(problemid).build())
+                            .studyProblem(studyProblem)
                             .build();
                     studyProblemImgRepository.save(studyProblemImg);
                 } catch (S3Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+            	System.out.println(" 문제 이미지 없을때 서비스");
+            	System.out.println(problemid + ": 문제아이디");
+            	  StudyProblemImg studyProblemImg = StudyProblemImg.builder()
+                          .imgdir("") // S3 URL만 사용하므로 비워둠
+                          .imgpath("default.png")
+                          .correct(dto.getCorrect())
+                          .studyProblem(studyProblem)
+                          .build();
+                  studyProblemImgRepository.save(studyProblemImg);
             }
         }
     }
 
     // 문제 수정 이미지 업로드
     public void problemImgUpdate(StudyProblemImgDto dto, MultipartFile[] files, int problemid) {
+    	
+    	StudyProblem studyProblem = studyProblemRepository.findById((long)problemid)
+    		    .orElseThrow(() -> new IllegalArgumentException("Invalid problem id: " + problemid));
+    	
         for (MultipartFile file : files) {
             if (!file.isEmpty() && file.getContentType().startsWith("image")) {
                 try {
                     // S3에 이미지 업로드
                     String imageUrl = s3ImageService.upload(file,dir);
-
+                    if(imageUrl ==null) {
+                    	imageUrl="default.png";
+                    }
                     List<StudyProblemImg> list = studyProblemImgRepository.findByStudyProblemProblemid(problemid);
                     int pbimgId = 0;
                     for (StudyProblemImg a : list) {
@@ -83,7 +105,7 @@ public class StudyProblemImgService {
                             .imgdir("") // S3 URL만 사용하므로 비워둠
                             .imgpath(imageUrl)
                             .correct(dto.getCorrect())
-                            .studyProblem(StudyProblem.builder().problemid(problemid).build())
+                            .studyProblem(studyProblem)
                             .build();
                     studyProblemImgRepository.save(studyProblemImg);
                 } catch (S3Exception e) {

@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.learnway.study.domain.Study;
+import com.learnway.study.domain.StudyProblem;
+import com.learnway.study.domain.StudyRepository;
 import com.learnway.study.domain.StudyTag;
 import com.learnway.study.domain.StudyTagRepository;
 import com.learnway.study.dto.StudyTagDto;
@@ -14,6 +16,8 @@ public class StudyTagService {
 
     @Autowired
     private StudyTagRepository studyTagRepository;
+    @Autowired
+    private StudyRepository studyRepository;
     
     // 모든 태그 조회
     public List<StudyTag> findAllTag() {
@@ -31,8 +35,10 @@ public class StudyTagService {
         }
     }
     
-    public void createTag(StudyTagDto studyTagDto, Study study, int postId) {
+    // 게시글 태그 수정
+    public void updateTag(StudyTagDto studyTagDto, int postId) {
         List<String> tags = studyTagDto.getTag();
+        Study study = studyRepository.findByPostid(postId);
         if (tags != null && !tags.isEmpty()) {
             for (String tag : tags) {
                 StudyTag studyTag = StudyTag.builder().tag(tag).study(study).build();
