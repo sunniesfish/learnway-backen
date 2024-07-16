@@ -34,7 +34,7 @@ public class ApiService {
     public String weeklySummary(Long memberId, LocalDateTime startOfWeekDateTime, LocalDateTime endOfWeekDateTime) {
 		
 
-    	String openaiAccessKey = "sk-proj-usmoAKhxbrKgTiq3pgD2T3BlbkFJW12FwTkrkOGGNynMvgP9";
+    	String openaiAccessKey = "0000";
         OpenAiService service = new OpenAiService(openaiAccessKey, Duration.ofSeconds(30));
         
         List<Schedule> weeklySchedules = scheduleRepository.findByMemberIdAndStartTimeBetween(
