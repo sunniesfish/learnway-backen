@@ -1,5 +1,5 @@
 #calendar{
-	height:800px;
+	height:790px;
 
     }
     
@@ -11,7 +11,7 @@
   height: 30px !important; /* 또는 다른 슬롯과 동일한 높이 */
   min-height: 30px !important;
 }
-  
+   
 .fc-event-content {
   display: flex;
   flex-direction: column;
