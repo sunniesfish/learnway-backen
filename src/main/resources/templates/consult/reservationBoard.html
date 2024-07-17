@@ -42,16 +42,16 @@
                         <div class="form-group">
                             <strong>
                                 <h3  style="text-align:center;">
-                                <label for="counselor" class="col-form-label" th:text="${consultantSubject}+' : ' + ' ' + ${consultantName} + '상담사님.'">상담사</label>
+                                <label for="counselor" class="col-form-label" th:text="${consultantSubject}+' : ' + ' ' + ${consultantName} + '상담사님.'" style="font-weight: bold;" >상담사</label>
                                 </h3>
                             </strong>
                             <hr/><br/>
                             <input type="hidden" th:value="${consultantId}" id="counselor">
-                            <label for="reservationId" class="col-form-label">요청상담내용(간단하게 적어주세요.)</label>
+                            <label for="reservationId" class="col-form-label" style="font-weight: bold;" >요청상담내용(간단하게 적어주세요.)</label>
                             <input type="text" class="form-control" id="reservationContent" name="reservationId">
-                            <label for="startTime" class="col-form-label">시작 시간</label>
+                            <label for="startTime" class="col-form-label" style="font-weight: bold;" >시작 시간</label>
                             <input type="datetime-local" class="form-control" id="startTime" name="startTime" disabled>
-                            <label for="endTime" class="col-form-label">종료 시간</label>
+                            <label for="endTime" class="col-form-label" style="font-weight: bold;" >종료 시간</label>
                             <input type="datetime-local" class="form-control" id="endTime" name="endTime" disabled>
                         </div>
                     </div>
@@ -64,8 +64,7 @@
         </div>
 
     <!-- 예약 취소 모달 -->
-        <div class="modal fade" id="deleteEventModal" tabindex="-1" role="dialog" aria-labelledby="deleteEventLabel"
-            aria-hidden="true">
+        <div class="modal fade" id="deleteEventModal" tabindex="-1" role="dialog" aria-labelledby="deleteEventLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
