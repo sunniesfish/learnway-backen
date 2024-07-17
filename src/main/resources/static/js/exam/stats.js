@@ -127,7 +127,7 @@ function Stats() {
         <>
             <div className="stats__btn-box">
                 <div className="stats__btn-box__col">
-                    <select className="form-control" onChange={handleExamTypeChange} defaultValue={"all"}>
+                    <select className="form-control examtype-selector" onChange={handleExamTypeChange} defaultValue={"all"}>
                         <option value="all">All</option>
                         {examTypeList?.map(item =>
                             <option key={item.examTypeId} value={item.examTypeName}>{item.examTypeName}</option>
