@@ -51,15 +51,15 @@
                         </a>
                     </td>
                     <td>
+                        <button type="button" th:value="${item.examId}" class="btn exam__modㅡbtn" data-toggle="modal" data-target="#examModModal">
+                            수정
+                        </button>
                         <form th:action="@{/exam/delete}" method="post" class="m-0 exam__delete-btn-form">
                             <input type="hidden" name="examId" th:value="${item.examId}" required />
                             <button class="exam__item__delete-btn btn clickable" type="submit">
                                 삭제
                             </button>
                         </form>
-                        <button type="button" th:value="${item.examId}" class="btn exam__modㅡbtn" data-toggle="modal" data-target="#examModModal">
-                            수정
-                        </button>
                     </td>
                 </tr>
             </tbody>
@@ -163,7 +163,7 @@
                             <label for="exam__modal__form-memo">메모</label>
                             <textarea class="form-control" id="exam__mod-modal__form-memo" name="examMemo" rows="3" placeholder="메모를 입력하세요"></textarea>
                         </div>
-                        <input type="hidden" id="exam__mod-modal__form-examId">
+                        <input type="hidden" id="exam__mod-modal__form-examId" name="examId">
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success float-right insertBtn">등록</button>
                         </div>
