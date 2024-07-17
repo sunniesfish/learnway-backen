@@ -84,6 +84,9 @@ public class StudyController {
 	        int[] detailSearchArray = Arrays.stream(dto.getDetailSearch().split(",")).mapToInt(Integer::parseInt).toArray();
 	        // 변환된 배열을 dto에 설정
 	        dto.setDetailSearchArray(detailSearchArray);
+	        for(int a: detailSearchArray) {
+	        	System.out.println(a + "중복된 값 출력");
+	        }
 	    }
 
 	    Page<Study> studies = studyPostService.boardSearchList(dto, pageable);
