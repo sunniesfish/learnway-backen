@@ -3,8 +3,6 @@ name: Deploy to AWS
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
 
 env:
   PROJECT_NAME: aselcni
@@ -28,15 +26,24 @@ jobs:
           distribution: 'temurin'
     
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+
+      - name: Update db AWS key id
+        run: sed -i 's/<AWS_ACCESS_KEY_ID>/${{ secrets.AWS_ACCESS_KEY_ID }}/' src/main/resources/application.properties
+  
+      - name: Update db AWS key
+        run: sed -i 's/<AWS_SECRET__ACCESS_KEY>/${{ secrets.AWS_SECRET__ACCESS_KEY }}/' src/main/resources/application.properties
+      
+      - name: Update GPT API key
+        run: sed -i 's/<GPT_API_KEY>/${{ secrets.GPT_API_KEY }}/' src/main/resources/application.properties
+  
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-        shell: bash
-      
+
       - name: Build with Gradle
         run: ./gradlew build -x test
-        shell: bash
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -48,7 +55,6 @@ jobs:
       - name: Make zip file
         run: zip -r ${{ github.sha }}.zip .
         shell: bash
-
 
       - name: Upload to S3
         run: aws s3 cp ${{ github.sha }}.zip s3://${{ env.BUCKET_NAME }}/${{ env.PROJECT_NAME }}/${{ github.sha }}.zip --region ${{ env.AWS_REGION }}
