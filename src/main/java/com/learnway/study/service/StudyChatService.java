@@ -1,7 +1,9 @@
 package com.learnway.study.service;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -140,6 +142,26 @@ public class StudyChatService {
 		
 		return chatRoomMemberRepository.findByChatRoom_Chatroomid(dto.getRoomId());
 	}
+	
+	public Map<String, String> getUserImagesForRoom(int roomId) {
+        Map<String, String> userImages = new HashMap<>();
+        
+        // 방장 정보 가져오기
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow();
+        userImages.put(chatRoom.getMember().getMemberName(), chatRoom.getMember().getMemberImage());
+        
+        // 참여자 정보 가져오기
+        List<ChatRoomMember> members = chatRoomMemberRepository.findByChatRoom_Chatroomid(roomId);
+        for (ChatRoomMember member : members) {
+            userImages.put(member.getMember().getMemberName(), member.getMember().getMemberImage());
+            System.out.println(member.getMember().getMemberName() + ": 멤버 이름");
+            System.out.println(member.getMember().getMemberImage() + ": 멤버 이미지");
+            
+        }
+        
+        return userImages;
+    }
+
 	
 	//이전채팅 가져오기
 	public List<ChatMessage> chatMessageList(ChatRoomDto dto) {
