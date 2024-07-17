@@ -23,6 +23,7 @@ td{
 .exam__item__delete-btn:hover{
     background-color: tomato;
     color: #fff;
+    border-color: tomato;
 }
 /* .exam__item__delete-btn>svg{
     width: 10px;
@@ -56,4 +57,20 @@ td{
 .page-item.active .page-link {
     background-color: #343a40;
     border-color: #343a40   ; /* Optional: If you want to change border color */
+}
+.exam__delete-btn-form{
+    display: inline-block;
+    margin-right: 5px;
+}
+.exam__modㅡbtn{
+    display: inline block;
+    color: #fff;
+    background-color: #343a40;
+    border-color: var(--learnwayBlack);
+    cursor: pointer;
+}
+.exam__modㅡbtn:hover{
+    color: #fff;
+    background-color: var(--learnwayBlue);
+    border-color: var(--learnwayBlue);
 }

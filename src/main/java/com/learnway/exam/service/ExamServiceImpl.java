@@ -58,9 +58,12 @@ public class ExamServiceImpl implements ExamService{
         Optional<Exam> opExam = examRepository.findByMemIdAndExamId(exam.getMemId(), exam.getExamId());
         opExam.ifPresent(value -> {
             value.setExamName(exam.getExamName());
-            value.setExamType(exam.getExamType());
+            value.setExamType(examTypeRepository.findByExamTypeName(exam.getExamType().getExamTypeName()).get());
             value.setExamDate(exam.getExamDate());
             value.setExamMemo(exam.getExamMemo());
+            if (exam.getExamEndDate() != null) {
+                value.setExamEndDate(exam.getExamEndDate());
+            }
             examRepository.save(value);
         });
     }

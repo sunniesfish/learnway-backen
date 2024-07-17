@@ -34,24 +34,27 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="item : ${examList.content}" th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" style="cursor: pointer;">
-                    <td>
+                <tr th:each="item : ${examList.content}" style="cursor: pointer;">
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examType.examTypeName}"></span>
                         </a>
                     </td>
-                    <td>
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examName}"></span>
                         </a>
                     </td>
-                    <td>
+                    <td th:onclick="|location.href='@{/exam/detail/{id}(id=${item.examId})}'|" >
                         <a th:href="@{/exam/detail/{id}(id=${item.examId})}" class="exam__item__info-box">
                             <span th:text="${item.examDate}"></span>
                         </a>
                     </td>
                     <td>
-                        <form th:action="@{/exam/delete}" method="post" class="m-0">
+                        <button type="button" th:value="${item.examId}" class="btn exam__modㅡbtn" data-toggle="modal" data-target="#examModModal">
+                            수정
+                        </button>
+                        <form th:action="@{/exam/delete}" method="post" class="m-0 exam__delete-btn-form">
                             <input type="hidden" name="examId" th:value="${item.examId}" required />
                             <button class="exam__item__delete-btn btn clickable" type="submit">
                                 삭제
@@ -125,6 +128,50 @@
         </div>
     </div>
 
+    <div class="modal fade" id="examModModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">시험 수정</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/exam/update" method="post">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="exam__modal__form-name">시험 이름</label>
+                                <input type="text" class="form-control" id="exam__mod-modal__form-name" name="examName" required placeholder="시험 이름을 입력하세요">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="exam__modal__form-type">시험 종류</label>
+                                <select class="form-control" id="exam__mod-modal__form-type" name="examTypeName" required>
+                                    <option th:each="item:${examTypes}" th:text="${item.getExamTypeName()}" th:value="${item.getExamTypeName()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label >시험기간</label>
+                            <div>
+                                <input type="date" class="form-control" id="exam__mod-modal__form-date" name="examDate" required>
+                                <span>부터</span>
+                                <input type="date" class="form-control" id="exam__mod-modal__form-end-date" name="examEndDate" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="exam__modal__form-memo">메모</label>
+                            <textarea class="form-control" id="exam__mod-modal__form-memo" name="examMemo" rows="3" placeholder="메모를 입력하세요"></textarea>
+                        </div>
+                        <input type="hidden" id="exam__mod-modal__form-examId" name="examId">
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-success float-right insertBtn">등록</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

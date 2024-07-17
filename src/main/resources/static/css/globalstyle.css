@@ -41,6 +41,7 @@
 }
 .hidden {
   display: none;
+  opacity: 0;
 }
 
 .main__content {
