@@ -23,6 +23,7 @@ td{
 .exam__item__delete-btn:hover{
     background-color: tomato;
     color: #fff;
+    border-color: tomato;
 }
 /* .exam__item__delete-btn>svg{
     width: 10px;
@@ -59,17 +60,17 @@ td{
 }
 .exam__delete-btn-form{
     display: inline-block;
+    margin-right: 5px;
 }
 .exam__modㅡbtn{
     display: inline block;
-    margin-left: 5px;
     color: #fff;
     background-color: #343a40;
     border-color: var(--learnwayBlack);
     cursor: pointer;
 }
 .exam__modㅡbtn:hover{
-    color: #343a40;
-    background-color: #fff;
-    border-color: #343a40;
+    color: #fff;
+    background-color: var(--learnwayBlue);
+    border-color: var(--learnwayBlue);
 }
