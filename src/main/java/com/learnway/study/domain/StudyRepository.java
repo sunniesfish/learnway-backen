@@ -16,7 +16,7 @@ public interface StudyRepository extends JpaRepository<Study, Integer> {
 	  @Query("SELECT s FROM Study s LEFT JOIN FETCH s.tags WHERE s.postid = :postid")
 	    Optional<Study> findByIdWithTags(@Param("postid") Long postid);
 	  
-	  List<Study> findByTitle(String title);
+	  List<Study> findByTitleContaining(String title);
 	  
 	  List<Study> findByStartdateGreaterThanEqual(Date startDate);
 	  
