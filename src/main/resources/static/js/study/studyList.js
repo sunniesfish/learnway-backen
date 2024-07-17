@@ -245,7 +245,7 @@ $('#roomCheck').on('change', function() {
         });
     });
 
-    // 검색 폼 수정
+    
     /*const searchForm = document.querySelector('.search-form');
     searchForm.addEventListener('submit', function(e) {
         e.preventDefault();
