@@ -2,36 +2,41 @@
     	
     	
         let startDateResults = [];
-        let hashtagResults = [];
+        let finalDuplicates = [];
         let chatRoomResults = [];
         let hashtagPostIds = [];
 
         // 채팅방 체크 박스 처리 함수
-        function updateCheckboxValue(checkbox) {
-    checkbox.value = checkbox.checked ? 1 : 0;
-    var roomCheck = checkbox.value;
-    console.log("Room Check Value:", roomCheck);
-    
-    if (roomCheck == 1) {
-        return $.ajax({
-            type: "POST",
-            url: "/api/study/searchChatStudy",
-            data: JSON.stringify({roomCheck: roomCheck}),
-            contentType: "application/json",
-            dataType: "json",
-            success: function(data) {
-                console.log("채팅방 데이터전송 성공", data);
-                chatRoomResults = data;
-            },
-            error: function(error) {
-                console.log('채팅방 데이터전송 실패:', error);
-            }
-        });
-    } else {
-        // 체크박스가 체크되지 않았을 때는 chatRoomResults를 빈 배열로 설정
-        chatRoomResults = [];
-        return Promise.resolve(); // 빈 프로미스 반환
-    }
+       function updateCheckboxValue(checkbox) {
+    return new Promise((resolve, reject) => {
+        checkbox.value = checkbox.checked ? 1 : 0;
+        var roomCheck = checkbox.value;
+        console.log("Room Check Value:", roomCheck);
+        
+        if (roomCheck == 1) {
+            $.ajax({
+                type: "POST",
+                url: "/api/study/searchChatStudy",
+                data: JSON.stringify({roomCheck: roomCheck}),
+                contentType: "application/json",
+                dataType: "json",
+                success: function(data) {
+                    console.log("채팅방 데이터전송 성공", data);
+                    chatRoomResults = data;
+                    checkAndProcessDuplicates();
+                    resolve();
+                },
+                error: function(error) {
+                    console.log('채팅방 데이터전송 실패:', error);
+                    reject(error);
+                }
+            });
+        } else {
+            chatRoomResults = [];
+            checkAndProcessDuplicates();
+            resolve();
+        }
+    });
 }
         window.updateCheckboxValue = updateCheckboxValue;
 
@@ -63,36 +68,29 @@
         });
 
         // 적용 버튼 클릭 시 처리
-       $('#applyButton').on('click', function() {
-    const promises = [];
+      $('#applyButton').on('click', function() {
+    // 결과를 hidden input에 저장
+    $('#hiddenDuplicates').val(finalDuplicates.join(','));
 
-    // 해시태그 처리
-    const currentTags = hashtags.map(tag => tag.replace('#', ''));
-    if (currentTags.length > 0) {
-        promises.push(new Promise(resolve => {
-            sendHashtagsToServer(currentTags);
-            resolve();
-        }));
-    }
+    console.log('최종 중복된 값:', finalDuplicates);
 
-    // 시작일 처리
-    const startDateVal = $('#startdate').val();
+    // 모달 창 닫기
+    $('#exampleModal').modal('hide');
+});
+
+
+$('#startdate').on('change', function() {
+    const startDateVal = $(this).val();
     if (startDateVal) {
-        promises.push(startDate(startDateVal));
-    }
-
-    // 채팅방 처리
-    const roomCheck = $('#roomCheck').prop('checked');
-    if (roomCheck) {
-        promises.push(updateCheckboxValue($('#roomCheck')[0]));
-    }
-
-    // 모든 비동기 작업이 완료된 후 중복 체크 실행
-    Promise.all(promises).then(() => {
+        startDate(startDateVal);
+    } else {
+        startDateResults = [];
         checkAndProcessDuplicates();
-        // 모달 창 닫기
-        $('#exampleModal').modal('hide');
-    });
+    }
+});
+
+$('#roomCheck').on('change', function() {
+    updateCheckboxValue(this);
 });
 
         // 태그 추가 함수
@@ -125,42 +123,50 @@
         }
 
         // 해시태그를 서버로 보내는 함수
-        function sendHashtagsToServer(hashtags) {
-    $.ajax({
-        type: "POST",
-        url: "/api/study/searchHashtags",
-        data: JSON.stringify({tags: hashtags}),
-        contentType: "application/json",
-        dataType: "json",
-        success: function(data) {
-            console.log("해시태그 업데이트 성공:", data);
-            hashtagPostIds = data; // 결과를 전역 변수에 저장
-        },
-        error: function(error) {
-            console.log('해시태그 업데이트 실패:', error);
-        }
+       function sendHashtagsToServer(hashtags) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: "/api/study/searchHashtags",
+            data: JSON.stringify({tags: hashtags}),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                console.log("해시태그 업데이트 성공:", data);
+                hashtagPostIds = data;
+                checkAndProcessDuplicates();
+                resolve();
+            },
+            error: function(error) {
+                console.log('해시태그 업데이트 실패:', error);
+                reject(error);
+            }
+        });
     });
 }
 
         // 시작일 날짜 값 처리 함수
-        function startDate(startDateVal) {
-            console.log(startDateVal);
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchStartdate",
-                data: JSON.stringify({startdate: startDateVal}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("시작일 데이터전송 성공", data);
-                    startDateResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('시작일 데이터전송 실패:', error);
-                }
-            });
-        }
+       function startDate(startDateVal) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "POST",
+            url: "/api/study/searchStartdate",
+            data: JSON.stringify({startdate: startDateVal}),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                console.log("시작일 데이터전송 성공", data);
+                startDateResults = data;
+                checkAndProcessDuplicates();
+                resolve();
+            },
+            error: function(error) {
+                console.log('시작일 데이터전송 실패:', error);
+                reject(error);
+            }
+        });
+    });
+}
 
         // 중복 체크 및 결과 처리
       function checkAndProcessDuplicates() {
@@ -170,13 +176,15 @@
         chatRoomResults
     ].filter(array => array && array.length > 0);
 
-    const duplicates = findDuplicates(activeArrays);
+    if (activeArrays.length === 0) {
+        finalDuplicates = [];
+    } else if (activeArrays.length === 1) {
+        finalDuplicates = activeArrays[0];
+    } else {
+        finalDuplicates = findDuplicates(activeArrays);
+    }
 
-    // 결과를 hidden input에 저장
-    $('#hiddenDuplicates').val(duplicates.join(','));
-
-    // 콘솔에 결과 출력
-    console.log('중복된 값:', duplicates);
+    console.log('현재 중복된 값:', finalDuplicates);
 }
         // 중복된 값 찾는 함수
         function findDuplicates(arrays) {
@@ -237,7 +245,7 @@
         });
     });
 
-    // 검색 폼 수정
+    
     /*const searchForm = document.querySelector('.search-form');
     searchForm.addEventListener('submit', function(e) {
         e.preventDefault();
