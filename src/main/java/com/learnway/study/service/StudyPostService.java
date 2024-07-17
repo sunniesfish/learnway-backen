@@ -65,7 +65,7 @@ public class StudyPostService {
         boolean hasDetail = detail != null && detail.length > 0;
         
         if (hasTitle && hasDetail) {
-            List<Study> list = studyRepository.findByTitle(title);
+            List<Study> list = studyRepository.findByTitleContaining(title);
 
             // Study 리스트에서 postid 값만 추출
             List<Integer> postIds = list.stream()
@@ -173,7 +173,7 @@ public class StudyPostService {
 	
 	//게시글 제목검색 메서드
 	public List<Study> searchBoardList(StudyDto dto) {
-		return studyRepository.findByTitle(dto.getTitle());
+		return studyRepository.findByTitleContaining(dto.getTitle());
 	}
 	
 	
