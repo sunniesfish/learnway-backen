@@ -4,33 +4,38 @@
         let startDateResults = [];
         let hashtagResults = [];
         let chatRoomResults = [];
+        let hashtagPostIds = [];
 
         // 채팅방 체크 박스 처리 함수
         function updateCheckboxValue(checkbox) {
-            checkbox.value = checkbox.checked ? 1 : 0;
-            var roomCheck = checkbox.value;
-            console.log(roomCheck);
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchChatStudy",
-                data: JSON.stringify({roomCheck: roomCheck}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("채팅방 데이터전송 성공", data);
-                    chatRoomResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('채팅방 데이터전송 실패:', error);
-                }
-            });
-        }
+    checkbox.value = checkbox.checked ? 1 : 0;
+    var roomCheck = checkbox.value;
+    console.log("Room Check Value:", roomCheck);
+    
+    if (roomCheck == 1) {
+        return $.ajax({
+            type: "POST",
+            url: "/api/study/searchChatStudy",
+            data: JSON.stringify({roomCheck: roomCheck}),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(data) {
+                console.log("채팅방 데이터전송 성공", data);
+                chatRoomResults = data;
+            },
+            error: function(error) {
+                console.log('채팅방 데이터전송 실패:', error);
+            }
+        });
+    } else {
+        // 체크박스가 체크되지 않았을 때는 chatRoomResults를 빈 배열로 설정
+        chatRoomResults = [];
+        return Promise.resolve(); // 빈 프로미스 반환
+    }
+}
         window.updateCheckboxValue = updateCheckboxValue;
 
-        $('#startdate').on('change', function() {
-            startDate();
-        });
+      
 
         $('#exampleModal').modal('hide');
         $('#advancedSearchButton').on('click', function() {
@@ -58,28 +63,37 @@
         });
 
         // 적용 버튼 클릭 시 처리
-        $('#applyButton').on('click', function() {
-            // 해시태그 처리
-            const tag = $('#searchtag').val();
-            if (tag) {
-                sendHashtagsToServer([tag]);
-            }
-        
-            // 시작일 처리
-            const startDateVal = $('#startdate').val();
-            if (startDateVal) {
-                startDate(startDateVal);
-            }
-        
-            // 채팅방 처리
-            const roomCheck = $('#roomCheck').prop('checked') ? 1 : 0;
-            if (roomCheck) {
-                updateCheckboxValue($('#roomCheck')[0]);
-            }
-        
-            // 모달 창 닫기
-            $('#exampleModal').modal('hide');
-        });
+       $('#applyButton').on('click', function() {
+    const promises = [];
+
+    // 해시태그 처리
+    const currentTags = hashtags.map(tag => tag.replace('#', ''));
+    if (currentTags.length > 0) {
+        promises.push(new Promise(resolve => {
+            sendHashtagsToServer(currentTags);
+            resolve();
+        }));
+    }
+
+    // 시작일 처리
+    const startDateVal = $('#startdate').val();
+    if (startDateVal) {
+        promises.push(startDate(startDateVal));
+    }
+
+    // 채팅방 처리
+    const roomCheck = $('#roomCheck').prop('checked');
+    if (roomCheck) {
+        promises.push(updateCheckboxValue($('#roomCheck')[0]));
+    }
+
+    // 모든 비동기 작업이 완료된 후 중복 체크 실행
+    Promise.all(promises).then(() => {
+        checkAndProcessDuplicates();
+        // 모달 창 닫기
+        $('#exampleModal').modal('hide');
+    });
+});
 
         // 태그 추가 함수
         function addHashtag(tag) {
@@ -112,22 +126,21 @@
 
         // 해시태그를 서버로 보내는 함수
         function sendHashtagsToServer(hashtags) {
-            $.ajax({
-                type: "POST",
-                url: "/api/study/searchHashtags",
-                data: JSON.stringify({tags: hashtags}),
-                contentType: "application/json",
-                dataType: "json",
-                success: function(data) {
-                    console.log("해시태그 업데이트 성공:", data);
-                    hashtagResults = data; // 결과 저장
-                    checkAndProcessDuplicates();
-                },
-                error: function(error) {
-                    console.log('해시태그 업데이트 실패:', error);
-                }
-            });
+    $.ajax({
+        type: "POST",
+        url: "/api/study/searchHashtags",
+        data: JSON.stringify({tags: hashtags}),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(data) {
+            console.log("해시태그 업데이트 성공:", data);
+            hashtagPostIds = data; // 결과를 전역 변수에 저장
+        },
+        error: function(error) {
+            console.log('해시태그 업데이트 실패:', error);
         }
+    });
+}
 
         // 시작일 날짜 값 처리 함수
         function startDate(startDateVal) {
@@ -150,25 +163,21 @@
         }
 
         // 중복 체크 및 결과 처리
-        function checkAndProcessDuplicates() {
-            const activeArrays = [
-                startDateResults.length > 0 ? startDateResults : null,
-                hashtagResults.length > 0 ? hashtagResults : null,
-                chatRoomResults.length > 0 ? chatRoomResults : null
-            ].filter(array => array !== null);
+      function checkAndProcessDuplicates() {
+    const activeArrays = [
+        startDateResults,
+        hashtagPostIds,
+        chatRoomResults
+    ].filter(array => array && array.length > 0);
 
-            const duplicates = findDuplicates(activeArrays);
+    const duplicates = findDuplicates(activeArrays);
 
-            // 결과를 hidden input에 저장
-            $('#hiddenDuplicates').val(duplicates.join(','));
+    // 결과를 hidden input에 저장
+    $('#hiddenDuplicates').val(duplicates.join(','));
 
-            // 콘솔에 결과 출력
-            console.log('중복된 값:', duplicates);
-
-            // 여기에 추가적인 처리 로직을 넣을 수 있습니다.
-            // 예: 결과를 화면에 표시하거나 다른 작업 수행
-        }
-
+    // 콘솔에 결과 출력
+    console.log('중복된 값:', duplicates);
+}
         // 중복된 값 찾는 함수
         function findDuplicates(arrays) {
             if (arrays.length === 0) return [];

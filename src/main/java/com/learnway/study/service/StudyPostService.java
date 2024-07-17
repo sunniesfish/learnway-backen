@@ -58,9 +58,13 @@ public class StudyPostService {
         // title과 detail 배열을 가져옴
         String title = dto.getTitle();
         int[] detail = dto.getDetailSearchArray();
-
+        System.out.println(dto.getTitle() + "제목값");
+        System.out.println(dto.getDetailSearchArray() + " 배열길이");
         // title과 detail이 둘 다 null이 아닐 때
-        if (title != null && detail != null) {
+        boolean hasTitle = title != null && !title.isEmpty();
+        boolean hasDetail = detail != null && detail.length > 0;
+        
+        if (hasTitle && hasDetail) {
             List<Study> list = studyRepository.findByTitle(title);
 
             // Study 리스트에서 postid 값만 추출
@@ -88,7 +92,7 @@ public class StudyPostService {
         }
 
         // title만 있을 때
-        if (title != null) {
+        if (hasTitle) {
         	System.out.println("제목값만 들어옴");
             Sort sort = Sort.by(Sort.Direction.DESC, "postid");
             Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -96,7 +100,7 @@ public class StudyPostService {
         }
 
         // detail 배열만 있을 때
-        if (detail != null) {
+        if (hasDetail) {
             Sort sort = Sort.by(Sort.Direction.DESC, "postid");
             Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
             return studyRepository.findByPostidIn(detail, sortedPageable);
