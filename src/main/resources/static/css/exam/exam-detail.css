@@ -29,12 +29,12 @@
     color: #fff;
     background-color: #343a40;
     border-color: var(--learnwayBlack);
-    cursor: pointer;
+    cursor: pointer;    
 }
 .exam-detail__reg-btn:hover{
-    color: #343a40;
-    background-color: #fff;
-    border-color: #343a40;
+    color: #fff;
+    background-color: var(--learnwayBlue);
+    border-color: var(--learnwayBlue);
 }
 
 .exam-detail__go-list-btn{
@@ -47,21 +47,19 @@
     justify-content: center;
     align-items: center;
 }
+.exam-detail__go-list-btn:hover{
+    color: #fff;
+    fill: #fff;
+    background-color: var(--learnwayBlack);
+}
 .exam-detail__go-list-btn>svg{
     fill:#343a40;
     height: 1rem;
 }
-.exam-detail__go-list-btn>svg:hover{
+.exam-detail__go-list-btn:hover>svg{
     fill:#fff;
 }
-.exam-detail__go-list-btn:hover{
-    color: #fff;
-    background-color: #343a40;
-    border-color: var(--learnwayBlack);
-}
-.exam-detail__go-list-btn>svg:hover{
-    fill: #fff;
-}
+
 .ed-score{
     margin-right: 3px;
 }
