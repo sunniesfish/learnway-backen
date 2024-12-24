@@ -17,7 +17,14 @@ public class ProgressDto {
 	private String progress;
 	private String memberId;
 
-	@Override
+    public ProgressDto(Long progressId, String materialId, double achieveRate, String progress) {
+		this.progressId = progressId;
+		this.materialId = materialId;
+		this.achieveRate = achieveRate;
+		this.progress = progress;
+    }
+
+    @Override
 	public String toString() {
 		return "ProgressDto [progressId=" + progressId + ", achieveRate=" + achieveRate + ", materialId=" + materialId
 				+ ", progress=" + progress + "]";

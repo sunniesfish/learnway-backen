@@ -33,7 +33,16 @@ public class ScheduleDto {
 	private List<ProgressDto> progresses;
 	private Member member; 
 	private List<Long> deletedProgressIds;
-	
+
+	public ScheduleDto(Long scheduleId, LocalDateTime startTime, LocalDateTime endTime, String subjectId, String studywayId, List<ProgressDto> progresses) {
+		this.scheduleId = scheduleId;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.studywayId = studywayId;
+		this.subjectId = subjectId;
+		this.progresses = progresses;
+	}
+
 	@Override
 	public String toString() {
 		return "ScheduleDto [scheduleId=" + scheduleId + ", startTime=" + startTime + ", endTime=" + endTime
