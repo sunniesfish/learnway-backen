@@ -46,31 +46,13 @@ public class ScheduleService {
     @Autowired
     private ProgressRepository progressRepository;
 
+
 	    // 스케쥴 추가하기 (주간)
     	@Transactional
 		public void add(ScheduleDto dto,Member member) {
 
-				Schedule schedule = new Schedule();
-				schedule.setStartTime(dto.getStartTime());
-				schedule.setEndTime(dto.getEndTime());
-				schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
-				        .orElseThrow(() -> new RuntimeException("Studyway not found")));
-				schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
-				        .orElseThrow(() -> new RuntimeException("Subject not found")));
-				schedule.setMember(member);
-
-				//Progress 엔티티 생성 및 설정
-				List<Progress> progresses = new ArrayList<>();
-				for (ProgressDto progressDto : dto.getProgresses()) {
-		            Progress progress = new Progress();
-		            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
-		                    .orElseThrow(() -> new RuntimeException("Material not found")));
-		            progress.setProgress(progressDto.getProgress());
-		            progress.setScheduleId(schedule);
-		            progress.setAchieveRate(progressDto.getAchieveRate());
-		            progress.setMemberId(member.getMemberId());
-		            progresses.add(progress);
-		        }
+				Schedule schedule = scheduleFromDto(dto, member);
+				List<Progress> progresses = progressListFromDto(dto.getProgresses(), schedule, member);
 				schedule.setProgresses(progresses);
 				scheduleRepository.save(schedule);
 		}
@@ -86,71 +68,39 @@ public class ScheduleService {
 
 			Schedule schedule = scheduleRepository.findById(dto.getScheduleId()).orElseThrow(()
 					-> new IllegalArgumentException("해당 일정이 존재하지 않습니다. id: " + dto.getScheduleId()));
-
-
 			schedule.setStartTime(dto.getStartTime());
 			schedule.setEndTime(dto.getEndTime());
 			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
 			        .orElseThrow(() -> new RuntimeException("Studyway not found")));
-
-
 			scheduleRepository.save(schedule);
 		}
 
+		@Transactional
 		//일일 스케쥴 가져오기
 		public Optional<Schedule> getDetail(Long id, Long memberId){
 				return scheduleRepository.findByScheduleIdAndMemberId(id,memberId);
-
 		}
 
 		@Transactional
 		//일정 전부 변경하기 (주간)
 		public void updateSchedule(ScheduleDto dto,Member member) {
 
-			    Optional<Schedule> existingSchedule = scheduleRepository.findByScheduleIdAndMemberId(dto.getScheduleId(),member.getId());
-			    if (existingSchedule.isPresent()) {
-			        Schedule schedule = existingSchedule.get();
+				Schedule existingSchedule = scheduleRepository.findByScheduleIdAndMemberId(dto.getScheduleId(), member.getId())
+					.orElseThrow(() -> new RuntimeException("Schedule not found"));
+				updateScheduleFromDto(existingSchedule, dto);
+
+				if (dto.getDeletedProgressIds() != null && !dto.getDeletedProgressIds().isEmpty()) {
+					for (Long deletedId : dto.getDeletedProgressIds()) {
+						progressRepository.deleteById(deletedId);
+					}
+				}
 
 
-			        // DTO의 값으로 schedule 객체 업데이트
-			        schedule.setStartTime(dto.getStartTime());
-			        schedule.setEndTime(dto.getEndTime());
-			        schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
-					        .orElseThrow(() -> new RuntimeException("Studyway not found")));
-					schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
-					        .orElseThrow(() -> new RuntimeException("Subject not found")));
+				List<Progress> progresses = progressListFromDto(dto.getProgresses(), existingSchedule, member);
+				existingSchedule.setProgresses(progresses);
+				scheduleRepository.save(existingSchedule);
 
-					// 삭제된 Progress 처리
-			        if (dto.getDeletedProgressIds() != null && !dto.getDeletedProgressIds().isEmpty()) {
-			            for (Long deletedId : dto.getDeletedProgressIds()) {
-			                progressRepository.deleteById(deletedId);
-			            }
-			        }
 
-					//Progress 엔티티 생성 및 설정
-					List<Progress> progresses = new ArrayList<>();
-					for (ProgressDto progressDto : dto.getProgresses()) {
-			            Progress progress;
-			            if (progressDto.getProgressId() != null) {
-			                // 기존의 Progress 엔티티 조회
-			                progress = progressRepository.findById(progressDto.getProgressId())
-			                        .orElseThrow(() -> new RuntimeException("Progress not found"));
-			            } else {
-			                // 새로운 Progress 엔티티 생성
-			                progress = new Progress();
-			            }
-			            progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
-			                    .orElseThrow(() -> new RuntimeException("Material not found")));
-			            progress.setProgress(progressDto.getProgress());
-			            progress.setScheduleId(schedule);
-			            progress.setAchieveRate(progressDto.getAchieveRate());
-			            progresses.add(progress);
-			        }
-
-					schedule.setProgresses(progresses);
-					scheduleRepository.save(schedule);
-
-			}
 		}
 
 		//스케쥴 삭제하기
@@ -270,6 +220,37 @@ public class ScheduleService {
 
 			return scheduleAchieveRate;
 
+		}
+
+		private Schedule scheduleFromDto(ScheduleDto dto, Member member) {
+			Schedule schedule = new Schedule();
+			updateScheduleFromDto(schedule, dto);
+			schedule.setMember(member);
+			return schedule;
+		}
+
+		private void updateScheduleFromDto(Schedule schedule, ScheduleDto dto) {
+			schedule.setStartTime(dto.getStartTime());
+			schedule.setEndTime(dto.getEndTime());
+			schedule.setStudywayId(studywayRepository.findById(dto.getStudywayId())
+					.orElseThrow(() -> new RuntimeException("Studyway not found")));
+			schedule.setSubjectId(subjectRepository.findById(dto.getSubjectId())
+					.orElseThrow(() -> new RuntimeException("Subject not found")));
+		}
+
+		private List<Progress> progressListFromDto(List<ProgressDto> progressDtos, Schedule schedule, Member member) {
+			List<Progress> progresses = new ArrayList<>();
+			for (ProgressDto progressDto : progressDtos) {
+				Progress progress = new Progress();
+				progress.setMaterialId(materialRepository.findById(progressDto.getMaterialId())
+						.orElseThrow(() -> new RuntimeException("Material not found")));
+				progress.setProgress(progressDto.getProgress());
+				progress.setScheduleId(schedule);
+				progress.setAchieveRate(progressDto.getAchieveRate());
+				progress.setMemberId(member.getMemberId());
+				progresses.add(progress);
+			}
+			return progresses;
 		}
 
 
