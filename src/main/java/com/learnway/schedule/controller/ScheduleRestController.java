@@ -62,31 +62,16 @@ public class ScheduleRestController {
 	@GetMapping("/getMonthlyAchievement")
 	public ResponseEntity<List<DailyAchieveDto>> getMonthlyAchievement(@RequestParam("year") int year, @RequestParam("month") int month
 																		,Authentication authentication){
-		
-		Member member = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            member = user.getMember();
-        }
-	    LocalDate start = LocalDate.of(year, month, 1);
-	    LocalDate end = start.plusMonths(1);
-	    
-	    List<DailyAchieveDto> dailyAchieves = scheduleService.AchieveList(start, end, member);
-	    
+		Member member = extractMemberFromAuthentication(authentication);
+	    List<DailyAchieveDto> dailyAchieves = scheduleService.AchieveList(year, month , member);
 	    return ResponseEntity.ok(dailyAchieves);
-		
 	}
 	
 	//날짜에 따라 찾기 기준시간 오전6시 ~ 다음날 오전6시
 	@GetMapping("findByDate")
 	public ResponseEntity<List<Map<String,Object>>> findByDate(@RequestParam("date") String dateStr,Authentication authentication){
-		
-		Member member = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            member = user.getMember();
-        }
-		
+
+		Member member = extractMemberFromAuthentication(authentication);
 		try {
 			
 			LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ISO_DATE);
@@ -130,12 +115,8 @@ public class ScheduleRestController {
 	//주간 일정 전부 불러오기
 	@GetMapping("/findAll")
 	public List<Map<String,Object>> weekScheduleList(Authentication authentication) {
-		
-		Member member = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            member = user.getMember();
-        }
+
+		Member member = extractMemberFromAuthentication(authentication);
 		
 		List<Schedule> scheduleList = scheduleService.findAllByMemberId(member.getId());
 		List<Map<String,Object>> eventList = new ArrayList<>();
@@ -185,12 +166,8 @@ public class ScheduleRestController {
 	//1개의 일정 내역 불러오기(수정모달용)
 	@GetMapping("/getDetail")
 	public Map<String,Object> getDetail(@RequestParam("id") Long id,ScheduleDto dto,Authentication authentication) {
-			
-			Member member = null;
-	        if (authentication != null && authentication.isAuthenticated()) {
-	            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-	            member = user.getMember();
-	        }
+
+			Member member = extractMemberFromAuthentication(authentication);
 			
 			Optional<Schedule> detail = scheduleService.getDetail(id,member.getId());
 			Map<String,Object> detailList = new HashMap<>();
@@ -226,12 +203,8 @@ public class ScheduleRestController {
 	public ResponseEntity<String> addSchedule(@RequestBody ScheduleDto dto,Authentication authentication){
 		
 		try {
-			
-			Member member = null;
-	        if (authentication != null && authentication.isAuthenticated()) {
-	            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-	            member = user.getMember();
-	        }
+
+			Member member = extractMemberFromAuthentication(authentication);
 				
         // 데이터 처리 로직 (DB 저장 등)
         scheduleService.add(dto,member);
@@ -250,12 +223,8 @@ public class ScheduleRestController {
 	//테이블 리사이즈 또는 드래그앤드롭 이벤트시에 수정 코드
 	@PatchMapping("/updateTime")
 	public ResponseEntity<Map<String, String>> updateTime(@RequestBody ScheduleDto dto, Authentication authentication){
-			
-			Member member = null;
-	        if (authentication != null && authentication.isAuthenticated()) {
-	            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-	            member = user.getMember();
-	        }
+
+			Member member = extractMemberFromAuthentication(authentication);
 			
 			scheduleService.updateScheduleTime(dto,member);
 	
@@ -269,12 +238,8 @@ public class ScheduleRestController {
 	//일정 삭제하기
 	@DeleteMapping("/deleteSchedule")
 	public ResponseEntity<Map<String, String>> deleteSchedule(@RequestParam("id") Long id, Authentication authentication){
-			
-			Member member = null;
-	        if (authentication != null && authentication.isAuthenticated()) {
-	            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-	            member = user.getMember();
-	        }
+
+			Member member = extractMemberFromAuthentication(authentication);
 			scheduleService.deleteSchedule(id,member.getId());
 			Map<String, String> response = new HashMap<>();
 		    response.put("message", "일정이 삭제되었습니다");
@@ -286,11 +251,7 @@ public class ScheduleRestController {
 	@PatchMapping("/updateSchedule")
 	public ResponseEntity<Map<String, String>> updateSchedule(@RequestBody ScheduleDto dto,Authentication authentication){
 
-		Member member = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-            member = user.getMember();
-        }
+		Member member = extractMemberFromAuthentication(authentication);
 		
 		try {
 	        Optional<Schedule> existingSchedule = scheduleService.getDetail(dto.getScheduleId(),member.getId());
@@ -317,6 +278,14 @@ public class ScheduleRestController {
 		    
 		    return ResponseEntity.ok(response);
 	    }
+	}
+
+	private Member extractMemberFromAuthentication(Authentication authentication) {
+		if (authentication != null && authentication.isAuthenticated()) {
+			CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+			return user.getMember();
+		}
+		throw new RuntimeException("사용자 인증 실패");
 	}
 		
 }
