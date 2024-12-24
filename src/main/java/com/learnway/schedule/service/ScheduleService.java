@@ -253,5 +253,36 @@ public class ScheduleService {
 			return progresses;
 		}
 
+		public List<ScheduleDto> getSchedulesByDate(LocalDate date, Member member) {
+			LocalDateTime startDateTime = date.atTime(6, 0);
+			LocalDateTime endDateTime = startDateTime.plusDays(1).minusSeconds(1);
+
+			return scheduleRepository
+					.findByMemberIdAndStartTimeBetween(member.getId(), startDateTime, endDateTime)
+					.stream() // Schedule 리스트를 스트림으로 변환
+					.map(this::convertToScheduleDto) // 각 Schedule을 ScheduleDto로 변환
+					.toList(); // 변환된 데이터를 다시 List로 수집
+		}
+
+		private ScheduleDto convertToScheduleDto(Schedule schedule) {
+			return new ScheduleDto(
+					schedule.getScheduleId(),
+					schedule.getStartTime(),
+					schedule.getEndTime(),
+					schedule.getStudywayId().getName(),
+					schedule.getSubjectId().getName(),
+					schedule.getProgresses().stream().map(this::convertToProgressDto).toList()
+			);
+		}
+
+		private ProgressDto convertToProgressDto(Progress progress) {
+			return new ProgressDto(
+					progress.getProgressId(),
+					progress.getMaterialId().getName(),
+					progress.getAchieveRate(),
+					progress.getProgress()
+			);
+		}
+
 
 }
