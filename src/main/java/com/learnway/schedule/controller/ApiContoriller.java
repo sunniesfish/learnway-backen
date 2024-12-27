@@ -47,7 +47,6 @@ public class ApiContoriller {
         LocalDateTime endOfWeekDateTime = endDate.plusDays(1).atTime(5, 59);
 
 	    String weekRange = startDate.plusDays(1).format(DateTimeFormatter.ofPattern("MM.dd")) + " - " + endDate.format(DateTimeFormatter.ofPattern("MM.dd"));
-	    System.out.println(weekRange);
 	    String summary = apiService.weeklySummary(member.getId(), startOfWeekDateTime, endOfWeekDateTime);
 
 	    Map<String, String> response = new HashMap<>();
